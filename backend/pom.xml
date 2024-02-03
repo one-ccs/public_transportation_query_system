@@ -43,6 +43,13 @@
 	        <version>1.18.30</version>
 	    </dependency>
 
+        <!-- mybits-plus 代码生成器需要依赖该插件 -->
+	    <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-freemarker</artifactId>
+	        <version>3.2.2</version>
+	    </dependency>
+
 	    <dependency>
 	        <groupId>com.baomidou</groupId>
 	        <artifactId>mybatis-plus-generator</artifactId>

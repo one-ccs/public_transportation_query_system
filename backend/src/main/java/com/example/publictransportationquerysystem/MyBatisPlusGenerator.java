@@ -12,7 +12,7 @@ public class MyBatisPlusGenerator {
 
     public static void main(String[] args) {
         FastAutoGenerator.create(
-            "jdbc:mysql://localhost:3306/leave_approval_management_system?useSSL=false&characterEncoding=UTF-8",
+            "jdbc:mysql://localhost:3306/public-transportation-query-system?useSSL=false&characterEncoding=UTF-8",
             "root",
             "LmzwTvA1p5Bds3DODi$b2bfe2b68ef2esdf9b86dd354e00d3c3c7f533ce18fe8a6f33f7c3af52396b1bb"
         )
@@ -32,16 +32,17 @@ public class MyBatisPlusGenerator {
 
             }))
             .packageConfig(builder -> {
-                builder.parent("com.example.leave_approval_management_system") // 设置父包名
+                builder.parent("com.example.publictransportationquerysystem") // 设置父包名
                     .moduleName(null) // 设置父包模块名
                     .pathInfo(Collections.singletonMap(OutputFile.xml, "D://test")); // 设置mapperXml生成路径
             })
             .strategyConfig(builder -> {
                 builder.addInclude("user") // 设置需要生成的表名
-                    .addInclude("student")
-                    .addInclude("teacher")
-                    .addInclude("leave")
-                    .addInclude("admin")
+                    .addInclude("line_info")
+                    .addInclude("site_info")
+                    .addInclude("ad")
+                    .addInclude("notice")
+                    .addInclude("lost")
                     .addTablePrefix("t_", "c_"); // 设置过滤表前缀
             })
             .templateEngine(new FreemarkerTemplateEngine()) // 使用Freemarker引擎模板，默认的是Velocity引擎模板
