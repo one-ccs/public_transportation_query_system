@@ -3,20 +3,7 @@ package com.example.publictransportationquerysystem.common;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONWriter;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Result<T> {
-
-    private Integer code;   // 业务状态码 0-成功 1-失败
-
-    private String message; // 提示信息
-
-    private T data;         // 响应数据
+public record Result<T>(Integer code, String message, T data) {
 
     // 快速返回操作成功的响应结果 (带响应数据)
     public static <T> Result<T> success(T data) {

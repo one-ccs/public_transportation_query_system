@@ -6,6 +6,13 @@ spring:
         url: jdbc:mysql://localhost:3306/public-transportation-query-system?useSSL=false&characterEncoding=UTF-8
         username: root
         password: LmzwTvA1p5Bds3DODi$b2bfe2b68ef2esdf9b86dd354e00d3c3c7f533ce18fe8a6f33f7c3af52396b1bb
+    security:
+        user:
+            name: root
+            password: root
+            roles:
+            - user
+            - admin
     web:
         resources:
             static-locations: classpath:, classpath:/templates
