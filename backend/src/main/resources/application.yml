@@ -13,9 +13,15 @@ spring:
             roles:
             - user
             - admin
-    web:
-        resources:
-            static-locations: classpath:, classpath:/templates
+
+springdoc:
+    swagger-ui:
+        enabled: true
+        path: /api/docs
+    api-docs:
+        enabled: true
+        path: /api/api-docs
+    show-login-endpoint: true
 
 # mybatis-plus:
 #     mapper-locations: classpath:/mapper/*.xml

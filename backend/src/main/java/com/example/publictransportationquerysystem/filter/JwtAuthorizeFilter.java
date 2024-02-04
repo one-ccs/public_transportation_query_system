@@ -6,6 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -19,13 +20,14 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * 每次请求都会调用该过滤器
  */
+@Component
 public class JwtAuthorizeFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         // 从请求头获取 token
-        String authorization = request.getHeader("Authoriztion");
+        String authorization = request.getHeader("Authorization");
         // 解析 JWT
         DecodedJWT jwt = JwtUtil.resolveJwt(authorization);
         if (jwt != null) {
@@ -37,5 +39,6 @@ public class JwtAuthorizeFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             request.setAttribute("id", JwtUtil.toId(jwt));
         }
+        filterChain.doFilter(request, response);
     }
 }

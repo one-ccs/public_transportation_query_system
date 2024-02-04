@@ -70,7 +70,7 @@ public class JwtUtil {
     public static UserDetails toUserDetails(DecodedJWT jwt) {
         Map<String, Claim> claims = jwt.getClaims();
         return User
-            .withUsername(claims.get("user").asString())
+            .withUsername(claims.get("username").asString())
             .password("未设置")
             .authorities(claims.get("authorities").asArray(String.class))
             .build();
