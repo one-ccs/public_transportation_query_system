@@ -15,6 +15,14 @@ public record Result<T>(Integer code, String message, T data) {
     }
 
     /**
+     * 成功（带提示信息）
+     * @return Result
+     */
+    public static <T> Result<T> success(String message) {
+        return new Result<>(0, message, null);
+    }
+
+    /**
      * 成功
      * @return Result
      */
@@ -41,21 +49,21 @@ public record Result<T>(Integer code, String message, T data) {
     }
 
     /**
-     * 失败（带数据）
-     * @param data<T>
-     * @return Result
-     */
-    public static <T> Result<T> error(T data) {
-        return new Result<>(1, "操作失败", data);
-    }
-
-    /**
      * 失败（带提示信息）
      * @param String
      * @return Result
      */
-    public static <T> Result<T> error(String message) {
+    public static <T> Result<T> failure(String message) {
         return new Result<>(1, message, null);
+    }
+
+    /**
+     * 失败
+     * @param data<T>
+     * @return Result
+     */
+    public static <T> Result<T> failure() {
+        return new Result<>(1, "操作失败", null);
     }
 
     /**

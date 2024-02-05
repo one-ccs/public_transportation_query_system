@@ -1,6 +1,7 @@
 package com.example.publictransportationquerysystem.config;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +25,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 public class SecurityConfig {
+
+    @Autowired
+    JwtUtil jwtUtil;
 
     @Autowired
     JwtAuthorizeFilter jwtAuthorizeFilter;
@@ -84,7 +88,7 @@ public class SecurityConfig {
      */
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String token = JwtUtil.createJWT(userDetails, 1, "张三");
+        String token = jwtUtil.createJWT(userDetails, 1, "张三");
 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
@@ -97,7 +101,7 @@ public class SecurityConfig {
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        response.getWriter().write(Result.error(exception.getMessage()).toJsonString());
+        response.getWriter().write(Result.failure(exception.getMessage()).toJsonString());
     }
 
     /**
@@ -106,6 +110,12 @@ public class SecurityConfig {
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        response.getWriter().write(Result.success("登出成功").toJsonString());
+        PrintWriter writer = response.getWriter();
+        String authorization = request.getHeader("Authorization");
+        if (jwtUtil.invalidateJwt(authorization)) {
+            writer.write(Result.success("登出成功").toJsonString());
+        } else {
+            writer.write(Result.failure("登出失败").toJsonString());
+        }
     }
 }

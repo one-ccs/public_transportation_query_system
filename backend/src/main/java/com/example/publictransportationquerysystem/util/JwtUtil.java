@@ -3,10 +3,14 @@ package com.example.publictransportationquerysystem.util;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -14,12 +18,13 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.publictransportationquerysystem.common.GlobalVariable;
 
+@Component
 public class JwtUtil {
-    // 秘钥
-    private static final String SECRET = "TvA1p5Bds3DODi$b2bfe2b68eff9b86dd354e00d3c3c7f533ce18fe8a6f33f7c3af52396b1bb";
-    // 过期时间 单位秒
-    private static final long EXPIRATION = 1800L;
+
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
     /**
      * 创建 JWT
@@ -27,8 +32,8 @@ public class JwtUtil {
      * @param user
      * @return String
      */
-    public static String createJWT(UserDetails userDetails, Integer id, String username) {
-        Date expireDate = new Date(System.currentTimeMillis() + EXPIRATION * 1000);
+    public String createJWT(UserDetails userDetails, Integer id, String username) {
+        Date expireDate = new Date(System.currentTimeMillis() + GlobalVariable.EXPIRATION * 1000);
 
         return JWT.create()
             .withJWTId(UUID.randomUUID().toString())
@@ -40,7 +45,38 @@ public class JwtUtil {
             )
             .withExpiresAt(expireDate)
             .withIssuedAt(new Date())
-            .sign(Algorithm.HMAC256(SECRET));
+            .sign(Algorithm.HMAC256(GlobalVariable.JWT_SECRET));
+    }
+
+    /**
+     * 让 token 失效
+     * @param headerToken
+     * @return
+     */
+    public Boolean invalidateJwt(String headerToken) {
+        String token = this.convertToken(headerToken);
+        if (token == null) return false;
+        Algorithm algorithm = Algorithm.HMAC256(GlobalVariable.JWT_SECRET);
+        JWTVerifier jwtVerifier = JWT.require(algorithm).build();
+        try {
+            DecodedJWT jwt = jwtVerifier.verify(token);
+            String id = jwt.getId();
+            return this.deleteToken(id, jwt.getExpiresAt());
+        } catch (JWTVerificationException e) {
+            return false;
+        }
+    }
+
+    public Boolean deleteToken(String uuid, Date time) {
+        if (this.isInvalidToken(uuid)) return false;
+        Date now = new Date();
+        Long expire = Math.max(time.getTime() - now.getTime(), 0);
+        stringRedisTemplate.opsForValue().set(GlobalVariable.JWT_BLACK_LIST_PREFIX + uuid, "", expire, TimeUnit.MILLISECONDS);
+        return true;
+    }
+
+    public Boolean isInvalidToken(String uuid) {
+        return stringRedisTemplate.hasKey(GlobalVariable.JWT_BLACK_LIST_PREFIX + uuid);
     }
 
     /**
@@ -48,26 +84,29 @@ public class JwtUtil {
      * @param headerToken
      * @return
      */
-    public static DecodedJWT resolveJwt(String headerToken) {
+    public DecodedJWT resolveJwt(String headerToken) {
         // 转换 token
-        String token = convertToken(headerToken);
-        if (token == null) {
-            return null;
-        }
+        String token = this.convertToken(headerToken);
+        if (token == null) return null;
         // 验证 token 是否有效且未过期
-        Algorithm algorithm = Algorithm.HMAC256(SECRET);
+        Algorithm algorithm = Algorithm.HMAC256(GlobalVariable.JWT_SECRET);
         JWTVerifier jwtVerifier = JWT.require(algorithm).build();
         try {
-            DecodedJWT verify = jwtVerifier.verify(token);
-            Date expiresAt = verify.getExpiresAt();
-
-            return new Date().after(expiresAt) ? null : verify;
+            DecodedJWT jwt = jwtVerifier.verify(token);
+            if (this.isInvalidToken(jwt.getId())) {
+                return null;
+            }
+            Date expiresAt = jwt.getExpiresAt();
+            if (new Date().after(expiresAt)) {
+                return null;
+            }
+            return jwt;
         } catch (JWTVerificationException e) {
             return null;
         }
     }
 
-    public static UserDetails toUserDetails(DecodedJWT jwt) {
+    public UserDetails toUserDetails(DecodedJWT jwt) {
         Map<String, Claim> claims = jwt.getClaims();
         return User
             .withUsername(claims.get("username").asString())
@@ -76,11 +115,11 @@ public class JwtUtil {
             .build();
     }
 
-    public static Integer toId(DecodedJWT jwt) {
+    public Integer toId(DecodedJWT jwt) {
         return jwt.getClaims().get("id").asInt();
     }
 
-    private static String convertToken(String headerToken) {
+    private String convertToken(String headerToken) {
         if (headerToken == null || !headerToken.startsWith("Bearer ")) {
             return null;
         }
