@@ -16,8 +16,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.publictransportationquerysystem.entity.po.Account;
 import com.example.publictransportationquerysystem.entity.vo.Result;
+import com.example.publictransportationquerysystem.entity.vo.response.AuthorizeVO;
 import com.example.publictransportationquerysystem.filter.JwtAuthorizeFilter;
+import com.example.publictransportationquerysystem.service.impl.AccountServiceImpl;
 import com.example.publictransportationquerysystem.util.JwtUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +31,9 @@ public class SecurityConfig {
 
     @Autowired
     JwtUtil jwtUtil;
+
+    @Autowired
+    AccountServiceImpl accountServiceImpl;
 
     @Autowired
     JwtAuthorizeFilter jwtAuthorizeFilter;
@@ -88,11 +94,17 @@ public class SecurityConfig {
      */
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String token = jwtUtil.createJWT(userDetails, 1, "张三");
+        Account account = accountServiceImpl.getUserByNameOrEmail(userDetails.getUsername());
+        String token = jwtUtil.createJWT(userDetails, account.getId(), account.getUsername());
+        AuthorizeVO authorizeVO = new AuthorizeVO();
+        authorizeVO.setExpire(jwtUtil.expireTime());
+        authorizeVO.setRole(account.getRole());
+        authorizeVO.setToken(token);
+        authorizeVO.setUsername(account.getUsername());
 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        response.getWriter().write(Result.success(token).toJsonString());
+        response.getWriter().write(Result.success(authorizeVO).toJsonString());
     }
 
     /**

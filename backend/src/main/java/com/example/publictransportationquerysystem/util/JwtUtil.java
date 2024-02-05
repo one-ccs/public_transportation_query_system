@@ -34,8 +34,6 @@ public class JwtUtil {
      * @return String
      */
     public String createJWT(UserDetails userDetails, Integer id, String username) {
-        Date expireDate = new Date(System.currentTimeMillis() + GlobalVariable.EXPIRATION * 1000);
-
         return JWT.create()
             .withJWTId(UUID.randomUUID().toString())
             .withClaim("id", id)
@@ -44,9 +42,13 @@ public class JwtUtil {
                 .stream()
                 .map(GrantedAuthority::getAuthority).toList()
             )
-            .withExpiresAt(expireDate)
+            .withExpiresAt(this.expireTime())
             .withIssuedAt(new Date())
             .sign(Algorithm.HMAC256(GlobalVariable.JWT_SECRET));
+    }
+
+    public Date expireTime() {
+        return new Date(System.currentTimeMillis() + GlobalVariable.EXPIRATION * 1000);
     }
 
     /**
