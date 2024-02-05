@@ -1,4 +1,4 @@
-package com.example.publictransportationquerysystem.common;
+package com.example.publictransportationquerysystem.entity.vo;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONWriter;

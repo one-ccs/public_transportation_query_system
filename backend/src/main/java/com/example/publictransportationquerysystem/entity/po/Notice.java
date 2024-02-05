@@ -1,4 +1,4 @@
-package com.example.publictransportationquerysystem.entity;
+package com.example.publictransportationquerysystem.entity.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

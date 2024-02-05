@@ -29,7 +29,8 @@ public class JwtUtil {
     /**
      * 创建 JWT
      * @param userDetails
-     * @param user
+     * @param id
+     * @param username
      * @return String
      */
     public String createJWT(UserDetails userDetails, Integer id, String username) {

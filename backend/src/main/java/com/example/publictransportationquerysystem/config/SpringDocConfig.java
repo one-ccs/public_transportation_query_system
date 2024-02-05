@@ -44,10 +44,10 @@ public class SpringDocConfig {
     }
 
     @Bean
-    public GroupedOpenApi userApi() {
+    public GroupedOpenApi accountApi() {
         return GroupedOpenApi.builder()
-            .group("2-用户")
-            .pathsToMatch("/api/user")
+            .group("2-账户")
+            .pathsToMatch("/api/account")
             .build();
     }
 

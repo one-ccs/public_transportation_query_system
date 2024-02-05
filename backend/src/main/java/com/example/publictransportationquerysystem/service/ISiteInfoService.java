@@ -1,7 +1,7 @@
 package com.example.publictransportationquerysystem.service;
 
-import com.example.publictransportationquerysystem.entity.SiteInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.publictransportationquerysystem.entity.po.SiteInfo;
 
 public interface ISiteInfoService extends IService<SiteInfo> {
 

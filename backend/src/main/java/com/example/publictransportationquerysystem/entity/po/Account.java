@@ -1,4 +1,4 @@
-package com.example.publictransportationquerysystem.entity;
+package com.example.publictransportationquerysystem.entity.po;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -10,8 +10,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "User对象")
-public class User implements Serializable {
+@Schema(description = "账户")
+public class Account implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -24,8 +24,8 @@ public class User implements Serializable {
     @Schema(description = "密码")
     private String password;
 
-    @Schema(description = "创建日期")
-    private LocalDateTime createDatetime;
+    @Schema(description = "注册日期")
+    private LocalDateTime registerDatetime;
 
     @Schema(description = "角色（user、admin）")
     private String role;
@@ -35,11 +35,11 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "Account{" +
             "id = " + id +
             ", username = " + username +
             ", password = " + password +
-            ", createDatetime = " + createDatetime +
+            ", createDatetime = " + registerDatetime +
             ", role = " + role +
             ", status = " + status +
         "}";

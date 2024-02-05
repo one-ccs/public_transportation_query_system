@@ -1,4 +1,4 @@
-package com.example.publictransportationquerysystem;
+package com.example.publictransportationquerysystem.util;
 
 import java.sql.Types;
 import java.util.Collections;
@@ -37,7 +37,7 @@ public class MyBatisPlusGenerator {
                     .pathInfo(Collections.singletonMap(OutputFile.xml, "D://test")); // 设置mapperXml生成路径
             })
             .strategyConfig(builder -> {
-                builder.addInclude("user") // 设置需要生成的表名
+                builder.addInclude("account") // 设置需要生成的表名
                     .addInclude("line_info")
                     .addInclude("site_info")
                     .addInclude("ad")

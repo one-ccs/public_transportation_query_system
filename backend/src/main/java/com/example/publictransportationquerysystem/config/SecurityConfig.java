@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.example.publictransportationquerysystem.common.Result;
+import com.example.publictransportationquerysystem.entity.vo.Result;
 import com.example.publictransportationquerysystem.filter.JwtAuthorizeFilter;
 import com.example.publictransportationquerysystem.util.JwtUtil;
 

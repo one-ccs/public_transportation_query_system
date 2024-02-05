@@ -1,4 +1,4 @@
-package com.example.publictransportationquerysystem.entity;
+package com.example.publictransportationquerysystem.entity.po;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -10,38 +10,42 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Ad对象")
-public class Ad implements Serializable {
+@Schema(description = "Lost对象")
+public class Lost implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @Schema(description = "广告类型（）")
-    private Byte type;
-
     @Schema(description = "描述")
     private String describe;
 
-    @Schema(description = "广告图片链接")
+    @Schema(description = "图片链接")
     private String imgUrl;
 
-    @Schema(description = "跳转链接")
-    private String jumpUrl;
+    @Schema(description = "拾取地点")
+    private String address;
 
-    @Schema(description = "发布日期")
+    @Schema(description = "拾取时间")
+    private LocalDateTime pickDatetime;
+
+    @Schema(description = "发布时间")
     private LocalDateTime releaseDatetime;
+
+    @Schema(description = "认领状态（0 待认领、1 已认领）")
+    private Byte status;
 
     @Override
     public String toString() {
-        return "Ad{" +
+        return "Lost{" +
             "id = " + id +
-            ", type = " + type +
             ", describe = " + describe +
             ", imgUrl = " + imgUrl +
-            ", jumpUrl = " + jumpUrl +
+            ", address = " + address +
+            ", pickDatetime = " + pickDatetime +
             ", releaseDatetime = " + releaseDatetime +
+            ", status = " + status +
         "}";
     }
 }
