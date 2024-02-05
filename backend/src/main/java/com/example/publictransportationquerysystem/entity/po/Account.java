@@ -5,13 +5,14 @@ import java.time.LocalDateTime;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.example.publictransportationquerysystem.entity.vo.BaseData;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
 @Schema(description = "账户")
-public class Account implements Serializable {
+public class Account implements Serializable, BaseData {
 
     private static final long serialVersionUID = 1L;
 

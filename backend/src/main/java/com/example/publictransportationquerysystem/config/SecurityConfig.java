@@ -96,11 +96,10 @@ public class SecurityConfig {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Account account = accountServiceImpl.getUserByNameOrEmail(userDetails.getUsername());
         String token = jwtUtil.createJWT(userDetails, account.getId(), account.getUsername());
-        AuthorizeVO authorizeVO = new AuthorizeVO();
-        authorizeVO.setExpire(jwtUtil.expireTime());
-        authorizeVO.setRole(account.getRole());
-        authorizeVO.setToken(token);
-        authorizeVO.setUsername(account.getUsername());
+        AuthorizeVO authorizeVO = account.asViewObject(AuthorizeVO.class, v -> {
+            v.setExpire(jwtUtil.expireTime());
+            v.setToken(token);
+        });
 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
