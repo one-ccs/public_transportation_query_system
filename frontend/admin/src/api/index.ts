@@ -84,6 +84,15 @@ function loginApi(username: string, password : string, remember: boolean, succes
     }, failure);
 }
 
+const fetchData = () => {
+    return request({
+        url: 'http://127.0.0.1:5173/table.json',
+        method: 'get'
+    });
+};
+
+
 export {
     loginApi,
+    fetchData
 }

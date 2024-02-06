@@ -7,7 +7,6 @@ import com.example.publictransportationquerysystem.entity.po.Lost;
 import com.example.publictransportationquerysystem.mapper.LostMapper;
 import com.example.publictransportationquerysystem.service.ILostService;
 
-
 @Service
 public class LostServiceImpl extends ServiceImpl<LostMapper, Lost> implements ILostService {
 

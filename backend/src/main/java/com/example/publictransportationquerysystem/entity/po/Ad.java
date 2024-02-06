@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Ad对象")
+@Schema(name = "Ad", description = "广告")
 public class Ad implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -21,6 +21,9 @@ public class Ad implements Serializable {
     @Schema(description = "广告类型（）")
     private Byte type;
 
+    @Schema(description = "标题")
+    private String title;
+
     @Schema(description = "描述")
     private String describe;
 
@@ -30,18 +33,23 @@ public class Ad implements Serializable {
     @Schema(description = "跳转链接")
     private String jumpUrl;
 
-    @Schema(description = "发布日期")
-    private LocalDateTime releaseDatetime;
+    @Schema(description = "开始日期")
+    private LocalDateTime startDatetime;
+
+    @Schema(description = "结束日期")
+    private LocalDateTime endDatetime;
 
     @Override
     public String toString() {
         return "Ad{" +
             "id = " + id +
             ", type = " + type +
+            ", title = " + title +
             ", describe = " + describe +
             ", imgUrl = " + imgUrl +
             ", jumpUrl = " + jumpUrl +
-            ", releaseDatetime = " + releaseDatetime +
+            ", startDatetime = " + startDatetime +
+            ", endDatetime = " + endDatetime +
         "}";
     }
 }

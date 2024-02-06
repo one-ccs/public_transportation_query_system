@@ -1,19 +1,17 @@
 package com.example.publictransportationquerysystem.entity.po;
 
+import java.io.Serializable;
+import java.time.LocalTime;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import java.io.Serializable;
-import java.time.LocalTime;
-
-@TableName("line_info")
 @Data
-@Schema(description = "LineInfo对象")
-public class LineInfo implements Serializable {
+@Schema(name = "Route", description = "")
+public class Route implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,7 +32,7 @@ public class LineInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "LineInfo{" +
+        return "Route{" +
             "id = " + id +
             ", no = " + no +
             ", firstTime = " + firstTime +

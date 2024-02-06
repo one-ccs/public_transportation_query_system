@@ -3,9 +3,9 @@ package com.example.publictransportationquerysystem.mapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.publictransportationquerysystem.entity.po.SiteInfo;
+import com.example.publictransportationquerysystem.entity.po.RouteStation;
 
 @Mapper
-public interface SiteInfoMapper extends BaseMapper<SiteInfo> {
+public interface RouteStationMapper extends BaseMapper<RouteStation> {
 
 }
