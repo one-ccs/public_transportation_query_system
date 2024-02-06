@@ -1,6 +1,7 @@
 import axios, {AxiosInstance, AxiosError, AxiosResponse, AxiosRequestConfig} from 'axios';
 
 const service:AxiosInstance = axios.create({
+    baseURL: 'http://127.0.0.1:8080',
     timeout: 5000
 });
 
@@ -9,7 +10,7 @@ service.interceptors.request.use(
         return config;
     },
     (error: AxiosError) => {
-        console.log(error);
+        // console.log(error);
         return Promise.reject();
     }
 );
@@ -23,7 +24,7 @@ service.interceptors.response.use(
         }
     },
     (error: AxiosError) => {
-        console.log(error);
+        // console.log(error);
         return Promise.reject();
     }
 );

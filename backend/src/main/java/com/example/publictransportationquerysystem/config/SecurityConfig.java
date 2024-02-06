@@ -63,6 +63,9 @@ public class SecurityConfig {
             .authenticationEntryPoint(this::onUnauthorized)
             .accessDeniedHandler(this::onAccessDeny)
         )
+        .cors(conf -> conf
+            .disable()
+        )
         .csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(conf -> conf
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -112,7 +115,7 @@ public class SecurityConfig {
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        response.getWriter().write(Result.failure(exception.getMessage()).toJsonString());
+        response.getWriter().write(Result.failure(400, exception.getMessage()).toJsonString());
     }
 
     /**
@@ -126,7 +129,7 @@ public class SecurityConfig {
         if (jwtUtil.invalidateJwt(authorization)) {
             writer.write(Result.success("登出成功").toJsonString());
         } else {
-            writer.write(Result.failure("登出失败").toJsonString());
+            writer.write(Result.failure(400, "登出失败").toJsonString());
         }
     }
 }

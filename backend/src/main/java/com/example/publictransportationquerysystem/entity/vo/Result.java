@@ -7,33 +7,33 @@ public record Result<T>(Integer code, String message, T data) {
 
     /**
      * 成功（带数据）
-     * @param String
-     * @return Result
+     * @param data<T>
+     * @return
      */
     public static <T> Result<T> success(T data) {
-        return new Result<>(0, "操作成功", data);
+        return new Result<>(200, "操作成功", data);
     }
 
     /**
      * 成功（带提示信息）
-     * @return Result
+     * @param message
+     * @return
      */
     public static <T> Result<T> success(String message) {
-        return new Result<>(0, message, null);
+        return new Result<>(200, message, null);
     }
 
     /**
      * 成功
-     * @return Result
+     * @return
      */
     public static <T> Result<T> success() {
-        return new Result<>(0, "操作成功", null);
+        return new Result<>(200, "操作成功", null);
     }
 
     /**
      * 未登录
-     * @param String
-     * @return Result
+     * @return
      */
     public static <T> Result<T> unauthorized() {
         return new Result<T>(401, "请登录后操作", null);
@@ -41,34 +41,35 @@ public record Result<T>(Integer code, String message, T data) {
 
     /**
      * 无权访问
-     * @param String
-     * @return Result
+     * @return
      */
     public static <T> Result<T> forbidden() {
         return new Result<T>(403, "您无权操作", null);
     }
 
     /**
-     * 失败（带提示信息）
-     * @param String
-     * @return Result
+     * 失败（带状态码）
+     * @param code<Integer>
+     * @return
      */
-    public static <T> Result<T> failure(String message) {
-        return new Result<>(1, message, null);
+    public static <T> Result<T> failure(Integer code) {
+        return new Result<>(code, "操作失败", null);
     }
 
     /**
-     * 失败
-     * @param data<T>
-     * @return Result
+     * 失败（带状态码及提示信息）
+     * @param code<Integer>
+     * @param message<String>
+     * @return
      */
-    public static <T> Result<T> failure() {
-        return new Result<>(1, "操作失败", null);
+    public static <T> Result<T> failure(Integer code, String message) {
+        if (message == null) message = "未知错误，操作失败";
+        return new Result<>(code, message, null);
     }
 
     /**
      * 将 Result 转为 String Json
-     * @return String
+     * @return
      */
     public String toJsonString() {
         return JSONObject.toJSONString(this, JSONWriter.Feature.WriteNulls);

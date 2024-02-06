@@ -1,0 +1,39 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+        {
+            "type": "npm",
+            "script": "dev",
+            "path": "frontend/admin",
+            "problemMatcher": [],
+            "label": "npm: dev - frontend/admin",
+            "detail": "vite"
+        },
+        {
+            "type": "npm",
+            "script": "build",
+            "path": "frontend/admin",
+            "group": "build",
+            "problemMatcher": [],
+            "label": "npm: build - frontend/admin",
+            "detail": "vue-tsc --noEmit && vite build"
+        },
+        {
+            "type": "npm",
+            "script": "dev",
+            "path": "frontend/user",
+            "problemMatcher": [],
+            "label": "npm: dev - frontend/user",
+            "detail": "vite"
+        },
+        {
+            "type": "npm",
+            "script": "build",
+            "path": "frontend/user",
+            "group": "build",
+            "problemMatcher": [],
+            "label": "npm: build - frontend/user",
+            "detail": "run-p type-check \"build-only {@}\" --"
+        }
+    ]
+}

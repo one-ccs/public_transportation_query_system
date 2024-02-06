@@ -10,4 +10,6 @@ public class GlobalVariable {
     public static final Long EXPIRATION = 1800L;
     // JWT 黑名单前缀
     public static final String JWT_BLACK_LIST_PREFIX = "jwt:blacklist:";
+    // 跨域过滤器优先级
+    public static final int ORDER_CORS = -102;
 }

@@ -27,8 +27,9 @@ public class JwtAuthorizeFilter extends OncePerRequestFilter {
     @Autowired
     JwtUtil jwtUtil;
 
+    @SuppressWarnings("null")
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
         // 从请求头获取 token
         String authorization = request.getHeader("Authorization");
@@ -43,6 +44,6 @@ public class JwtAuthorizeFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             request.setAttribute("id", jwtUtil.toId(jwt));
         }
-        filterChain.doFilter(request, response);
+        chain.doFilter(request, response);
     }
 }

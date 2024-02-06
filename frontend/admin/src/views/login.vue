@@ -1,7 +1,7 @@
 <template>
 	<div class="login-wrap">
 		<div class="ms-login">
-			<div class="ms-title">后台管理系统</div>
+			<div class="ms-title">重庆公交查询后台管理系统</div>
 			<el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
 				<el-form-item prop="username">
 					<el-input v-model="param.username" placeholder="username">
@@ -22,10 +22,12 @@
 						</template>
 					</el-input>
 				</el-form-item>
+                <el-form-item>
+                    <el-checkbox v-model="param.remember">记住我</el-checkbox>
+                </el-form-item>
 				<div class="login-btn">
 					<el-button type="primary" @click="submitForm(login)">登录</el-button>
 				</div>
-				<p class="login-tips">Tips : 用户名和密码随便填。</p>
 			</el-form>
 		</div>
 	</div>
@@ -39,16 +41,19 @@ import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
+import { loginApi } from '../api/index';
 
 interface LoginInfo {
 	username: string;
 	password: string;
+    remember: boolean;
 }
 
 const router = useRouter();
 const param = reactive<LoginInfo>({
 	username: 'admin',
-	password: '123123'
+	password: '',
+    remember: false,
 });
 
 const rules: FormRules = {
@@ -65,19 +70,17 @@ const permiss = usePermissStore();
 const login = ref<FormInstance>();
 const submitForm = (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
-	formEl.validate((valid: boolean) => {
-		if (valid) {
+
+    formEl.validate((valid: boolean) => {
+        valid && loginApi(param.username, param.password, param.remember, () => {
 			ElMessage.success('登录成功');
 			localStorage.setItem('ms_username', param.username);
 			const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'user'];
 			permiss.handleSet(keys);
 			localStorage.setItem('ms_keys', JSON.stringify(keys));
 			router.push('/');
-		} else {
-			ElMessage.error('登录成功');
-			return false;
-		}
-	});
+        });
+    });
 };
 
 const tags = useTagsStore();
@@ -90,7 +93,20 @@ tags.clearTags();
 	width: 100%;
 	height: 100%;
 	background-image: url(../assets/img/login-bg.jpg);
-	background-size: 100%;
+	background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+.login-wrap::after {
+    content: "";
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: #0005;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(3px);
 }
 .ms-title {
 	width: 100%;
@@ -101,6 +117,7 @@ tags.clearTags();
 	border-bottom: 1px solid #ddd;
 }
 .ms-login {
+    z-index: 2;
 	position: absolute;
 	left: 50%;
 	top: 50%;
