@@ -1,4 +1,4 @@
-# public-transportation-query-system
+# public_transportation_query_system
 
 This template should help get you started developing with Vue 3 in Vite.
 

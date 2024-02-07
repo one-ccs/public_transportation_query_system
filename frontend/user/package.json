@@ -1,5 +1,5 @@
 {
-  "name": "public-transportation-query-system",
+  "name": "public_transportation_query_system",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,6 +11,8 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "axios": "^1.6.7",
+    "element-plus": "^2.5.5",
     "pinia": "^2.1.7",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5"

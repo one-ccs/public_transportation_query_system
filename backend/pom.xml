@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>public-transportation-query-system</artifactId>
+	<artifactId>public_transportation_query_system</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>public-transportation-query-system</name>
+	<name>public_transportation_query_system</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
