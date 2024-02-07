@@ -2,7 +2,10 @@
     "cSpell.words": [
         "Batis",
         "Pinia",
-        "Schart"
+        "Schart",
+        "sitename",
+        "tinyint",
+        "varchar"
     ],
     "java.configuration.updateBuildConfiguration": "interactive"
 }
