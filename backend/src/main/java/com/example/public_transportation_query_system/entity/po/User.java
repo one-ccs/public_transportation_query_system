@@ -11,8 +11,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(name = "Account", description = "用户")
-public class Account implements Serializable, BaseData {
+@Schema(name = "User", description = "用户表")
+public class User implements Serializable, BaseData {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,25 +28,21 @@ public class Account implements Serializable, BaseData {
     @Schema(description = "邮箱地址")
     private String email;
 
-    @Schema(description = "注册日期")
-    private LocalDateTime registerDatetime;
-
-    @Schema(description = "角色（user、admin）")
-    private String role;
-
     @Schema(description = "状态（0 未激活、1 已激活、2 已注销）")
     private Byte status;
 
+    @Schema(description = "注册日期")
+    private LocalDateTime registerDatetime;
+
     @Override
     public String toString() {
-        return "Account{" +
+        return "User{" +
             "id = " + id +
             ", username = " + username +
             ", password = " + password +
             ", email = " + email +
-            ", registerDatetime = " + registerDatetime +
-            ", role = " + role +
             ", status = " + status +
+            ", registerDatetime = " + registerDatetime +
         "}";
     }
 }

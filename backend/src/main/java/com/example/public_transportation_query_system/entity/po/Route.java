@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(name = "Route", description = "")
+@Schema(name = "Route", description = "线路表")
 public class Route implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -27,7 +27,7 @@ public class Route implements Serializable {
     @Schema(description = "末班车时间")
     private LocalTime lastTime;
 
-    @Schema(description = "开通状态（0 未开通、1 已开通、2 暂停运营）")
+    @Schema(description = "开通状态（0 计划开通、1 正常运营、2 暂停运营）")
     private Byte status;
 
     @Override

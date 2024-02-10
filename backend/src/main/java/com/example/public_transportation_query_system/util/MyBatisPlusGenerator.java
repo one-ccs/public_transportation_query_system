@@ -31,21 +31,23 @@ public class MyBatisPlusGenerator {
             }))
             .packageConfig(builder -> builder
                 // 设置父包名
-                .parent("com.example.publictransportationquerysystem")
+                .parent("com.example")
                 // 设置父包模块名
-                .moduleName(null)
+                .moduleName("public_transportation_query_system")
                 // 设置 mapperXml 生成路径
                 .pathInfo(Collections.singletonMap(OutputFile.xml, "D://test"))
             )
             .strategyConfig(builder -> builder
                 // 设置需要生成的表名
-                .addInclude("account")
-                .addInclude("lost")
-                .addInclude("notice")
-                .addInclude("ad")
-                .addInclude("station")
-                .addInclude("route_station")
+                .addInclude("user")
+                .addInclude("user_role")
+                .addInclude("role")
                 .addInclude("route")
+                .addInclude("route_station")
+                .addInclude("station")
+                .addInclude("notice")
+                .addInclude("lost")
+                .addInclude("ad")
                 // 设置过滤表前缀
                 .addTablePrefix("t_", "c_")
             )

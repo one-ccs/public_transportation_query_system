@@ -36,7 +36,7 @@ public record Result<T>(Integer code, String message, T data) {
      * @return
      */
     public static <T> Result<T> unauthorized() {
-        return new Result<T>(401, "请登录后操作", null);
+        return new Result<>(401, "请登录后操作", null);
     }
 
     /**
@@ -44,7 +44,7 @@ public record Result<T>(Integer code, String message, T data) {
      * @return
      */
     public static <T> Result<T> forbidden() {
-        return new Result<T>(403, "您无权操作", null);
+        return new Result<>(403, "您无权操作", null);
     }
 
     /**

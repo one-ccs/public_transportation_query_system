@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.public_transportation_query_system.mapper.RoleMapper">
+    <select id="getRolesByUid" resultType="com.example.public_transportation_query_system.entity.po.Role">
+        SELECT
+            role.id,
+            role.`name`,
+            role.name_zh
+        FROM
+            role
+            INNER JOIN
+            user_role
+            ON
+                role.id = user_role.rid
+        WHERE
+            user_role.uid = #{uid}
+    </select>
+</mapper>

@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 
 @Controller
-@RequestMapping("/station")
-public class StationController {
+@RequestMapping("/userRole")
+public class UserRoleController {
 
 }

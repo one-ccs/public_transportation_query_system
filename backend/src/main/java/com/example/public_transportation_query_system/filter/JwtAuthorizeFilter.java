@@ -29,16 +29,14 @@ public class JwtAuthorizeFilter extends OncePerRequestFilter {
 
     @SuppressWarnings("null")
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         // 从请求头获取 token
         String authorization = request.getHeader("Authorization");
         // 解析 JWT
         DecodedJWT jwt = jwtUtil.resolveJwt(authorization);
         if (jwt != null) {
             UserDetails userDetails = jwtUtil.toUserDetails(jwt);
-            UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             // 添加认证信息强制认证通过
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);

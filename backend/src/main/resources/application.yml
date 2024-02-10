@@ -11,6 +11,7 @@ spring:
             order: -100
 
 springdoc:
+    show-actuator: true
     swagger-ui:
         enabled: true
         path: /api/docs

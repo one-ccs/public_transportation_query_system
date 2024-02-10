@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(name = "Lost", description = "")
+@Schema(name = "Lost", description = "失物招领表")
 public class Lost implements Serializable {
 
     private static final long serialVersionUID = 1L;
