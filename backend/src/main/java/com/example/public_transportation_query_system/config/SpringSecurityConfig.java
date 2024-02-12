@@ -112,7 +112,8 @@ public class SpringSecurityConfig {
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .map(authority -> authority.replace("ROLE_", ""))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList())
+            );
         });
 
         response.setContentType("application/json");

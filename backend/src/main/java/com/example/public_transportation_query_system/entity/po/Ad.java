@@ -18,8 +18,8 @@ public class Ad implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @Schema(description = "广告类型（）")
-    private Byte type;
+    @Schema(description = "广告位置索引")
+    private Byte index;
 
     @Schema(description = "标题")
     private String title;
@@ -43,7 +43,7 @@ public class Ad implements Serializable {
     public String toString() {
         return "Ad{" +
             "id = " + id +
-            ", type = " + type +
+            ", index = " + index +
             ", title = " + title +
             ", describe = " + describe +
             ", imgUrl = " + imgUrl +
