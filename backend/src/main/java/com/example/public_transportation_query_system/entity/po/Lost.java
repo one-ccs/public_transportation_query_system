@@ -30,8 +30,8 @@ public class Lost implements Serializable {
     @Schema(description = "拾取时间")
     private LocalDateTime pickDatetime;
 
-    @Schema(description = "发布时间")
-    private LocalDateTime releaseDatetime;
+    @Schema(description = "认领时间")
+    private LocalDateTime claimDatetime;
 
     @Schema(description = "认领状态（0 待认领、1 已认领）")
     private Byte status;
@@ -44,7 +44,7 @@ public class Lost implements Serializable {
             ", imgUrl = " + imgUrl +
             ", address = " + address +
             ", pickDatetime = " + pickDatetime +
-            ", releaseDatetime = " + releaseDatetime +
+            ", claimDatetime = " + claimDatetime +
             ", status = " + status +
         "}";
     }
