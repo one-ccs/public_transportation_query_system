@@ -126,6 +126,6 @@ public class JwtUtil {
         if (headerToken == null || !headerToken.startsWith("Bearer ")) {
             return null;
         }
-        return  headerToken.substring(7);
+        return headerToken.substring(7);
     }
 }

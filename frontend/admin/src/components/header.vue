@@ -95,7 +95,7 @@ const handleCommand = (command: string) => {
 }
 .header .logo {
 	float: left;
-	width: 250px;
+	width: 280px;
 	line-height: 70px;
 }
 .header-right {

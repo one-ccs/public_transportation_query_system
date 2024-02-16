@@ -1,5 +1,6 @@
 import { ElMessage } from 'element-plus';
 import request from '../utils/request';
+import encryptMD5 from '../utils/encryptMD5';
 
 
 const authItemName = 'access_token';
@@ -94,7 +95,7 @@ function fetchDelete(url: string, data: any, headers: any = {}, success: Functio
 }
 
 function loginApi(username: string, password: string, remember: boolean, success: Function, failure = defaultFailure) {
-    fetchPost('/api/auth/login', { username, password}, {}, (data: any) => {
+    fetchPost('/api/auth/login', { username, password: encryptMD5(password)}, {}, (data: any) => {
         storeAccessToken(data.data.token, data.data.expire);
         success(data);
     }, failure);

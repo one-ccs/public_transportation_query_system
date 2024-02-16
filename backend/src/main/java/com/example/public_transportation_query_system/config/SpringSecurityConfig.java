@@ -42,25 +42,29 @@ public class SpringSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return  http.authorizeHttpRequests(conf -> conf
+        return http.authorizeHttpRequests(conf -> conf
+            // 放行 error 接口
+            .requestMatchers("/error").permitAll()
             // 放行 SpringDoc
             .requestMatchers("/api/docs").permitAll()
             .requestMatchers("/api/api-docs/**").permitAll()
             .requestMatchers("/api/swagger-ui/**").permitAll()
             // 放行 SpringDoc 的 actuator
             .requestMatchers("/actuator/**").permitAll()
+            // 放行 注册接口
+            .requestMatchers("/api/user/register").permitAll()
             // 其它所有接口均需认证
             .anyRequest().authenticated()
         )
         .formLogin(conf -> conf
             // 登录接口默认自动放行
-            .loginProcessingUrl("/api/auth/login")
+            .loginProcessingUrl("/api/user/login")
             .failureHandler(this::onAuthenticationFailure)
             .successHandler(this::onAuthenticationSuccess)
         )
         .logout(conf -> conf
             // 登出接口默认自动放行
-            .logoutUrl("/api/auth/logout")
+            .logoutUrl("/api/user/logout")
             .logoutSuccessHandler(this::onLogoutSuccess)
             .invalidateHttpSession(true)
             .clearAuthentication(true)

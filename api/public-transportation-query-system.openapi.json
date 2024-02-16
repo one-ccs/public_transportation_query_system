@@ -13,6 +13,9 @@
             "name": "Route"
         },
         {
+            "name": "Notice"
+        },
+        {
             "name": "Ad"
         },
         {
@@ -30,16 +33,6 @@
                 ],
                 "parameters": [
                     {
-                        "name": "routeId",
-                        "in": "query",
-                        "description": "",
-                        "required": true,
-                        "example": "023-0492-0",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "Authorization",
                         "in": "header",
                         "description": "携带 token",
@@ -50,6 +43,25 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "routeId": {
+                                        "type": "string",
+                                        "description": "线路 id",
+                                        "example": "023-0492-0"
+                                    }
+                                },
+                                "required": [
+                                    "routeId"
+                                ]
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "成功",
@@ -280,7 +292,7 @@
                 "x-run-in-apifox": "https://www.apifox.cn/web/project/4004896/apis/api-147844636-run"
             }
         },
-        "/api/auth/login": {
+        "/api/user/login": {
             "post": {
                 "summary": "登录",
                 "deprecated": false,
@@ -303,7 +315,7 @@
                                     "password": {
                                         "type": "string",
                                         "description": "密码",
-                                        "example": "123"
+                                        "example": "{{'123'|md5}}"
                                     }
                                 },
                                 "required": [
@@ -528,6 +540,16 @@
                                             "items": {
                                                 "type": "object",
                                                 "properties": {
+                                                    "address": {
+                                                        "type": "string",
+                                                        "maxLength": 255,
+                                                        "title": "拾取地点"
+                                                    },
+                                                    "describe": {
+                                                        "type": "string",
+                                                        "maxLength": 255,
+                                                        "title": "描述"
+                                                    },
                                                     "id": {
                                                         "description": "",
                                                         "type": "integer",
@@ -535,37 +557,27 @@
                                                         "maximum": 2147483647
                                                     },
                                                     "status": {
-                                                        "description": "认领状态（0 待认领、1 已认领）",
                                                         "default": "0",
                                                         "type": "integer",
                                                         "minimum": -2147483648,
-                                                        "maximum": 2147483647
-                                                    },
-                                                    "describe": {
-                                                        "description": "描述",
-                                                        "type": "string",
-                                                        "maxLength": 255
-                                                    },
-                                                    "address": {
-                                                        "description": "拾取地点",
-                                                        "type": "string",
-                                                        "maxLength": 255
-                                                    },
-                                                    "imgUrl": {
-                                                        "description": "图片链接",
-                                                        "type": "string",
-                                                        "maxLength": 255
-                                                    },
-                                                    "pickDatetime": {
-                                                        "description": "拾取时间",
-                                                        "type": "string",
-                                                        "format": "date-time"
+                                                        "maximum": 2147483647,
+                                                        "title": "认领状态（0 待认领、1 已认领）"
                                                     },
                                                     "claimDatetime": {
-                                                        "description": "认领时间",
                                                         "default": "CURRENT_TIMESTAMP",
                                                         "type": "string",
-                                                        "format": "date-time"
+                                                        "format": "date-time",
+                                                        "title": "认领时间"
+                                                    },
+                                                    "imgUrl": {
+                                                        "type": "string",
+                                                        "maxLength": 255,
+                                                        "title": "图片链接"
+                                                    },
+                                                    "pickDatetime": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "title": "拾取时间"
                                                     }
                                                 },
                                                 "x-apifox-orders": [
@@ -580,13 +592,13 @@
                                                     "id"
                                                 ],
                                                 "x-apifox-ignore-properties": [
+                                                    "address",
+                                                    "describe",
                                                     "id",
                                                     "status",
-                                                    "describe",
-                                                    "address",
+                                                    "claimDatetime",
                                                     "imgUrl",
-                                                    "pickDatetime",
-                                                    "claimDatetime"
+                                                    "pickDatetime"
                                                 ]
                                             },
                                             "title": "响应数据"
@@ -652,7 +664,7 @@
                                                     "releaseDatetime": "2011-04-24 08:23:41"
                                                 }
                                             ],
-                                            "message": "操作成功"
+                                            "message": "查询成功"
                                         }
                                     }
                                 }
@@ -955,6 +967,580 @@
                 "x-apifox-folder": "Lost",
                 "x-apifox-status": "developing",
                 "x-run-in-apifox": "https://www.apifox.cn/web/project/4004896/apis/api-147912913-run"
+            },
+            "post": {
+                "summary": "修改失物招领信息",
+                "deprecated": false,
+                "description": "修改失物招领信息",
+                "tags": [
+                    "Lost"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "携带 token",
+                        "required": true,
+                        "example": "Bearer {{token}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "address": {
+                                        "type": "string",
+                                        "description": "拾取地点",
+                                        "example": "{% mock 'natural', 1, 9 %}"
+                                    },
+                                    "describe": {
+                                        "type": "string",
+                                        "description": "物品描述",
+                                        "example": "{% mock 'csentence' %}"
+                                    },
+                                    "img": {
+                                        "type": "string",
+                                        "description": "物品图片",
+                                        "example": "{% mock 'dataImage' %}"
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "description": "认领状态",
+                                        "example": "{% mock 'natural', 1, 2 %}"
+                                    },
+                                    "pickDatetime": {
+                                        "type": "string",
+                                        "description": "拾取时间",
+                                        "example": "{% mock 'datetime' %}"
+                                    },
+                                    "claimDatetime": {
+                                        "type": "string",
+                                        "description": "认领时间",
+                                        "example": "{% mock 'datetime' %}"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "title": "状态码"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "title": "响应数据"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "title": "提示信息"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ],
+                                    "x-apifox-orders": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ],
+                                    "x-apifox-ignore-properties": []
+                                },
+                                "examples": {
+                                    "1": {
+                                        "summary": "成功示例",
+                                        "value": {
+                                            "code": 200,
+                                            "data": null,
+                                            "message": "修改成功"
+                                        }
+                                    },
+                                    "2": {
+                                        "summary": "异常示例",
+                                        "value": {
+                                            "code": 400,
+                                            "data": null,
+                                            "message": "修改失败"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-apifox-folder": "Lost",
+                "x-apifox-status": "developing",
+                "x-run-in-apifox": "https://www.apifox.cn/web/project/4004896/apis/api-147912914-run"
+            }
+        },
+        "/api/notice": {
+            "get": {
+                "summary": "获取公告列表",
+                "deprecated": false,
+                "description": "获取公告列表",
+                "tags": [
+                    "Notice"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "携带 token",
+                        "required": true,
+                        "example": "Bearer {{token}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "page": {
+                                        "type": "integer",
+                                        "description": "页码",
+                                        "example": "1"
+                                    },
+                                    "pageSize": {
+                                        "type": "integer",
+                                        "description": "每页显示的条数",
+                                        "example": "10"
+                                    },
+                                    "startDatetime": {
+                                        "type": "string",
+                                        "description": "开始日期"
+                                    },
+                                    "endDatetime": {
+                                        "type": "string",
+                                        "description": "结束日期"
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "description": "查询内容"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "title": "状态码"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Notice"
+                                            },
+                                            "title": "响应数据"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "title": "提示信息"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ],
+                                    "x-apifox-orders": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ],
+                                    "x-apifox-ignore-properties": []
+                                },
+                                "examples": {
+                                    "1": {
+                                        "summary": "成功示例",
+                                        "value": {
+                                            "code": 200,
+                                            "data": [
+                                                {
+                                                    "content": "ad quis",
+                                                    "id": 295187691,
+                                                    "status": -632415924,
+                                                    "releaseDatetime": "1987-06-17 09:48:19"
+                                                }
+                                            ],
+                                            "message": "查询成功"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "x-200:空列表": {
+                        "description": "空列表",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "title": "状态码"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "null"
+                                            },
+                                            "title": "响应数据"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "title": "提示信息"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ],
+                                    "x-apifox-orders": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ]
+                                },
+                                "examples": {
+                                    "1": {
+                                        "summary": "成功示例",
+                                        "value": {
+                                            "code": 200,
+                                            "data": [
+                                                null
+                                            ],
+                                            "message": "操作成功"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-apifox-folder": "Notice",
+                "x-apifox-status": "developing",
+                "x-run-in-apifox": "https://www.apifox.cn/web/project/4004896/apis/api-147924957-run"
+            },
+            "put": {
+                "summary": "添加公告",
+                "deprecated": false,
+                "description": "添加公告信息",
+                "tags": [
+                    "Notice"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "携带 token",
+                        "required": true,
+                        "example": "Bearer {{token}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "content": {
+                                        "type": "string",
+                                        "description": "公告内容",
+                                        "example": "{% mock 'csentence' %}"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "title": "状态码"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "title": "响应数据"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "title": "提示信息"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ],
+                                    "x-apifox-orders": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ],
+                                    "x-apifox-ignore-properties": []
+                                },
+                                "examples": {
+                                    "1": {
+                                        "summary": "成功示例",
+                                        "value": {
+                                            "code": 200,
+                                            "data": null,
+                                            "message": "添加成功"
+                                        }
+                                    },
+                                    "2": {
+                                        "summary": "异常示例",
+                                        "value": {
+                                            "code": 400,
+                                            "data": null,
+                                            "message": "添加失败"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-apifox-folder": "Notice",
+                "x-apifox-status": "developing",
+                "x-run-in-apifox": "https://www.apifox.cn/web/project/4004896/apis/api-147925034-run"
+            },
+            "post": {
+                "summary": "修改公告",
+                "deprecated": false,
+                "description": "修改公告信息",
+                "tags": [
+                    "Notice"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "携带 token",
+                        "required": true,
+                        "example": "Bearer {{token}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "content": {
+                                        "type": "string",
+                                        "example": "{% mock 'csentence' %}"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "description": "状态",
+                                        "example": "{% mock 'natural', 1, 2 %}"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "title": "状态码"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "title": "响应数据"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "title": "提示信息"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ],
+                                    "x-apifox-orders": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ],
+                                    "x-apifox-ignore-properties": []
+                                },
+                                "examples": {
+                                    "1": {
+                                        "summary": "成功示例",
+                                        "value": {
+                                            "code": 200,
+                                            "data": null,
+                                            "message": "修改成功"
+                                        }
+                                    },
+                                    "2": {
+                                        "summary": "异常示例",
+                                        "value": {
+                                            "code": 400,
+                                            "data": null,
+                                            "message": "修改失败"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-apifox-folder": "Notice",
+                "x-apifox-status": "developing",
+                "x-run-in-apifox": "https://www.apifox.cn/web/project/4004896/apis/api-147925071-run"
+            },
+            "delete": {
+                "summary": "删除公告",
+                "deprecated": false,
+                "description": "删除公告信息",
+                "tags": [
+                    "Notice"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "携带 token",
+                        "required": true,
+                        "example": "Bearer {{token}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "description": "ID 编号",
+                                        "example": "{% mock 'natural', 1, 999 %}"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "title": "状态码"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "title": "响应数据"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "title": "提示信息"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ],
+                                    "x-apifox-orders": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ],
+                                    "x-apifox-ignore-properties": []
+                                },
+                                "examples": {
+                                    "1": {
+                                        "summary": "成功示例",
+                                        "value": {
+                                            "code": 200,
+                                            "data": null,
+                                            "message": "删除成功"
+                                        }
+                                    },
+                                    "2": {
+                                        "summary": "异常示例",
+                                        "value": {
+                                            "code": 400,
+                                            "data": null,
+                                            "message": "删除失败"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-apifox-folder": "Notice",
+                "x-apifox-status": "developing",
+                "x-run-in-apifox": "https://www.apifox.cn/web/project/4004896/apis/api-147925182-run"
             }
         },
         "/api/ad": {
@@ -1138,7 +1724,7 @@
                                                     "startDatetime": "2001-10-17 18:17:31"
                                                 }
                                             ],
-                                            "message": "操作成功"
+                                            "message": "查询成功"
                                         }
                                     }
                                 }
@@ -1316,67 +1902,51 @@
                 ],
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "describe": {
-                                        "type": "string",
-                                        "maxLength": 255,
-                                        "title": "描述"
-                                    },
                                     "index": {
-                                        "type": "integer",
-                                        "title": "广告位置索引",
-                                        "default": "0",
-                                        "minimum": 1
+                                        "type": "string",
+                                        "description": "广告位置索引",
+                                        "example": "{% mock 'natural', 1, 9 %}"
                                     },
                                     "title": {
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "title": "标题"
+                                        "description": "标题",
+                                        "example": " {% mock 'ctitle' %}"
                                     },
-                                    "endDatetime": {
+                                    "describe": {
                                         "type": "string",
-                                        "format": "date-time",
-                                        "title": "结束日期"
-                                    },
-                                    "imgUrl": {
-                                        "type": "string",
-                                        "maxLength": 255,
-                                        "title": "广告图片链接"
-                                    },
-                                    "jumpUrl": {
-                                        "type": "string",
-                                        "maxLength": 255,
-                                        "title": "跳转链接"
+                                        "description": "描述",
+                                        "example": "{% mock 'csentence' %}"
                                     },
                                     "startDatetime": {
                                         "type": "string",
-                                        "format": "date-time",
-                                        "title": "开始日期"
+                                        "description": "开始时间",
+                                        "example": "{% mock 'datetime' %}"
+                                    },
+                                    "endDatetime": {
+                                        "type": "string",
+                                        "description": "结束时间",
+                                        "example": "{% mock 'datetime' %}"
+                                    },
+                                    "img": {
+                                        "type": "string",
+                                        "description": "广告图片",
+                                        "example": "{% mock 'dataImage' %}"
+                                    },
+                                    "jumpUrl": {
+                                        "type": "string",
+                                        "description": "跳转链接",
+                                        "example": "{% mock 'url', 'http' %}"
                                     }
                                 },
-                                "x-apifox-orders": [
-                                    "01HPE17YRCX1JMSHTW9E1F80SW"
-                                ],
-                                "x-apifox-refs": {
-                                    "01HPE17YRCX1JMSHTW9E1F80SW": {
-                                        "$ref": "#/components/schemas/Ad",
-                                        "x-apifox-overrides": {}
-                                    }
-                                },
-                                "x-apifox-ignore-properties": [
-                                    "describe",
+                                "required": [
                                     "index",
-                                    "title",
-                                    "endDatetime",
-                                    "imgUrl",
-                                    "jumpUrl",
-                                    "startDatetime"
+                                    "img"
                                 ]
-                            },
-                            "example": ""
+                            }
                         }
                     }
                 },
@@ -1441,11 +2011,11 @@
                 "x-run-in-apifox": "https://www.apifox.cn/web/project/4004896/apis/api-147847538-run"
             },
             "post": {
-                "summary": "修改失物招领信息",
+                "summary": "修改广告",
                 "deprecated": false,
-                "description": "修改失物招领信息",
+                "description": "修改广告信息",
                 "tags": [
-                    "Lost"
+                    "Ad"
                 ],
                 "parameters": [
                     {
@@ -1465,37 +2035,50 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "address": {
+                                    "id": {
                                         "type": "string",
-                                        "description": "拾取地点",
+                                        "description": "ID 编号",
+                                        "example": "{% mock 'natural' %}"
+                                    },
+                                    "index": {
+                                        "type": "string",
+                                        "description": "广告位置索引",
                                         "example": "{% mock 'natural', 1, 9 %}"
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "description": "标题",
+                                        "example": " {% mock 'ctitle' %}"
                                     },
                                     "describe": {
                                         "type": "string",
-                                        "description": "物品描述",
+                                        "description": "描述",
                                         "example": "{% mock 'csentence' %}"
+                                    },
+                                    "startDatetime": {
+                                        "type": "string",
+                                        "description": "开始时间",
+                                        "example": "{% mock 'datetime' %}"
+                                    },
+                                    "endDatetime": {
+                                        "type": "string",
+                                        "description": "结束时间",
+                                        "example": "{% mock 'datetime' %}"
                                     },
                                     "img": {
                                         "type": "string",
-                                        "description": "物品图片",
+                                        "description": "广告图片",
                                         "example": "{% mock 'dataImage' %}"
                                     },
-                                    "status": {
-                                        "type": "integer",
-                                        "description": "认领状态",
-                                        "example": "{% mock 'natural', 1, 2 %}"
-                                    },
-                                    "pickDatetime": {
+                                    "jumpUrl": {
                                         "type": "string",
-                                        "description": "拾取时间",
-                                        "example": "{% mock 'datetime' %}"
-                                    },
-                                    "claimDatetime": {
-                                        "type": "string",
-                                        "description": "认领时间",
-                                        "example": "{% mock 'datetime' %}"
+                                        "description": "跳转链接",
+                                        "example": "{% mock 'url', 'http' %}"
                                     }
-                                }
+                                },
+                                "required": [
+                                    "id"
+                                ]
                             }
                         }
                     }
@@ -1556,12 +2139,12 @@
                     }
                 },
                 "security": [],
-                "x-apifox-folder": "Lost",
+                "x-apifox-folder": "Ad",
                 "x-apifox-status": "developing",
-                "x-run-in-apifox": "https://www.apifox.cn/web/project/4004896/apis/api-147912914-run"
+                "x-run-in-apifox": "https://www.apifox.cn/web/project/4004896/apis/api-147848324-run"
             }
         },
-        "/api/auth/logout": {
+        "/api/user/logout": {
             "post": {
                 "summary": "登出",
                 "deprecated": false,
@@ -1677,6 +2260,105 @@
                 "x-apifox-folder": "Auth",
                 "x-apifox-status": "developing",
                 "x-run-in-apifox": "https://www.apifox.cn/web/project/4004896/apis/api-147299207-run"
+            }
+        },
+        "/api/user/register": {
+            "post": {
+                "summary": "注册",
+                "deprecated": false,
+                "description": "注册接口",
+                "tags": [
+                    "Auth"
+                ],
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "description": "用户名",
+                                        "example": "{% mock 'cname' %}"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "description": "邮箱地址",
+                                        "example": "{% mock 'email' %}"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "description": "密码",
+                                        "example": "{{'123'|md5}}"
+                                    }
+                                },
+                                "required": [
+                                    "password"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "title": "状态码"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "title": "响应数据"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "title": "提示信息"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ],
+                                    "x-apifox-orders": [
+                                        "code",
+                                        "data",
+                                        "message"
+                                    ],
+                                    "x-apifox-ignore-properties": []
+                                },
+                                "examples": {
+                                    "1": {
+                                        "summary": "成功示例",
+                                        "value": {
+                                            "code": 200,
+                                            "data": null,
+                                            "message": "注册成功"
+                                        }
+                                    },
+                                    "2": {
+                                        "summary": "异常示例",
+                                        "value": {
+                                            "code": 400,
+                                            "data": null,
+                                            "message": "注册失败"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [],
+                "x-apifox-folder": "Auth",
+                "x-apifox-status": "developing",
+                "x-run-in-apifox": "https://www.apifox.cn/web/project/4004896/apis/api-147925617-run"
             }
         }
     },
@@ -1998,6 +2680,16 @@
             },
             "Lost": {
                 "properties": {
+                    "address": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "title": "拾取地点"
+                    },
+                    "describe": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "title": "描述"
+                    },
                     "id": {
                         "description": "",
                         "type": "integer",
@@ -2005,37 +2697,27 @@
                         "maximum": 2147483647
                     },
                     "status": {
-                        "description": "认领状态（0 待认领、1 已认领）",
                         "default": "0",
                         "type": "integer",
                         "minimum": -2147483648,
-                        "maximum": 2147483647
-                    },
-                    "describe": {
-                        "description": "描述",
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "address": {
-                        "description": "拾取地点",
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "imgUrl": {
-                        "description": "图片链接",
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "pickDatetime": {
-                        "description": "拾取时间",
-                        "type": "string",
-                        "format": "date-time"
+                        "maximum": 2147483647,
+                        "title": "认领状态（0 待认领、1 已认领）"
                     },
                     "claimDatetime": {
-                        "description": "认领时间",
                         "default": "CURRENT_TIMESTAMP",
                         "type": "string",
-                        "format": "date-time"
+                        "format": "date-time",
+                        "title": "认领时间"
+                    },
+                    "imgUrl": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "title": "图片链接"
+                    },
+                    "pickDatetime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "拾取时间"
                     }
                 },
                 "type": "object",
@@ -2043,13 +2725,13 @@
                     "id"
                 ],
                 "x-apifox-orders": [
+                    "address",
+                    "describe",
                     "id",
                     "status",
-                    "describe",
-                    "address",
+                    "claimDatetime",
                     "imgUrl",
-                    "pickDatetime",
-                    "claimDatetime"
+                    "pickDatetime"
                 ],
                 "x-apifox-ignore-properties": [],
                 "x-apifox-folder": "数据库模型"
@@ -2119,5 +2801,18 @@
         },
         "securitySchemes": {}
     },
-    "servers": []
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8080",
+            "description": "开发环境"
+        },
+        {
+            "url": "https://ptqs.one-ccs.test",
+            "description": "测试环境"
+        },
+        {
+            "url": "https://ptqs.one-ccs.com",
+            "description": "正式环境"
+        }
+    ]
 }
