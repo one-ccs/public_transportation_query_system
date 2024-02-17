@@ -95,7 +95,7 @@ function fetchDelete(url: string, data: any, headers: any = {}, success: Functio
 }
 
 function loginApi(username: string, password: string, remember: boolean, success: Function, failure = defaultFailure) {
-    fetchPost('/api/auth/login', { username, password: encryptMD5(password)}, {}, (data: any) => {
+    fetchPost('/api/user/login', { username, password: encryptMD5(password)}, {}, (data: any) => {
         storeAccessToken(data.data.token, data.data.expire);
         success(data);
     }, failure);

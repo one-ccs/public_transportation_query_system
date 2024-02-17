@@ -14,9 +14,15 @@ springdoc:
     show-actuator: true
     swagger-ui:
         enabled: true
+        # GUI 访问接口
         path: /api/docs
+        # API 排序
+        tags-sorter: alpha
+        # HTTP 方法排序
+        operations-sorter: summary
     api-docs:
         enabled: true
+        # JSON 访问接口
         path: /api/api-docs
     show-login-endpoint: true
 

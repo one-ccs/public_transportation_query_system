@@ -1,12 +1,9 @@
 package com.example.public_transportation_query_system.config;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
@@ -57,17 +54,12 @@ public class SpringDocConfig {
     }
 
     /**
-     * 对接口列表进行排序
+     * 自定义接口
      * @return
      */
     public OpenApiCustomizer sortTagsAlphabetically() {
         return openApi -> {
             this.authorizePathItems().forEach(openApi.getPaths()::addPathItem);
-            openApi.setTags(openApi.getTags()
-                .stream()
-                .sorted(Comparator.comparing(tag -> StringUtils.stripAccents(tag.getName())))
-                .collect(Collectors.toList())
-            );
         };
     }
 
