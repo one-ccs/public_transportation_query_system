@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -18,7 +19,7 @@ import com.example.public_transportation_query_system.entity.dto.MyUserDetails;
 import com.example.public_transportation_query_system.entity.po.Role;
 import com.example.public_transportation_query_system.entity.po.User;
 import com.example.public_transportation_query_system.entity.vo.request.QueryUserVO;
-import com.example.public_transportation_query_system.mapper.RoleMapper;
+import com.example.public_transportation_query_system.entity.vo.request.UserVO;
 import com.example.public_transportation_query_system.mapper.UserMapper;
 import com.example.public_transportation_query_system.service.IUserService;
 
@@ -26,32 +27,36 @@ import com.example.public_transportation_query_system.service.IUserService;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
     @Autowired
-    RoleMapper roleMapper;
+    RoleServiceImpl roleServiceImpl;
+
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = this.getUserByNameOrEmail(username);
+        User user = this.getUserByNameOrEmail(username, username);
         if (user == null) throw new UsernameNotFoundException("不存在该用户");
-        List<Role> roles = roleMapper.getRolesByUid(user.getId());
+        List<Role> roles = roleServiceImpl.getRolesByUid(user.getId());
 
         return new MyUserDetails(username, user.getPassword(), roles, user);
     }
 
     /**
      * 通过用户名或邮箱地址查找用户
-     * @param nameOrEmail 用户名/邮箱地址
+     * @param name 用户名
+     * @param email 邮箱地址
      * @return
      */
-    public User getUserByNameOrEmail(String nameOrEmail) {
+    public User getUserByNameOrEmail(String username, String email) {
         return this.query()
-            .eq("username", nameOrEmail).or()
-            .eq("email", nameOrEmail)
+            .eq("username", username).or()
+            .eq("email", email)
             .one();
     }
 
     public UserBO getUserWithRoles(User user) {
         return user.asViewObject(UserBO.class, v -> {
-            v.setRoles(roleMapper.getRolesByUid(user.getId()));
+            v.setRoles(roleServiceImpl.getRolesByUid(user.getId()));
         });
     }
 
@@ -80,5 +85,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         );
 
         return map;
+    }
+
+    /**
+     * 向数据库中添加用户并设置角色
+     * @param userVO
+     * @return
+     */
+    public Object addUser(UserVO userVO) {
+        // 构造 User 并加密密码
+        User newUser = userVO.asViewObject(User.class, v -> v.setPassword(passwordEncoder.encode(v.getPassword())));
+        // 添加用户
+        if (this.save(newUser)) {
+            // 获取新用户
+            User user = this.getUserByNameOrEmail(userVO.getUsername(), userVO.getEmail());
+            // 设置角色
+            return roleServiceImpl.addRoles(user.getId(), userVO.getRoleIds());
+        }
+        return false;
     }
 }

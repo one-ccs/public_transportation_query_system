@@ -37,7 +37,7 @@
 				</el-table-column>
 				<el-table-column label="角色" align="center">
 					<template #default="scope">
-                        <el-tag class="me-1" v-for="(item, index) in scope.row.roles" :key="index">{{ item.name }}</el-tag>
+                        <el-tag class="me-1" v-for="(item, index) in scope.row.roles" :key="index">{{ item.nameZh }}</el-tag>
                     </template>
 				</el-table-column>
 

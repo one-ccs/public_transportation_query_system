@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.request.QueryUserVO;
+import com.example.public_transportation_query_system.entity.vo.request.UserVO;
 import com.example.public_transportation_query_system.service.impl.UserServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,8 +42,8 @@ public class UserController {
 
     @Operation(summary = "添加用户", description = "添加用户接口")
     @PutMapping
-    public Result<Object> apiUserPut() {
-        return Result.success();
+    public Result<Object> apiUserPut(UserVO userVO) {
+        return Result.success(userServiceImpl.addUser(userVO));
     }
 
     @Operation(summary = "修改用户", description = "修改用户接口")
