@@ -64,9 +64,26 @@ const items = [
     },
     {
         icon: 'User',
-        index: '/users',
+        index: '1',
         title: '用户管理',
         permiss: '2',
+        subs: [
+            {
+                index: '/users',
+                title: '用户管理',
+                permiss: '2',
+            },
+            {
+                index: '/admins',
+                title: '管理员管理',
+                permiss: '2',
+            },
+            {
+                index: '/roles',
+                title: '角色管理',
+                permiss: '2',
+            },
+        ],
     },
     {
         icon: 'SemiSelect',
@@ -100,7 +117,7 @@ const items = [
     },
     {
         icon: 'Calendar',
-        index: '1',
+        index: '2',
         title: '表格相关',
         permiss: '3',
         subs: [

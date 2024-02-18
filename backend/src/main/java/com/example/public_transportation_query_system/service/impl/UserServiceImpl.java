@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -30,7 +30,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     RoleServiceImpl roleServiceImpl;
 
     @Autowired
-    BCryptPasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -81,6 +81,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         map.put("total", this.count());
         map.put("list", this.list(page, queryWrapper).stream()
             .map(this::getUserWithRoles)
+            // filterFlag 为 0 时不进行过滤
+            // filterFlag 为 1 时筛选角色 id = 1 的用户
+            // filterFlag 为 2 时筛选角色 id > 1 的用户
+            .filter(userBO -> {
+                if (query.getFilterFlag() == 0) return true;
+                if (query.getFilterFlag() == 1) {
+                    return userBO.getRoles().stream()
+                        .anyMatch(role -> role.getId() == 1);
+                }
+                if (query.getFilterFlag() == 2) {
+                    return userBO.getRoles().stream()
+                            .anyMatch(role -> role.getId() > 1);
+                }
+                return false;
+            })
             .toList()
         );
 

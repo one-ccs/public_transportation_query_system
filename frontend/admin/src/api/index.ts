@@ -120,8 +120,8 @@ function requestLogin(username: string, password: string, remember: boolean, suc
     }, failure);
 }
 
-function requestPageUser(page: number, pageSize: number, startDatetime: string, endDatetime: string, username: string, success: Function, failure = defaultFailure) {
-    fetchGet('/api/user', { page, pageSize, startDatetime, endDatetime, username }, {}, (data: any) => {
+function requestPageUser(query: object, success: Function, failure = defaultFailure) {
+    fetchGet('/api/user', query, {}, (data: any) => {
         success && success(data)
     }, failure);
 }

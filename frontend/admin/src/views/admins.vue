@@ -106,7 +106,7 @@ const query = reactive({
 	pageSize: 10,
     startDatetime: '',
     endDatetime: '',
-    filterFlag: 1
+    filterFlag: 2
 });
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
