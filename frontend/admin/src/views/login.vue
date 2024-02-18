@@ -41,7 +41,7 @@ import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
-import { loginApi } from '../api/index';
+import { requestLogin } from '../api/index';
 
 interface LoginInfo {
 	username: string;
@@ -72,7 +72,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
 
     formEl.validate((valid: boolean) => {
-        valid && loginApi(param.username, param.password, param.remember, () => {
+        valid && requestLogin(param.username, param.password, param.remember, () => {
 			ElMessage.success('登录成功');
 			localStorage.setItem('ms_username', param.username);
 			const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'user'];

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.public_transportation_query_system.entity.vo.BaseQuery;
 import com.example.public_transportation_query_system.entity.vo.Result;
+import com.example.public_transportation_query_system.entity.vo.request.QueryUserVO;
 import com.example.public_transportation_query_system.service.impl.UserServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +35,7 @@ public class UserController {
 
     @Operation(summary = "获取用户列表", description = "获取用户列表接口")
     @GetMapping
-    public Result<Object> apiUserGet(BaseQuery query) {
+    public Result<Object> apiUserGet(QueryUserVO query) {
         return Result.success(userServiceImpl.getPageUsers(query));
     }
 

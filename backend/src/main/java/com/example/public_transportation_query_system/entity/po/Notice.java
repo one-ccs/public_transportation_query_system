@@ -3,10 +3,9 @@ package com.example.public_transportation_query_system.entity.po;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -24,7 +23,7 @@ public class Notice implements Serializable {
     private String content;
 
     @Schema(description = "发布日期")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime releaseDatetime;
 
     @Schema(description = "状态（0 不显示、1 显示）")

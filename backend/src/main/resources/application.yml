@@ -9,6 +9,9 @@ spring:
     security:
         filter:
             order: -100
+    jackson:
+        date-format: yyyy-MM-dd HH:mm:ss
+        time-zone: GMT+8
 
 springdoc:
     show-actuator: true

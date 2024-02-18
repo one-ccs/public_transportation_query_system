@@ -32,6 +32,8 @@ function takeAccessToken() {
     if (authObj.expire <= new Date()) {
         deleteAccessToken();
         ElMessage.warning('登录已过期，请重新登录！');
+        location.href = '/#/login';
+
         return null;
     }
     return authObj;
@@ -48,10 +50,15 @@ function storeAccessToken(token: string, expire: Date, remember = false) {
     }
 }
 
-function fetchGet(url: string, headers: any = {}, success: Function, failure: Function, error = defaultError) {
-    request.get(url, { headers }).then(res => {
+function fetchGet(url: string, params: any = {}, headers: any = {}, success: Function, failure: Function, error = defaultError) {
+    const token = takeAccessToken();
+    token && (headers['Authorization'] = `Bearer ${token.token}`);
+
+    request.get(url, { params, headers }).then(res => {
         if (res.data.code == 200) {
             success(res.data);
+        } else if (res.data.code == 401) {
+            location.href = '/#/login';
         } else {
             failure(url, res.data.code, res.data.message);
         }
@@ -59,11 +66,15 @@ function fetchGet(url: string, headers: any = {}, success: Function, failure: Fu
 }
 
 function fetchPost(url: string, data: any, headers: any = {}, success: Function, failure: Function, error = defaultError) {
+    const token = takeAccessToken();
+    token && (headers['Authorization'] = `Bearer ${token.token}`);
     headers['Content-Type'] = 'multipart/form-data';
 
     request.post(url, data, { headers }).then(res => {
         if (res.data.code == 200) {
             success(res.data);
+        } else if (res.data.code == 401) {
+            location.href = '/#/login';
         } else {
             failure(url, res.data.code, res.data.message);
         }
@@ -71,11 +82,15 @@ function fetchPost(url: string, data: any, headers: any = {}, success: Function,
 }
 
 function fetchPut(url: string, data: any, headers: any = {}, success: Function, failure: Function, error = defaultError) {
+    const token = takeAccessToken();
+    token && (headers['Authorization'] = `Bearer ${token.token}`);
     headers['Content-Type'] = 'multipart/form-data';
 
     request.put(url, data, { headers }).then(res => {
         if (res.data.code == 200) {
             success(res.data);
+        } else if (res.data.code == 401) {
+            location.href = '/#/login';
         } else {
             failure(url, res.data.code, res.data.message);
         }
@@ -83,21 +98,31 @@ function fetchPut(url: string, data: any, headers: any = {}, success: Function, 
 }
 
 function fetchDelete(url: string, data: any, headers: any = {}, success: Function, failure: Function, error = defaultError) {
+    const token = takeAccessToken();
+    token && (headers['Authorization'] = `Bearer ${token.token}`);
     headers['Content-Type'] = 'multipart/form-data';
 
     request.delete(url, { headers, data }).then(res => {
         if (res.data.code == 200) {
             success(res.data);
+        } else if (res.data.code == 401) {
+           location.href = '/#/login';
         } else {
             failure(url, res.data.code, res.data.message);
         }
     }).catch(err => error(err));
 }
 
-function loginApi(username: string, password: string, remember: boolean, success: Function, failure = defaultFailure) {
+function requestLogin(username: string, password: string, remember: boolean, success: Function, failure = defaultFailure) {
     fetchPost('/api/user/login', { username, password: encryptMD5(password)}, {}, (data: any) => {
         storeAccessToken(data.data.token, data.data.expire);
-        success(data);
+        success && success(data);
+    }, failure);
+}
+
+function requestPageUser(page: number, pageSize: number, startDatetime: string, endDatetime: string, username: string, success: Function, failure = defaultFailure) {
+    fetchGet('/api/user', { page, pageSize, startDatetime, endDatetime, username }, {}, (data: any) => {
+        success && success(data)
     }, failure);
 }
 
@@ -108,8 +133,8 @@ const fetchData = () => {
     });
 };
 
-
 export {
-    loginApi,
+    requestLogin,
+    requestPageUser,
     fetchData
 }

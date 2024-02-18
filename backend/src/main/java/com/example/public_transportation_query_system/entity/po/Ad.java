@@ -3,10 +3,9 @@ package com.example.public_transportation_query_system.entity.po;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -36,11 +35,11 @@ public class Ad implements Serializable {
     private String jumpUrl;
 
     @Schema(description = "开始日期")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDatetime;
 
     @Schema(description = "结束日期")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDatetime;
 
     @Override

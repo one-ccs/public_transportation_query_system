@@ -10,13 +10,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.public_transportation_query_system.entity.bo.UserBO;
 import com.example.public_transportation_query_system.entity.dto.MyUserDetails;
 import com.example.public_transportation_query_system.entity.po.Role;
 import com.example.public_transportation_query_system.entity.po.User;
-import com.example.public_transportation_query_system.entity.vo.BaseQuery;
+import com.example.public_transportation_query_system.entity.vo.request.QueryUserVO;
 import com.example.public_transportation_query_system.mapper.RoleMapper;
 import com.example.public_transportation_query_system.mapper.UserMapper;
 import com.example.public_transportation_query_system.service.IUserService;
@@ -59,14 +60,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         throw new UnsupportedOperationException("Unimplemented method 'register'");
     }
 
-    public HashMap<String, Object> getPageUsers(BaseQuery query) {
+    public HashMap<String, Object> getPageUsers(QueryUserVO query) {
         // 构造查询条件
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.ge(query.getStartDatetime() != null, "register_datetime", query.getStartDatetime());
         queryWrapper.le(query.getEndDatetime() != null, "register_datetime", query.getEndDatetime());
+        queryWrapper.like(StringUtils.isNotBlank(query.getUsername()), "username", query.getUsername());
         // 分页
         Page<User> page = new Page<>(
-            Optional.ofNullable(query.getPage()).orElse(1),
+            Optional.ofNullable(query.getPageIndex()).orElse(1),
             Optional.ofNullable(query.getPageSize()).orElse(10)
         );
         // 构造返回结构

@@ -12,12 +12,4 @@ public class QueryNoticeVO extends BaseQuery {
 	public void setContent(String content) {
 		this.content = content;
 	}
-
-    @Override
-    public String toString() {
-        return "QueryNoticeVO{" +
-            "content = " + content +
-            ", " + super.toString() +
-        "}";
-    }
 }

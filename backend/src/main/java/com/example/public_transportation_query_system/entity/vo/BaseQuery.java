@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class BaseQuery {
 
-    private Integer page = 1;
+    private Integer pageIndex = 1;
 
     private Integer pageSize = 10;
 
@@ -22,7 +22,7 @@ public class BaseQuery {
     @Override
     public String toString() {
         return "PageQuery{" +
-            "page = " + page +
+            "pageIndex = " + pageIndex +
             ", pageSize = " + pageSize +
             ", startDatetime = " + startDatetime +
             ", endDatetime = " + endDatetime +
