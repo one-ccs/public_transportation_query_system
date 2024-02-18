@@ -22,6 +22,60 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard.vue'),
             },
             {
+                path: '/users',
+                name: 'users',
+                meta: {
+                    title: '用户管理',
+                    permiss: '',
+                },
+                component: () => import(/* webpackChunkName: "table" */ '../views/users.vue'),
+            },
+            {
+                path: '/route',
+                name: 'route',
+                meta: {
+                    title: '线路管理',
+                    permiss: '',
+                },
+                component: () => import(/* webpackChunkName: "table" */ '../views/route.vue'),
+            },
+            {
+                path: '/station',
+                name: 'station',
+                meta: {
+                    title: '站点管理',
+                    permiss: '',
+                },
+                component: () => import(/* webpackChunkName: "table" */ '../views/station.vue'),
+            },
+            {
+                path: '/notice',
+                name: 'notice',
+                meta: {
+                    title: '公告管理',
+                    permiss: '',
+                },
+                component: () => import(/* webpackChunkName: "table" */ '../views/notice.vue'),
+            },
+            {
+                path: '/lost',
+                name: 'lost',
+                meta: {
+                    title: '失物招领管理',
+                    permiss: '',
+                },
+                component: () => import(/* webpackChunkName: "table" */ '../views/lost.vue'),
+            },
+            {
+                path: '/ad',
+                name: 'ad',
+                meta: {
+                    title: '广告管理',
+                    permiss: '',
+                },
+                component: () => import(/* webpackChunkName: "table" */ '../views/ad.vue'),
+            },
+            {
                 path: '/table',
                 name: 'basetable',
                 meta: {
@@ -58,15 +112,6 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "tabs" */ '../views/tabs.vue'),
             },
             {
-                path: '/donate',
-                name: 'donate',
-                meta: {
-                    title: '鼓励作者',
-                    permiss: '14',
-                },
-                component: () => import(/* webpackChunkName: "donate" */ '../views/donate.vue'),
-            },
-            {
                 path: '/permission',
                 name: 'permission',
                 meta: {
@@ -92,6 +137,15 @@ const routes: RouteRecordRaw[] = [
                     permiss: '10',
                 },
                 component: () => import(/* webpackChunkName: "icon" */ '../views/icon.vue'),
+            },
+            {
+                path: '/icon2',
+                name: 'icon2',
+                meta: {
+                    title: '自定义图标2',
+                    permiss: '10',
+                },
+                component: () => import(/* webpackChunkName: "icon" */ '../views/icon2.vue'),
             },
             {
                 path: '/user',

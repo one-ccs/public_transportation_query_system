@@ -2,7 +2,6 @@ package com.example.public_transportation_query_system.config;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,12 +12,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.example.public_transportation_query_system.entity.po.User;
+import com.example.public_transportation_query_system.entity.dto.MyUserDetails;
 import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.response.AuthorizeVO;
 import com.example.public_transportation_query_system.filter.JwtAuthorizeFilter;
@@ -106,18 +103,16 @@ public class SpringSecurityConfig {
      * 登录成功
      */
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userServiceImpl.getUserByNameOrEmail(userDetails.getUsername());
-        String token = jwtUtil.createJWT(userDetails, user.getId(), user.getUsername());
-        AuthorizeVO authorizeVO = user.asViewObject(AuthorizeVO.class, v -> {
+        MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
+        String token = jwtUtil.createJWT(
+            myUserDetails,
+            myUserDetails.getUser().getId(),
+            myUserDetails.getUser().getUsername());
+
+        AuthorizeVO authorizeVO = myUserDetails.getUser().asViewObject(AuthorizeVO.class, v -> {
             v.setExpire(jwtUtil.expireTime());
             v.setToken(token);
-            v.setRoles(userDetails.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .map(authority -> authority.replace("ROLE_", ""))
-                .collect(Collectors.toList())
-            );
+            v.setRoles(myUserDetails.getRolesName());
         });
 
         response.setContentType("application/json");

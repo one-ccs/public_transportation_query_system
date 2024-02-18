@@ -40,10 +40,8 @@ public class MyBatisPlusGenerator {
             .strategyConfig(builder -> builder
                 // 设置需要生成的表名
                 .addInclude("user")
-                .addInclude("user_role")
                 .addInclude("role")
                 .addInclude("route")
-                .addInclude("route_station")
                 .addInclude("station")
                 .addInclude("notice")
                 .addInclude("lost")

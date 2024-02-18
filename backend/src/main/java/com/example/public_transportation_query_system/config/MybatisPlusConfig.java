@@ -17,8 +17,11 @@ public class MybatisPlusConfig {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         PaginationInnerInterceptor pageInterceptor = new PaginationInnerInterceptor();
 
+        // 溢出总页数后是否进行处理默认 false
         pageInterceptor.setOverflow(false);
+        // 单页分页条数限制 默认无限制
         pageInterceptor.setMaxLimit((long) 500);
+        // 数据库类型
         pageInterceptor.setDbType(DbType.MYSQL);
 
         interceptor.addInnerInterceptor(pageInterceptor);
