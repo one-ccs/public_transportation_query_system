@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.request.QueryNoticeVO;
@@ -12,10 +13,8 @@ import com.example.public_transportation_query_system.entity.vo.request.QueryNot
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import org.springframework.stereotype.Controller;
-
-@Tag(name = "5-公告", description = "公告接口")
-@Controller
+@Tag(name = "6-公告", description = "公告接口")
+@RestController
 @RequestMapping("/api/notice")
 public class NoticeController {
 

@@ -8,10 +8,12 @@ import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 
 import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.response.AuthorizeVO;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -26,6 +28,7 @@ import io.swagger.v3.oas.models.parameters.QueryParameter;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @Configuration
 public class SpringDocConfig {
@@ -33,6 +36,15 @@ public class SpringDocConfig {
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
+            .components(new Components()
+                .addSecuritySchemes("apiToken", new SecurityScheme()
+                    .name(HttpHeaders.AUTHORIZATION)
+                    .type(SecurityScheme.Type.HTTP)
+                    .in(SecurityScheme.In.HEADER)
+                    .scheme("Bearer")
+                    .bearerFormat("JWT")
+                )
+            )
             .info(new Info()
                 .title("重庆公交管理系统 API")
                 .description("重庆公共交通管理系统应用程序开放文档")
@@ -50,7 +62,7 @@ public class SpringDocConfig {
                 .description("博客：one-ccs")
                 .url("https://blog.csdn.net/qq_43155814")
             )
-            .security(List.of(new SecurityRequirement().addList("api_token")));
+            .security(List.of(new SecurityRequirement().addList("apiToken")));
     }
 
     /**

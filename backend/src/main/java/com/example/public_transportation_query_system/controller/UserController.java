@@ -15,6 +15,7 @@ import com.example.public_transportation_query_system.entity.vo.request.UserVO;
 import com.example.public_transportation_query_system.service.impl.UserServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "1-用户", description = "用户接口")
@@ -25,6 +26,7 @@ public class UserController {
     @Autowired
     UserServiceImpl userServiceImpl;
 
+    @SecurityRequirements
     @Operation(summary = "注册", description = "用户注册接口")
     @PostMapping("/register")
     public Result<Object> register(String username, String password, @RequestParam(name = "email", defaultValue = "") String email) {

@@ -22,7 +22,7 @@ springdoc:
         # API 排序
         tags-sorter: alpha
         # HTTP 方法排序
-        operations-sorter: summary
+        operations-sorter: alpha
     api-docs:
         enabled: true
         # JSON 访问接口
