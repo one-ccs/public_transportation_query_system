@@ -18,6 +18,7 @@ import com.example.public_transportation_query_system.entity.bo.UserBO;
 import com.example.public_transportation_query_system.entity.dto.MyUserDetails;
 import com.example.public_transportation_query_system.entity.po.Role;
 import com.example.public_transportation_query_system.entity.po.User;
+import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.request.QueryUserVO;
 import com.example.public_transportation_query_system.entity.vo.request.UserVO;
 import com.example.public_transportation_query_system.mapper.UserMapper;
@@ -25,6 +26,9 @@ import com.example.public_transportation_query_system.service.IUserService;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
+
+    @Autowired
+    UserRoleServiceImpl userRoleServiceImpl;
 
     @Autowired
     RoleServiceImpl roleServiceImpl;
@@ -54,7 +58,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             .one();
     }
 
-    public UserBO getUserWithRoles(User user) {
+    /**
+     * 返回包含角色 (Role) 的 User
+     * @param user
+     * @return
+     */
+    public UserBO getUserBO(User user) {
         return user.asViewObject(UserBO.class, v -> {
             v.setRoles(roleServiceImpl.getRolesByUid(user.getId()));
         });
@@ -65,7 +74,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         throw new UnsupportedOperationException("Unimplemented method 'register'");
     }
 
-    public HashMap<String, Object> getPageUsers(QueryUserVO query) {
+    /**
+     * 分页查询用户数据
+     * @param query
+     * @return
+     */
+    public Result<Object> getPageUsers(QueryUserVO query) {
         // 构造查询条件
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.ge(query.getStartDatetime() != null, "register_datetime", query.getStartDatetime());
@@ -80,7 +94,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         HashMap<String, Object> map = new HashMap<>();
         map.put("total", this.count());
         map.put("list", this.list(page, queryWrapper).stream()
-            .map(this::getUserWithRoles)
+            .map(this::getUserBO)
             // filterFlag 为 0 时不进行过滤
             // filterFlag 为 1 时筛选角色 id = 1 的用户
             // filterFlag 为 2 时筛选角色 id > 1 的用户
@@ -99,7 +113,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             .toList()
         );
 
-        return map;
+        return Result.success("查询成功", map);
     }
 
     /**
@@ -107,16 +121,60 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @param userVO
      * @return
      */
-    public Object addUser(UserVO userVO) {
+    public Result<Object> addUser(UserVO userVO) {
+        // 表单验证
+        if (StringUtils.isBlank(userVO.getUsername()) && StringUtils.isBlank(userVO.getEmail())) {
+            return Result.failure(400, "用户名和邮箱地址不能同时为空");
+        }
+        if (StringUtils.isBlank(userVO.getPassword())) {
+            return Result.failure(400, "密码不能为空");
+        }
+        if (!StringUtils.isBlank(userVO.getUsername()) && this.query().eq("username", userVO.getUsername()).one() != null) {
+            return Result.failure(400, "添加失败，用户名重复");
+        }
+        if (!StringUtils.isBlank(userVO.getEmail()) && this.query().eq("email", userVO.getEmail()).one() != null) {
+            return Result.failure(400, "添加失败，邮箱地址重复");
+        }
+
+        // 清除 id 值
+        userVO.setId(null);
+
         // 构造 User 并加密密码
-        User newUser = userVO.asViewObject(User.class, v -> v.setPassword(passwordEncoder.encode(v.getPassword())));
+        User newUser = userVO.asViewObject(User.class, user -> user
+            .setPassword(passwordEncoder.encode(user.getPassword()))
+        );
+
         // 添加用户
         if (this.save(newUser)) {
-            // 获取新用户
+            // 获取新用户 id
             User user = this.getUserByNameOrEmail(userVO.getUsername(), userVO.getEmail());
+            userVO.setId(user.getId());
             // 设置角色
-            return roleServiceImpl.addRoles(user.getId(), userVO.getRoleIds());
+            if (roleServiceImpl.addRoles(userVO)) {
+                return Result.success("添加成功");
+            }
+            return Result.failure(400, "用户角色添加失败");
         }
-        return false;
+        return Result.failure(400, "添加失败");
+    }
+
+    public Result<Object> updateByUserVO(UserVO userVO) {
+        User newUser = userVO.asViewObject(User.class, user -> user
+            .setPassword(passwordEncoder.encode(user.getPassword()))
+        );
+
+        // 更新用户信息
+        if (this.updateById(newUser)) {
+            // 删除旧角色信息
+            userRoleServiceImpl.removeBatchByUid(userVO.getId());
+
+            // 添加新角色信息
+            if (userRoleServiceImpl.saveBatch(userVO.getUserRoleList())) {
+                return Result.success("修改成功");
+            }
+            return Result.failure(400, "修改用户角色失败");
+        }
+
+        return Result.failure(400, "修改失败");
     }
 }

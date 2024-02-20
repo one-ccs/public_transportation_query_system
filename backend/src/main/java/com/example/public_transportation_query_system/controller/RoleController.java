@@ -1,5 +1,6 @@
 package com.example.public_transportation_query_system.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.public_transportation_query_system.entity.vo.Result;
-import com.example.public_transportation_query_system.entity.vo.request.QueryNoticeVO;
+import com.example.public_transportation_query_system.service.impl.RoleServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,11 +19,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/role")
 public class RoleController {
 
+    @Autowired
+    RoleServiceImpl roleServiceImpl;
+
     @Operation(summary = "获取角色列表", description = "获取角色列表接口")
     @GetMapping
-    public Result<Object> apiNoticeGet(QueryNoticeVO queryNoticeVO) {
-        System.out.println(queryNoticeVO);
-        return Result.success(queryNoticeVO);
+    public Result<Object> apiNoticeGet() {
+        return Result.success(roleServiceImpl.removePrefix(roleServiceImpl.list()));
     }
 
     @Operation(summary = "添加角色", description = "添加角色接口")

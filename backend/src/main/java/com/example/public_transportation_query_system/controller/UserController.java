@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +27,30 @@ public class UserController {
     @Autowired
     UserServiceImpl userServiceImpl;
 
+    @Operation(summary = "获取用户列表", description = "获取用户列表接口")
+    @GetMapping
+    public Result<Object> apiUserGet(QueryUserVO query) {
+        return userServiceImpl.getPageUsers(query);
+    }
+
+    @Operation(summary = "添加用户", description = "添加用户接口")
+    @PutMapping
+    public Result<Object> apiUserPut(@RequestBody UserVO userVO) {
+        return userServiceImpl.addUser(userVO);
+    }
+
+    @Operation(summary = "修改用户", description = "修改用户接口")
+    @PostMapping
+    public Result<Object> apiUserPost(@RequestBody UserVO userVO) {
+        return userServiceImpl.updateByUserVO(userVO);
+    }
+
+    @Operation(summary = "删除用户", description = "删除用户接口")
+    @DeleteMapping
+    public Result<Object> apiUserDelete(Integer uid) {
+        return Result.success();
+    }
+
     @SecurityRequirements
     @Operation(summary = "注册", description = "用户注册接口")
     @PostMapping("/register")
@@ -34,29 +59,5 @@ public class UserController {
             return Result.success("注册成功");
         }
         return Result.success("注册失败");
-    }
-
-    @Operation(summary = "获取用户列表", description = "获取用户列表接口")
-    @GetMapping
-    public Result<Object> apiUserGet(QueryUserVO query) {
-        return Result.success(userServiceImpl.getPageUsers(query));
-    }
-
-    @Operation(summary = "添加用户", description = "添加用户接口")
-    @PutMapping
-    public Result<Object> apiUserPut(UserVO userVO) {
-        return Result.success(userServiceImpl.addUser(userVO));
-    }
-
-    @Operation(summary = "修改用户", description = "修改用户接口")
-    @PostMapping
-    public Result<Object> apiUserPost() {
-        return Result.success();
-    }
-
-    @Operation(summary = "删除用户", description = "删除用户接口")
-    @DeleteMapping
-    public Result<Object> apiUserDelete() {
-        return Result.success();
     }
 }

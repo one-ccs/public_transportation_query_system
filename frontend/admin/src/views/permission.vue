@@ -99,10 +99,6 @@ const data: Tree[] = [
 		id: '13',
 		label: '权限管理'
 	},
-	{
-		id: '14',
-		label: '支持作者'
-	}
 ];
 
 const permiss = usePermissStore();

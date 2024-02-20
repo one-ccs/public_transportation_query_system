@@ -1,6 +1,5 @@
 package com.example.public_transportation_query_system.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.public_transportation_query_system.entity.po.Role;
-import com.example.public_transportation_query_system.entity.po.UserRole;
+import com.example.public_transportation_query_system.entity.vo.request.UserVO;
 import com.example.public_transportation_query_system.mapper.RoleMapper;
 import com.example.public_transportation_query_system.service.IRoleService;
 
@@ -32,15 +31,24 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     /**
      * 给用户添加多个角色
-     * @param uid 用户 id
-     * @param roleIds 角色 id 列表
+     * @param userVO userVO 包装类
      * @return 是否添加成功
      */
-    public boolean addRoles(Integer uid, List<Integer> roleIds) {
-        List<UserRole> userRoles = new ArrayList<>();
-        roleIds.forEach(roleId -> {
-            userRoles.add(new UserRole(null, uid, roleId));
-        });
-        return userRoleServiceImpl.saveOrUpdateBatch(userRoles);
+    public boolean addRoles(UserVO userVO) {
+        return userRoleServiceImpl.saveOrUpdateBatch(userVO.getUserRoleList());
+    }
+
+    /**
+     * 将角色名的 ROLE_ 前缀去掉
+     * @param roles 角色列表
+     * @return
+     */
+    public List<Role> removePrefix(List<Role> roles) {
+        return roles.stream()
+            .map(role -> {
+                role.setName(role.getName().replace("ROLE_", ""));
+                return role;
+            })
+            .toList();
     }
 }

@@ -229,6 +229,6 @@ const sidebar = useSidebarStore();
     width: 250px;
 }
 .sidebar > ul {
-    /* height: 100%; */
+    min-height: 100%;
 }
 </style>
