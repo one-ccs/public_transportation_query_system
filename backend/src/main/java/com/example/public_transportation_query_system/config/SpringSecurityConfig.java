@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -48,10 +49,15 @@ public class SpringSecurityConfig {
             .requestMatchers("/api/swagger-ui/**").permitAll()
             // 放行 SpringDoc 的 actuator
             .requestMatchers("/actuator/**").permitAll()
-            // 放行 注册接口
+            // 放行 登录、登出、注册接口
+            .requestMatchers("/api/user/login").permitAll()
+            .requestMatchers("/api/user/logout").permitAll()
             .requestMatchers("/api/user/register").permitAll()
-            // 其它所有接口均需认证
-            .anyRequest().authenticated()
+            // 对用户放行 查询、失物招领相关接口接口
+            .requestMatchers(HttpMethod.GET).hasAnyRole("user", "admin", "userAdmin", "systemAdmin", "superAdmin")
+            .requestMatchers("/api/lost/**").hasAnyRole("user", "admin", "userAdmin", "systemAdmin", "superAdmin")
+            // 其它所有接口均需 管理员权限
+            .anyRequest().hasAnyRole("admin", "userAdmin", "systemAdmin", "superAdmin")
         )
         .formLogin(conf -> conf
             // 登录接口默认自动放行

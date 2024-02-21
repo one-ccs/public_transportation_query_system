@@ -1,4 +1,5 @@
 import { ElMessage } from 'element-plus';
+import { deepCopy } from '../utils/copy';
 import request from '../utils/request';
 import encryptMD5 from '../utils/encryptMD5';
 
@@ -143,10 +144,16 @@ function apiPageUser(query: object, success?: Function, failure?: Function) {
  * @param success 成功回调函数
  * @param failure 失败回调函数
  */
-function apiAddUser(user: object, success?: Function, failure?: Function) {
+function apiAddUser(user: any, success?: Function, failure?: Function) {
+    // 使用临时变量，防止修改原变量
+    let t: any = {};
+    deepCopy(t, user);
+    // 加密密码
+    t.password = encryptMD5(t.password);
+
     fetch('/api/user', {
         method: 'put',
-        data: user,
+        data: t,
         contentType: 'json',
         success,
         failure
@@ -159,7 +166,14 @@ function apiAddUser(user: object, success?: Function, failure?: Function) {
  * @param success 成功回调函数
  * @param failure 失败回调函数
  */
-function apiModifyUser(user: object, success?: Function, failure?: Function) {
+function apiModifyUser(user: any, success?: Function, failure?: Function) {
+    let t: any = {};
+    deepCopy(t, user);
+    // 加密密码
+    t.password = encryptMD5(t.password);
+    // 加密密码
+    t.password && (t.password = encryptMD5(t.password));
+
     fetch('/api/user', {
         method: 'post',
         data: user,

@@ -21,7 +21,7 @@ public class NoticeController {
     @Operation(summary = "获取公告列表", description = "获取公告列表接口")
     @GetMapping
     public Result<Object> apiNoticeGet(QueryNoticeVO queryNoticeVO) {
-        return Result.success(queryNoticeVO);
+        return Result.success();
     }
 
     @Operation(summary = "添加公告", description = "添加公告接口")
