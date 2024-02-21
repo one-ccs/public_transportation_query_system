@@ -58,28 +58,12 @@ public class MyUserDetails implements UserDetails {
 	}
 
     /**
-     * 返回不含前缀的角色名列表
+     * 返回角色英文名列表
      * @return eg. [admin, user]
      */
     public List<String> getRolesName() {
         return this.roles.stream()
             .map(Role::getName)
-            .map(name -> name.replace("ROLE_", ""))
-            .toList();
-    }
-
-    /**
-     * 返回不含前缀的角色名和角色中文名列表
-     * @return eg. [{nameZh=管理员, name=admin}, {nameZh=用户, name=user}]
-     */
-    public List<Map<String, Object>> getRoles() {
-        return this.roles.stream()
-            .map(role -> {
-                Map<String, Object> roleInfo = new HashMap<>();
-                roleInfo.put("name", role.getName().replace("ROLE_", ""));
-                roleInfo.put("nameZh", role.getNameZh());
-                return roleInfo;
-            })
             .toList();
     }
 
@@ -87,7 +71,7 @@ public class MyUserDetails implements UserDetails {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         for (Role role : this.roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
         }
 		return authorities;
 	}

@@ -77,23 +77,6 @@
 				<el-form-item label="密码" prop="password">
 					<el-input v-model="addForm.password"></el-input>
 				</el-form-item>
-				<el-form-item label="邮箱地址" prop="email">
-					<el-input v-model="addForm.email"></el-input>
-				</el-form-item>
-                <el-form-item label="角色" prop="roles">
-                    <el-select
-                        v-model="addForm.roles"
-                        multiple
-                        placeholder="请选择角色"
-                        value-key="id"
-                    >
-                        <el-option
-                            v-for="item in roleList" :key="item.id"
-                            :label="item.nameZh"
-                            :value="item"
-                        />
-                    </el-select>
-                </el-form-item>
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
@@ -106,50 +89,12 @@
 		<!-- 修改弹出框 -->
 		<el-dialog title="修改" v-model="modifyVisible" width="30%">
 			<el-form :model="modifyForm" ref="modifyFormRef" :rules="modifyRules" label-width="70px">
-				<el-form-item label="ID" prop="id">
-					<el-input v-model="modifyForm.id" disabled></el-input>
-				</el-form-item>
-				<el-form-item label="用户名" prop="username">
+				<el-form-item label="英文名" prop="username">
 					<el-input v-model="modifyForm.username"></el-input>
 				</el-form-item>
-				<el-form-item label="密码" prop="password">
+				<el-form-item label="中文名" prop="password">
 					<el-input v-model="modifyForm.password"></el-input>
 				</el-form-item>
-				<el-form-item label="邮箱地址" prop="email">
-					<el-input v-model="modifyForm.email"></el-input>
-				</el-form-item>
-                <el-form-item label="状态" prop="status">
-                    <el-select
-                        v-model="modifyForm.status"
-                        placeholder="请选择状态"
-                    >
-                        <el-option
-                            v-for="item in statusList" :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        >
-                            <el-tag
-                                :type="item.value == 0 ? 'info': item.value == 1 ? 'success': 'danger'"
-                            >
-                                {{ item.value == 0 ? '未激活': item.value == 1 ? '已激活': '已注销' }}
-                            </el-tag>
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="角色" prop="roles">
-                    <el-select
-                        v-model="modifyForm.roles"
-                        multiple
-                        placeholder="请选择角色"
-                        value-key="id"
-                    >
-                        <el-option
-                            v-for="item in roleList" :key="item.id"
-                            :label="item.nameZh"
-                            :value="item"
-                        />
-                    </el-select>
-                </el-form-item>
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
@@ -231,18 +176,10 @@ const handleDelete = (index: number) => {
 const roleList = reactive([
     {id: 1, name: 'user', nameZh: '用户'}
 ])
-const statusList = reactive([
-    {value: 0, label: '未激活'},
-    {value: 1, label: '已激活'},
-    {value: 2, label: '已注销'},
-])
-
 // 添加表格验证
 const addRules: FormRules = {
-	username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-	password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
-    email: [{ type: 'email', message: '请输入正确的电子邮件地址', trigger: ['blur', 'change'] }],
-    roles: [{ required: true, message: '请选择角色', trigger: 'blur' }],
+	name: [{ required: true, message: '请输入角色英文名', trigger: 'blur' }],
+	nameZh: [{ required: true, message: '请输入角色中文名', trigger: 'blur' }],
 };
 // 表格添加时弹窗和保存
 const addVisible = ref(false);

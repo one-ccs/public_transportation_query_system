@@ -160,7 +160,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User newUser = userVO.asViewObject(User.class, user -> user
             .setPassword(passwordEncoder.encode(user.getPassword()))
         );
-        System.out.println(newUser);
 
         // 添加用户
         if (this.save(newUser)) {

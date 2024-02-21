@@ -26,15 +26,6 @@ public class UserBO {
 
     private List<Role> roles;
 
-    public List<Role> getRoles() {
-        return roles.stream()
-            .map(role -> {
-                role.setName(role.getName().replace("ROLE_", ""));
-                return role;
-            })
-            .toList();
-    }
-
     @Override
     public String toString() {
         return "UserBO{" +

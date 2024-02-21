@@ -37,18 +37,4 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     public boolean addRoles(UserVO userVO) {
         return userRoleServiceImpl.saveOrUpdateBatch(userVO.getUserRoleList());
     }
-
-    /**
-     * 将角色名的 ROLE_ 前缀去掉
-     * @param roles 角色列表
-     * @return
-     */
-    public List<Role> removePrefix(List<Role> roles) {
-        return roles.stream()
-            .map(role -> {
-                role.setName(role.getName().replace("ROLE_", ""));
-                return role;
-            })
-            .toList();
-    }
 }

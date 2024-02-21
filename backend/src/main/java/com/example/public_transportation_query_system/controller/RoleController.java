@@ -25,7 +25,7 @@ public class RoleController {
     @Operation(summary = "获取角色列表", description = "获取角色列表接口")
     @GetMapping
     public Result<Object> apiNoticeGet() {
-        return Result.success(roleServiceImpl.removePrefix(roleServiceImpl.list()));
+        return Result.success(roleServiceImpl.list());
     }
 
     @Operation(summary = "添加角色", description = "添加角色接口")
