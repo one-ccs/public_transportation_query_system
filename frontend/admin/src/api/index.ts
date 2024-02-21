@@ -26,7 +26,7 @@ function deleteAccessToken() {
 }
 
 function takeAccessToken() {
-    const str = localStorage.getItem(authItemName) || sessionStorage.getItem(authItemName) || '';
+    const str = localStorage.getItem(authItemName) || sessionStorage.getItem(authItemName) || '{}';
     const authObj = JSON.parse(str);
 
     if (authObj.expire <= new Date()) {
@@ -153,6 +153,12 @@ function apiAddUser(user: object, success?: Function, failure?: Function) {
     });
 }
 
+/**
+ * 修改用户
+ * @param user 用户信息
+ * @param success 成功回调函数
+ * @param failure 失败回调函数
+ */
 function apiModifyUser(user: object, success?: Function, failure?: Function) {
     fetch('/api/user', {
         method: 'post',
@@ -161,6 +167,21 @@ function apiModifyUser(user: object, success?: Function, failure?: Function) {
         success,
         failure
     });
+}
+
+/**
+ * 删除用户信息
+ * @param uid 用户 id
+ * @param success 成功回调函数
+ * @param failure 失败回调函数
+ */
+function apiDeleteUser(uid: number, success?: Function, failure?: Function) {
+    fetch('/api/user', {
+        method: 'delete',
+        data: { uid },
+        success,
+        failure
+    })
 }
 
 /**
@@ -187,6 +208,7 @@ export {
     apiPageUser,
     apiAddUser,
     apiModifyUser,
+    apiDeleteUser,
     apiGetRoles,
     fetchData
 }

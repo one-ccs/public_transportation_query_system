@@ -18,6 +18,7 @@ import com.example.public_transportation_query_system.entity.bo.UserBO;
 import com.example.public_transportation_query_system.entity.dto.MyUserDetails;
 import com.example.public_transportation_query_system.entity.po.Role;
 import com.example.public_transportation_query_system.entity.po.User;
+import com.example.public_transportation_query_system.entity.po.UserRole;
 import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.request.QueryUserVO;
 import com.example.public_transportation_query_system.entity.vo.request.UserVO;
@@ -69,9 +70,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         });
     }
 
-    public boolean register(String username, String password, String email) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'register'");
+    public Result<Object> register(String username, String password, String email) {
+        if (this.save(new User(username, password, email))) {
+            User newUser = this.getUserByNameOrEmail(username, email);
+            // 添加角色为 用户
+            userRoleServiceImpl.save(new UserRole(null, newUser.getId(), 1));
+
+            return Result.success("注册成功");
+        }
+        return Result.success("注册失败");
     }
 
     /**
@@ -159,9 +166,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     public Result<Object> updateByUserVO(UserVO userVO) {
-        User newUser = userVO.asViewObject(User.class, user -> user
-            .setPassword(passwordEncoder.encode(user.getPassword()))
-        );
+        User newUser = userVO.asViewObject(User.class, user -> {
+            if (StringUtils.isNotBlank(user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            } else {
+                user.setPassword(null);
+            }
+        });
 
         // 更新用户信息
         if (this.updateById(newUser)) {

@@ -9,9 +9,13 @@ import com.example.public_transportation_query_system.entity.vo.BaseData;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Schema(name = "User", description = "用户表")
 public class User implements Serializable, BaseData {
 
@@ -35,6 +39,10 @@ public class User implements Serializable, BaseData {
     @Schema(description = "注册日期")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime registerDatetime;
+
+    public User(String username, String password, String email) {
+        this(null, username, password, email, null, null);
+    }
 
     @Override
     public String toString() {

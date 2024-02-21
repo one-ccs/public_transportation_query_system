@@ -190,11 +190,11 @@ const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
 	apiPageUser(query, (data: any) => {
-        ElMessage.success('用户数据获取成功');
+        ElMessage.success('管理员数据获取成功');
 		tableData.value = data.data.list;
 		pageTotal.value = data.data.total || 50;
     }, (data: any) => {
-        ElMessage.success('用户数据获取失败');
+        ElMessage.success('管理员数据获取失败');
     });
 };
 getData();

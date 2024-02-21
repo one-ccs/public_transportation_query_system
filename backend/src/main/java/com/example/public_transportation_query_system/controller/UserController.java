@@ -48,16 +48,13 @@ public class UserController {
     @Operation(summary = "删除用户", description = "删除用户接口")
     @DeleteMapping
     public Result<Object> apiUserDelete(Integer uid) {
-        return Result.success();
+        return Result.success(userServiceImpl.removeById(uid));
     }
 
     @SecurityRequirements
     @Operation(summary = "注册", description = "用户注册接口")
     @PostMapping("/register")
     public Result<Object> register(String username, String password, @RequestParam(name = "email", defaultValue = "") String email) {
-        if (userServiceImpl.register(username, password, email)) {
-            return Result.success("注册成功");
-        }
-        return Result.success("注册失败");
+        return userServiceImpl.register(username, password, email);
     }
 }

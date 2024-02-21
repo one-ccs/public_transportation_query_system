@@ -48,7 +48,7 @@
 						<el-button text :icon="Edit" @click="handleModify(scope.row)" v-permiss="15">
 							修改
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
+						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index, scope.row)" v-permiss="16">
 							删除
 						</el-button>
 					</template>
@@ -115,6 +115,9 @@
 				<el-form-item label="密码" prop="password">
 					<el-input v-model="modifyForm.password"></el-input>
 				</el-form-item>
+				<el-form-item label="确认密码" prop="passwordCheck">
+					<el-input v-model="modifyForm.passwordCheck"></el-input>
+				</el-form-item>
 				<el-form-item label="邮箱地址" prop="email">
 					<el-input v-model="modifyForm.email"></el-input>
 				</el-form-item>
@@ -165,7 +168,7 @@
 import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
-import { apiAddUser, apiPageUser, apiModifyUser, apiGetRoles } from '../api/index';
+import { apiAddUser, apiPageUser, apiModifyUser, apiGetRoles, apiDeleteUser } from '../api/index';
 import { deepCopy } from '../utils/copy';
 interface TableItem {
 	id: number;
@@ -215,14 +218,16 @@ const handlePageChange = (val: number) => {
 };
 
 // 删除操作
-const handleDelete = (index: number) => {
+const handleDelete = (index: number, row: any) => {
 	// 二次确认删除
-	ElMessageBox.confirm('确定要删除吗？', '提示', {
+	ElMessageBox.confirm(`确定要删除 "${row.username}" 吗？`, '提示', {
 		type: 'warning'
 	})
 		.then(() => {
-			ElMessage.success('删除成功');
-			tableData.value.splice(index, 1);
+            apiDeleteUser(row.id, (data: any) => {
+                ElMessage.success('删除成功');
+                tableData.value.splice(index, 1);
+            });
 		})
 		.catch(() => {});
 };
@@ -284,6 +289,7 @@ const validatePass = (rule: any, value: any, callback: any) => {
     }
 }
 const validatePass2 = (rule: any, value: any, callback: any) => {
+    if (modifyForm.password === oldPassword) callback();
     if (value === '') {
         callback(new Error('请二次确认密码'))
     } else if (value !== modifyForm.password) {
@@ -309,7 +315,10 @@ const modifyForm = reactive({
     passwordCheck: '',
     roles: [roleList[0]],
 });
+let oldPassword = '';
 const handleModify = (row: any) => {
+    oldPassword = row.password;
+    modifyForm.passwordCheck = '';
     deepCopy(modifyForm, row);
 
     apiGetRoles((data: any) => {
@@ -320,6 +329,7 @@ const handleModify = (row: any) => {
 const saveModify = (formEl: FormInstance | undefined) => {
     formEl && formEl.validate((valid: boolean) => {
         if (valid) {
+            if (modifyForm.password === oldPassword) modifyForm.password = '';
             apiModifyUser(modifyForm, (data: any) => {
                 modifyVisible.value = false;
                 ElMessage.success(`修改成功 (ID ${modifyForm.id})`);

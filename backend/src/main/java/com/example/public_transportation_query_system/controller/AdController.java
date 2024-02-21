@@ -21,7 +21,6 @@ public class AdController {
     @Operation(summary = "获取广告列表", description = "获取广告列表接口")
     @GetMapping
     public Result<Object> apiNoticeGet(QueryNoticeVO queryNoticeVO) {
-        System.out.println(queryNoticeVO);
         return Result.success(queryNoticeVO);
     }
 
