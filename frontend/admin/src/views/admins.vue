@@ -48,7 +48,7 @@
 						<el-button text :icon="Edit" @click="handleModify(scope.row)" v-permiss="15">
 							修改
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
+						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index, scope.row)" v-permiss="16">
 							删除
 						</el-button>
 					</template>
@@ -75,7 +75,10 @@
 					<el-input v-model="addForm.username"></el-input>
 				</el-form-item>
 				<el-form-item label="密码" prop="password">
-					<el-input v-model="addForm.password"></el-input>
+                    <el-input v-model="addForm.password"></el-input>
+				</el-form-item>
+				<el-form-item label="确认密码" prop="passwordCheck">
+					<el-input v-model="addForm.passwordCheck"></el-input>
 				</el-form-item>
 				<el-form-item label="邮箱地址" prop="email">
 					<el-input v-model="addForm.email"></el-input>
@@ -114,6 +117,9 @@
 				</el-form-item>
 				<el-form-item label="密码" prop="password">
 					<el-input v-model="modifyForm.password"></el-input>
+				</el-form-item>
+				<el-form-item label="确认密码" prop="passwordCheck">
+					<el-input v-model="modifyForm.passwordCheck"></el-input>
 				</el-form-item>
 				<el-form-item label="邮箱地址" prop="email">
 					<el-input v-model="modifyForm.email"></el-input>
@@ -165,7 +171,7 @@
 import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
-import { apiAddUser, apiPageUser, apiModifyUser, apiGetRoles } from '../api/index';
+import { apiAddUser, apiPageUser, apiModifyUser, apiGetRoles, apiDeleteUser } from '../api/index';
 import { deepCopy } from '../utils/copy';
 interface TableItem {
 	id: number;
@@ -215,14 +221,16 @@ const handlePageChange = (val: number) => {
 };
 
 // 删除操作
-const handleDelete = (index: number) => {
+const handleDelete = (index: number, row: any) => {
 	// 二次确认删除
-	ElMessageBox.confirm('确定要删除吗？', '提示', {
+	ElMessageBox.confirm(`确定要删除 "${row.username}" 吗？`, '提示', {
 		type: 'warning'
 	})
 		.then(() => {
-			ElMessage.success('删除成功');
-			tableData.value.splice(index, 1);
+            apiDeleteUser(row.id, (data: any) => {
+                ElMessage.success('删除成功');
+                tableData.value.splice(index, 1);
+            });
 		})
 		.catch(() => {});
 };
@@ -237,10 +245,35 @@ const statusList = reactive([
     {value: 2, label: '已注销'},
 ])
 
+// 添加用户密码验证
+const validatePassAdd = (rule: any, value: any, callback: any) => {
+    if (value === '') {
+        callback(new Error('请输入密码'));
+    } else {
+        if (addForm.passwordCheck !== '') {
+            if (!addFormRef.value) return;
+            addFormRef.value.validateField('passwordCheck', () => null);
+        }
+        callback();
+    }
+}
+const validatePassAdd2 = (rule: any, value: any, callback: any) => {
+    if (value === '') {
+        callback(new Error('请二次确认密码'));
+    } else if (value !== addForm.password) {
+        callback(new Error("二次确认密码不匹配"));
+    } else {
+        callback();
+    }
+}
 // 添加表格验证
 const addRules: FormRules = {
 	username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-	password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+    password: [
+        { required: true, message: '请输入密码', trigger: 'blur' },
+        { validator: validatePassAdd, trigger: 'blur' }
+    ],
+    passwordCheck: [{ validator: validatePassAdd2, trigger: 'blur' }],
     email: [{ type: 'email', message: '请输入正确的电子邮件地址', trigger: ['blur', 'change'] }],
     roles: [{ required: true, message: '请选择角色', trigger: 'blur' }],
 };
@@ -250,6 +283,7 @@ const addFormRef = ref<FormInstance>();
 const addForm = reactive({
     username: '',
     password: '',
+    passwordCheck: '',
     email: '',
     roles: [roleList[0]],
 });
@@ -257,6 +291,7 @@ const handleSave = () => {
     apiGetRoles((data: any) => {
         deepCopy(roleList, data.data);
     })
+    addForm.passwordCheck = '';
 	addVisible.value = true;
 };
 const saveAdd = (formEl: FormInstance | undefined) => {
@@ -271,30 +306,31 @@ const saveAdd = (formEl: FormInstance | undefined) => {
     });
 };
 
-// 修改表格验证
-const validatePass = (rule: any, value: any, callback: any) => {
+// 修改用户密码验证
+const validatePassModify = (rule: any, value: any, callback: any) => {
     if (value === '') {
-        callback(new Error('请输入密码'))
+        callback(new Error('请输入密码'));
     } else {
         if (modifyForm.passwordCheck !== '') {
-            if (!modifyFormRef.value) return
-            modifyFormRef.value.validateField('passwordCheck', () => null)
+            if (!modifyFormRef.value) return;
+            modifyFormRef.value.validateField('passwordCheck', () => null);
         }
-        callback()
+        callback();
     }
 }
-const validatePass2 = (rule: any, value: any, callback: any) => {
+const validatePassModify2 = (rule: any, value: any, callback: any) => {
+    if (modifyForm.password === oldPassword) callback();
     if (value === '') {
-        callback(new Error('请二次确认密码'))
+        callback(new Error('请二次确认密码'));
     } else if (value !== modifyForm.password) {
-        callback(new Error("二次确认密码不匹配"))
+        callback(new Error("二次确认密码不匹配"));
     } else {
-        callback()
+        callback();
     }
 }
 const modifyRules: FormRules = {
-    password: [{ validator: validatePass, trigger: 'blur' }],
-    passwordCheck: [{ validator: validatePass2, trigger: 'blur' }],
+    password: [{ validator: validatePassModify, trigger: 'blur' }],
+    passwordCheck: [{ validator: validatePassModify2, trigger: 'blur' }],
     email: [{ type: 'email', message: '请输入正确的电子邮件地址', trigger: ['blur', 'change'] }],
 };
 // 表格修改时弹窗和保存
@@ -309,7 +345,10 @@ const modifyForm = reactive({
     passwordCheck: '',
     roles: [roleList[0]],
 });
+let oldPassword = '';
 const handleModify = (row: any) => {
+    oldPassword = row.password;
+    modifyForm.passwordCheck = '';
     deepCopy(modifyForm, row);
 
     apiGetRoles((data: any) => {
@@ -320,6 +359,7 @@ const handleModify = (row: any) => {
 const saveModify = (formEl: FormInstance | undefined) => {
     formEl && formEl.validate((valid: boolean) => {
         if (valid) {
+            if (modifyForm.password === oldPassword) modifyForm.password = '';
             apiModifyUser(modifyForm, (data: any) => {
                 modifyVisible.value = false;
                 ElMessage.success(`修改成功 (ID ${modifyForm.id})`);

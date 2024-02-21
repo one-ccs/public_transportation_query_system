@@ -12,17 +12,17 @@ import lombok.Data;
 @Data
 public class UserVO implements BaseData {
 
-    private Integer id;
+    private Integer id = null;
 
-    private String username;
+    private String username = null;
 
-    private String password;
+    private String password = null;
 
-    private String email;
+    private String email = null;
 
-    private Byte status;
+    private Byte status = 1;
 
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
 
     /**
      * 根据 id (User.id) 和 roles 生成 UserRole (UserRole.id 为 null)

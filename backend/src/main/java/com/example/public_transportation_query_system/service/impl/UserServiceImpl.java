@@ -60,6 +60,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     /**
+     * 用过用户名查找用户
+     * @param username 用户名
+     * @return
+     */
+    public User getUserByName(String username) {
+        return this.query()
+            .eq("username", username)
+            .one();
+    }
+
+    /**
      * 返回包含角色 (Role) 的 User
      * @param user
      * @return
@@ -142,7 +153,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (!StringUtils.isBlank(userVO.getEmail()) && this.query().eq("email", userVO.getEmail()).one() != null) {
             return Result.failure(400, "添加失败，邮箱地址重复");
         }
-
         // 清除 id 值
         userVO.setId(null);
 
@@ -150,11 +160,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User newUser = userVO.asViewObject(User.class, user -> user
             .setPassword(passwordEncoder.encode(user.getPassword()))
         );
+        System.out.println(newUser);
 
         // 添加用户
         if (this.save(newUser)) {
             // 获取新用户 id
-            User user = this.getUserByNameOrEmail(userVO.getUsername(), userVO.getEmail());
+            User user = this.getUserByName(newUser.getUsername());
             userVO.setId(user.getId());
             // 设置角色
             if (roleServiceImpl.addRoles(userVO)) {
