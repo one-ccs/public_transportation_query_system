@@ -65,6 +65,12 @@ public class SpringSecurityConfig {
             .failureHandler(this::onAuthenticationFailure)
             .successHandler(this::onAuthenticationSuccess)
         )
+        .rememberMe(conf -> conf
+            .rememberMeParameter("remember")
+            .rememberMeCookieName("remember")
+            .tokenValiditySeconds(3600 * 24 * 7)
+            .useSecureCookie(true)
+        )
         .logout(conf -> conf
             // 登出接口默认自动放行
             .logoutUrl("/api/user/logout")
@@ -116,9 +122,8 @@ public class SpringSecurityConfig {
             myUserDetails.getUser().getUsername());
 
         AuthorizeVO authorizeVO = myUserDetails.getUser().asViewObject(AuthorizeVO.class, v -> {
-            v.setExpire(jwtUtil.expireTime());
             v.setToken(token);
-            v.setRoles(myUserDetails.getRolesName());
+            v.setRoles(myUserDetails.getRoleNames());
         });
 
         response.setContentType("application/json");

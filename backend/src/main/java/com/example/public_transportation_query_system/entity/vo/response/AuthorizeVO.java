@@ -1,6 +1,5 @@
 package com.example.public_transportation_query_system.entity.vo.response;
 
-import java.util.Date;
 import java.util.List;
 
 import lombok.Data;
@@ -13,5 +12,4 @@ public class AuthorizeVO {
     String username;
     List<String> roles;
     String token;
-    Date expire;
 }

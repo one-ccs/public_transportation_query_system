@@ -61,7 +61,7 @@ public class MyUserDetails implements UserDetails {
      * 返回角色英文名列表
      * @return eg. [admin, user]
      */
-    public List<String> getRolesName() {
+    public List<String> getRoleNames() {
         return this.roles.stream()
             .map(Role::getName)
             .toList();

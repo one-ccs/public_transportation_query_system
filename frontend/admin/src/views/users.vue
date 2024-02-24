@@ -200,7 +200,7 @@ const getData = () => {
 		tableData.value = data.data.list;
 		pageTotal.value = data.data.total || 50;
     }, (data: any) => {
-        ElMessage.success('用户数据获取失败');
+        ElMessage.warning('用户数据获取失败');
     });
 };
 getData();
@@ -226,11 +226,13 @@ const handleDelete = (index: number, row: any) => {
 	ElMessageBox.confirm(`确定要删除 "${row.username}" 吗？`, '提示', {
 		type: 'warning'
 	})
-		.then(() => {
-            apiDeleteUser(row.id, (data: any) => {
+		.then(async () => {
+            if ((await apiDeleteUser(row.id)).data.code === 200) {
                 ElMessage.success('删除成功');
                 tableData.value.splice(index, 1);
-            });
+            } else {
+                ElMessage.warning("删除失败");
+            }
 		})
 		.catch(() => {});
 };

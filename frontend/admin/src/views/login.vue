@@ -69,14 +69,20 @@ const rules: FormRules = {
 const permiss = usePermissStore();
 const login = ref<FormInstance>();
 const submitForm = (formEl: FormInstance | undefined) => {
-    formEl && formEl.validate((valid: boolean) => {
-        valid && apiLogin(param.username, param.password, param.remember, () => {
-			ElMessage.success('登录成功');
-			localStorage.setItem('ms_username', param.username);
-			const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'user'];
-			permiss.handleSet(keys);
-			localStorage.setItem('ms_keys', JSON.stringify(keys));
-			router.push('/');
+    formEl && formEl.validate(async (valid: boolean) => {
+        if (!valid) return;
+
+        apiLogin(param.username, param.password, param.remember, (data: any) => {
+            if (data.data.roles.includes('user') && data.data.roles.length === 1) {
+                return ElMessage.warning('您无权登录该系统！');
+            }
+
+            ElMessage.success('登录成功');
+            localStorage.setItem('ms_username', param.username);
+            const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'user'];
+            permiss.handleSet(keys);
+            localStorage.setItem('ms_keys', JSON.stringify(keys));
+            router.push('/');
         });
     });
 };

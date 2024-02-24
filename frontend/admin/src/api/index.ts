@@ -1,105 +1,26 @@
 import { ElMessage } from 'element-plus';
 import { deepCopy } from '../utils/copy';
+import { localLoad, localSave } from '../utils/local';
 import request from '../utils/request';
 import encryptMD5 from '../utils/encryptMD5';
 
+const TOKEN_NAME = 'token';
 
-const authItemName = 'access_token';
-
-
+/**
+ * 默认成功处理函数
+ * @param message 提示消息
+ */
 function defaultSuccess(data: any) {
     ElMessage.success(data.message);
 }
 
-function defaultFailure(url: string, code: number, message: string) {
-    // console.warn(`请求失败：${url} ${code} ${message}`);
-    ElMessage.warning(message);
-}
-
-function defaultError(err: any) {
-    // console.error(err);
-    ElMessage.error('发生了一些错误，请联系管理员。')
-}
-
-function deleteAccessToken() {
-    localStorage.removeItem(authItemName);
-    sessionStorage.removeItem(authItemName);
-}
-
-function takeAccessToken() {
-    const str = localStorage.getItem(authItemName) || sessionStorage.getItem(authItemName) || '{}';
-    const authObj = JSON.parse(str);
-
-    if (authObj.expire <= new Date()) {
-        deleteAccessToken();
-        ElMessage.warning('登录已过期，请重新登录！');
-        setTimeout(() => {
-            location.href = '/login';
-        }, 1200);
-
-        return {token: null};
-    }
-    return authObj;
-}
-
-function storeAccessToken(token: string, expire: Date, remember = false) {
-    const authObj = {token, expire};
-    const str = JSON.stringify(authObj);
-
-    if (remember) {
-        localStorage.setItem(authItemName, str);
-    } else {
-        sessionStorage.setItem(authItemName, str);
-    }
-}
-
-interface FetchConfig {
-    method?: string;
-    params?: any;
-    data?: any;
-    headers?: { [key: string]: string };
-    contentType?: 'form' | 'json';
-    success?: Function;
-    failure?: Function;
-    error?: Function;
-}
-
 /**
- * 封装通用请求逻辑并设置默认值
- * @param url 请求链接
- * @param config 配置
+ * 默认失败处理函数
+ * @param url 请求地址
+ * @param code 状态码
  */
-function fetch(url: string, config: FetchConfig) {
-    let {
-        method = 'GET',
-        params = {},
-        data = {},
-        headers = {},
-        contentType = 'form',
-        success = defaultSuccess,
-        failure = defaultFailure,
-        error = defaultError
-    } = config;
-
-    if (!('Authorization' in headers)) headers['Authorization'] = `Bearer ${takeAccessToken().token}`;
-    if (!('Content-Type' in headers)) {
-        if (contentType === 'form') headers['Content-Type'] = 'multipart/form-data';
-        if (contentType === 'json') headers['Content-Type'] = 'application/json';
-    };
-    if (method.toLocaleLowerCase() === 'get' && Object.keys(data).length !== 0) console.error('FetchError: GET 方法不允许携带 data 参数，请检查你的配置。');
-
-    request(url, { method, params, data, headers }).then(res => {
-        if (res.data.code == 200) {
-            success(res.data);
-        } else if (res.data.code == 401) {
-            ElMessage.warning('登录已过期，即将跳转登录界面！');
-            setTimeout(() => {
-                location.href = '/login';
-            }, 1200);
-        } else {
-            failure(url, res.data.code, res.data.message);
-        }
-    }).catch(err => error(err));
+function defaultFailure(data: any, status: number, url: string) {
+    ElMessage.warning(data.message);
 }
 
 /**
@@ -110,14 +31,17 @@ function fetch(url: string, config: FetchConfig) {
  * @param success 成功回调函数
  * @param failure 失败回调函数
  */
-function apiLogin(username: string, password: string, remember: boolean, success?: Function, failure?: Function) {
-    fetch('/api/user/login', {
+function apiLogin(username: string, password: string, remember: boolean, success: Function = defaultSuccess, failure: Function = defaultFailure) {
+    return request('/api/user/login', {
         method: 'post',
         data: {
-            username, password: encryptMD5(password)
+            username,
+            password: encryptMD5(password),
+            remember
         },
+        contentType: 'form',
         success: (data: any) => {
-            storeAccessToken(data.data.token, data.data.expire);
+            localSave(TOKEN_NAME, data.data.token);
             success && success(data);
         }
         ,failure
@@ -130,9 +54,10 @@ function apiLogin(username: string, password: string, remember: boolean, success
  * @param success 成功回调函数
  * @param failure 失败回调函数
  */
-function apiPageUser(query: object, success?: Function, failure?: Function) {
-    fetch('/api/user', {
+function apiPageUser(query: object, success: Function = defaultSuccess, failure: Function = defaultFailure) {
+    return request('/api/user', {
         params: query,
+        token: localLoad(TOKEN_NAME)!,
         success,
         failure
     });
@@ -144,17 +69,18 @@ function apiPageUser(query: object, success?: Function, failure?: Function) {
  * @param success 成功回调函数
  * @param failure 失败回调函数
  */
-function apiAddUser(user: any, success?: Function, failure?: Function) {
+function apiAddUser(user: any, success: Function = defaultSuccess, failure: Function = defaultFailure) {
     // 使用临时变量，防止修改原变量
     let t: any = {};
     deepCopy(t, user);
     // 加密密码
     t.password = encryptMD5(t.password);
+    delete t.passwordCheck;
 
-    fetch('/api/user', {
+    return request('/api/user', {
         method: 'put',
         data: t,
-        contentType: 'json',
+        token: localLoad(TOKEN_NAME)!,
         success,
         failure
     });
@@ -166,18 +92,17 @@ function apiAddUser(user: any, success?: Function, failure?: Function) {
  * @param success 成功回调函数
  * @param failure 失败回调函数
  */
-function apiModifyUser(user: any, success?: Function, failure?: Function) {
+function apiModifyUser(user: any, success: Function = defaultSuccess, failure: Function = defaultFailure) {
     let t: any = {};
     deepCopy(t, user);
     // 加密密码
-    t.password = encryptMD5(t.password);
-    // 加密密码
     t.password && (t.password = encryptMD5(t.password));
+    delete t.passwordCheck;
 
-    fetch('/api/user', {
+    return request('/api/user', {
         method: 'post',
-        data: user,
-        contentType: 'json',
+        data: t,
+        token: localLoad(TOKEN_NAME)!,
         success,
         failure
     });
@@ -185,14 +110,15 @@ function apiModifyUser(user: any, success?: Function, failure?: Function) {
 
 /**
  * 删除用户信息
- * @param uid 用户 id
+ * @param id 用户 id
  * @param success 成功回调函数
  * @param failure 失败回调函数
  */
-function apiDeleteUser(uid: number, success?: Function, failure?: Function) {
-    fetch('/api/user', {
+function apiDeleteUser(id: number, success: Function = defaultSuccess, failure: Function = defaultFailure) {
+    return request('/api/user', {
         method: 'delete',
-        data: { uid },
+        data: { id },
+        token: localLoad(TOKEN_NAME)!,
         success,
         failure
     })
@@ -204,17 +130,15 @@ function apiDeleteUser(uid: number, success?: Function, failure?: Function) {
  * @param failure 失败回调函数
  */
 function apiGetRoles(success?: Function, failure?: Function) {
-    fetch('/api/role', {
+    return request('/api/role', {
+        token: localLoad(TOKEN_NAME)!,
         success,
         failure
     });
 }
 
 const fetchData = () => {
-    return request({
-        url: 'http://127.0.0.1:5173/table.json',
-        method: 'get'
-    });
+    return request('http://127.0.0.1:5173/table.json');
 };
 
 export {
