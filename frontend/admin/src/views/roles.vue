@@ -18,7 +18,7 @@
                         value-format="YYYY-MM-DD HH:mm:ss"
                         placeholder="结束日期"
                     />
-                    <el-input v-model="query.username" placeholder="用户名" class="handle-input mr10"></el-input>
+                    <el-input v-model="query.query" @change="handleSearch" prefix-icon="Search" clearable placeholder="搜索用户名或邮箱地址" class="handle-input mr10"></el-input>
                     <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
                 </div>
 			</div>
@@ -48,7 +48,7 @@
 						<el-button text :icon="Edit" @click="handleModify(scope.row)" v-permiss="15">
 							修改
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
+						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index, scope.row)" v-permiss="16">
 							删除
 						</el-button>
 					</template>
@@ -75,8 +75,28 @@
 					<el-input v-model="addForm.username"></el-input>
 				</el-form-item>
 				<el-form-item label="密码" prop="password">
-					<el-input v-model="addForm.password"></el-input>
+                    <el-input v-model="addForm.password"></el-input>
 				</el-form-item>
+				<el-form-item label="确认密码" prop="passwordCheck">
+					<el-input v-model="addForm.passwordCheck"></el-input>
+				</el-form-item>
+				<el-form-item label="邮箱地址" prop="email">
+					<el-input v-model="addForm.email"></el-input>
+				</el-form-item>
+                <el-form-item label="角色" prop="roles">
+                    <el-select
+                        v-model="addForm.roles"
+                        multiple
+                        placeholder="请选择角色"
+                        value-key="id"
+                    >
+                        <el-option
+                            v-for="item in roleList" :key="item.id"
+                            :label="item.nameZh"
+                            :value="item"
+                        />
+                    </el-select>
+                </el-form-item>
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
@@ -89,12 +109,53 @@
 		<!-- 修改弹出框 -->
 		<el-dialog title="修改" v-model="modifyVisible" width="30%">
 			<el-form :model="modifyForm" ref="modifyFormRef" :rules="modifyRules" label-width="70px">
-				<el-form-item label="英文名" prop="username">
+				<el-form-item label="ID" prop="id">
+					<el-input v-model="modifyForm.id" disabled></el-input>
+				</el-form-item>
+				<el-form-item label="用户名" prop="username">
 					<el-input v-model="modifyForm.username"></el-input>
 				</el-form-item>
-				<el-form-item label="中文名" prop="password">
+				<el-form-item label="密码" prop="password">
 					<el-input v-model="modifyForm.password"></el-input>
 				</el-form-item>
+				<el-form-item label="确认密码" prop="passwordCheck">
+					<el-input v-model="modifyForm.passwordCheck"></el-input>
+				</el-form-item>
+				<el-form-item label="邮箱地址" prop="email">
+					<el-input v-model="modifyForm.email"></el-input>
+				</el-form-item>
+                <el-form-item label="状态" prop="status">
+                    <el-select
+                        v-model="modifyForm.status"
+                        placeholder="请选择状态"
+                    >
+                        <el-option
+                            v-for="item in statusList" :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                            <el-tag
+                                :type="item.value == 0 ? 'info': item.value == 1 ? 'success': 'danger'"
+                            >
+                                {{ item.value == 0 ? '未激活': item.value == 1 ? '已激活': '已注销' }}
+                            </el-tag>
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="角色" prop="roles">
+                    <el-select
+                        v-model="modifyForm.roles"
+                        multiple
+                        placeholder="请选择角色"
+                        value-key="id"
+                    >
+                        <el-option
+                            v-for="item in roleList" :key="item.id"
+                            :label="item.nameZh"
+                            :value="item"
+                        />
+                    </el-select>
+                </el-form-item>
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
@@ -110,7 +171,7 @@
 import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
-import { apiAddUser, apiPageUser, apiModifyUser, apiGetRoles } from '../api/index';
+import { apiAddUser, apiPageUser, apiModifyUser, apiGetRoles, apiDeleteUser } from '../api/index';
 import { deepCopy } from '../utils/copy';
 interface TableItem {
 	id: number;
@@ -123,7 +184,7 @@ interface TableItem {
 }
 
 const query = reactive({
-	username: '',
+	query: '',
 	pageIndex: 1,
 	pageSize: 10,
     startDatetime: '',
@@ -139,7 +200,7 @@ const getData = () => {
 		tableData.value = data.data.list;
 		pageTotal.value = data.data.total || 50;
     }, (data: any) => {
-        ElMessage.success('用户数据获取失败');
+        ElMessage.warning('用户数据获取失败');
     });
 };
 getData();
@@ -160,14 +221,18 @@ const handlePageChange = (val: number) => {
 };
 
 // 删除操作
-const handleDelete = (index: number) => {
+const handleDelete = (index: number, row: any) => {
 	// 二次确认删除
-	ElMessageBox.confirm('确定要删除吗？', '提示', {
+	ElMessageBox.confirm(`确定要删除 "${row.username ? row.username : row.email}" 吗？`, '提示', {
 		type: 'warning'
 	})
-		.then(() => {
-			ElMessage.success('删除成功');
-			tableData.value.splice(index, 1);
+		.then(async () => {
+            if ((await apiDeleteUser(row.id)).code === 200) {
+                ElMessage.success('删除成功');
+                getData();
+            } else {
+                ElMessage.warning("删除失败");
+            }
 		})
 		.catch(() => {});
 };
@@ -176,10 +241,43 @@ const handleDelete = (index: number) => {
 const roleList = reactive([
     {id: 1, name: 'user', nameZh: '用户'}
 ])
+const statusList = reactive([
+    {value: 0, label: '未激活'},
+    {value: 1, label: '已激活'},
+    {value: 2, label: '已注销'},
+])
+
+// 添加用户密码验证
+const validatePassAdd = (rule: any, value: any, callback: any) => {
+    if (value === '') {
+        callback(new Error('请输入密码'));
+    } else {
+        if (addForm.passwordCheck !== '') {
+            if (!addFormRef.value) return;
+            addFormRef.value.validateField('passwordCheck', () => null);
+        }
+        callback();
+    }
+}
+const validatePassAdd2 = (rule: any, value: any, callback: any) => {
+    if (value === '') {
+        callback(new Error('请二次确认密码'));
+    } else if (value !== addForm.password) {
+        callback(new Error("二次确认密码不匹配"));
+    } else {
+        callback();
+    }
+}
 // 添加表格验证
 const addRules: FormRules = {
-	name: [{ required: true, message: '请输入角色英文名', trigger: 'blur' }],
-	nameZh: [{ required: true, message: '请输入角色中文名', trigger: 'blur' }],
+	username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+    password: [
+        { required: true, message: '请输入密码', trigger: 'blur' },
+        { validator: validatePassAdd, trigger: 'blur' }
+    ],
+    passwordCheck: [{ validator: validatePassAdd2, trigger: 'blur' }],
+    email: [{ type: 'email', message: '请输入正确的电子邮件地址', trigger: ['blur', 'change'] }],
+    roles: [{ required: true, message: '请选择角色', trigger: 'blur' }],
 };
 // 表格添加时弹窗和保存
 const addVisible = ref(false);
@@ -187,6 +285,7 @@ const addFormRef = ref<FormInstance>();
 const addForm = reactive({
     username: '',
     password: '',
+    passwordCheck: '',
     email: '',
     roles: [roleList[0]],
 });
@@ -194,6 +293,7 @@ const handleSave = () => {
     apiGetRoles((data: any) => {
         deepCopy(roleList, data.data);
     })
+    addForm.passwordCheck = '';
 	addVisible.value = true;
 };
 const saveAdd = (formEl: FormInstance | undefined) => {
@@ -208,30 +308,31 @@ const saveAdd = (formEl: FormInstance | undefined) => {
     });
 };
 
-// 修改表格验证
-const validatePass = (rule: any, value: any, callback: any) => {
+// 修改用户密码验证
+const validatePassModify = (rule: any, value: any, callback: any) => {
     if (value === '') {
-        callback(new Error('请输入密码'))
+        callback(new Error('请输入密码'));
     } else {
         if (modifyForm.passwordCheck !== '') {
-            if (!modifyFormRef.value) return
-            modifyFormRef.value.validateField('passwordCheck', () => null)
+            if (!modifyFormRef.value) return;
+            modifyFormRef.value.validateField('passwordCheck', () => null);
         }
-        callback()
+        callback();
     }
 }
-const validatePass2 = (rule: any, value: any, callback: any) => {
+const validatePassModify2 = (rule: any, value: any, callback: any) => {
+    if (modifyForm.password === oldPassword) callback();
     if (value === '') {
-        callback(new Error('请二次确认密码'))
+        callback(new Error('请二次确认密码'));
     } else if (value !== modifyForm.password) {
-        callback(new Error("二次确认密码不匹配"))
+        callback(new Error("二次确认密码不匹配"));
     } else {
-        callback()
+        callback();
     }
 }
 const modifyRules: FormRules = {
-    password: [{ validator: validatePass, trigger: 'blur' }],
-    passwordCheck: [{ validator: validatePass2, trigger: 'blur' }],
+    password: [{ validator: validatePassModify, trigger: 'blur' }],
+    passwordCheck: [{ validator: validatePassModify2, trigger: 'blur' }],
     email: [{ type: 'email', message: '请输入正确的电子邮件地址', trigger: ['blur', 'change'] }],
 };
 // 表格修改时弹窗和保存
@@ -239,15 +340,21 @@ const modifyVisible = ref(false);
 const modifyFormRef = ref<FormInstance>();
 const modifyForm = reactive({
     id: null,
-	username: '',
-	email: '',
+	username: null,
+	email: null,
     status: null,
-    password: '',
+    password: null,
     passwordCheck: '',
+    passwordModified: false,
     roles: [roleList[0]],
 });
+let oldModifyString = '';
+let oldPassword = '';
 const handleModify = (row: any) => {
+    oldPassword = row.password;
+    modifyForm.passwordCheck = '';
     deepCopy(modifyForm, row);
+    oldModifyString = JSON.stringify(modifyForm);
 
     apiGetRoles((data: any) => {
         deepCopy(roleList, data.data);
@@ -257,6 +364,10 @@ const handleModify = (row: any) => {
 const saveModify = (formEl: FormInstance | undefined) => {
     formEl && formEl.validate((valid: boolean) => {
         if (valid) {
+            // 表单未修改
+            if (JSON.stringify(modifyForm) === oldModifyString) return ElMessage.warning('未修改');
+            // 密码未修改
+            if (modifyForm.password !== oldPassword) modifyForm.passwordModified = true;
             apiModifyUser(modifyForm, (data: any) => {
                 modifyVisible.value = false;
                 ElMessage.success(`修改成功 (ID ${modifyForm.id})`);

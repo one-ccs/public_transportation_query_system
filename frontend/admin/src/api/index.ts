@@ -1,5 +1,4 @@
 import { ElMessage } from 'element-plus';
-import { deepCopy } from '../utils/copy';
 import { localLoad, localSave } from '../utils/local';
 import request from '../utils/request';
 import encryptMD5 from '../utils/encryptMD5';
@@ -31,7 +30,7 @@ function defaultFailure(data: any, status: number, url: string) {
  * @param success 成功回调函数
  * @param failure 失败回调函数
  */
-function apiLogin(username: string, password: string, remember: boolean, success: Function = defaultSuccess, failure: Function = defaultFailure) {
+function apiLogin(username: string, password: string, remember: boolean, success?: Function, failure: Function = defaultFailure) {
     return request('/api/user/login', {
         method: 'post',
         data: {
@@ -54,7 +53,7 @@ function apiLogin(username: string, password: string, remember: boolean, success
  * @param success 成功回调函数
  * @param failure 失败回调函数
  */
-function apiPageUser(query: object, success: Function = defaultSuccess, failure: Function = defaultFailure) {
+function apiPageUser(query: object, success?: Function, failure: Function = defaultFailure) {
     return request('/api/user', {
         params: query,
         token: localLoad(TOKEN_NAME)!,
@@ -69,17 +68,15 @@ function apiPageUser(query: object, success: Function = defaultSuccess, failure:
  * @param success 成功回调函数
  * @param failure 失败回调函数
  */
-function apiAddUser(user: any, success: Function = defaultSuccess, failure: Function = defaultFailure) {
-    // 使用临时变量，防止修改原变量
-    let t: any = {};
-    deepCopy(t, user);
-    // 加密密码
-    t.password = encryptMD5(t.password);
-    delete t.passwordCheck;
-
+function apiAddUser(user: any, success?: Function, failure: Function = defaultFailure) {
     return request('/api/user', {
         method: 'put',
-        data: t,
+        data: {
+            username: user.username,
+            password: encryptMD5(user.password),
+            email: user.email || null,
+            roles: user.roles
+        },
         token: localLoad(TOKEN_NAME)!,
         success,
         failure
@@ -92,16 +89,17 @@ function apiAddUser(user: any, success: Function = defaultSuccess, failure: Func
  * @param success 成功回调函数
  * @param failure 失败回调函数
  */
-function apiModifyUser(user: any, success: Function = defaultSuccess, failure: Function = defaultFailure) {
-    let t: any = {};
-    deepCopy(t, user);
-    // 加密密码
-    t.password && (t.password = encryptMD5(t.password));
-    delete t.passwordCheck;
-
+function apiModifyUser(user: any, success?: Function, failure: Function = defaultFailure) {
     return request('/api/user', {
         method: 'post',
-        data: t,
+        data: {
+            id: user.id,
+            username: user.username,
+            password: user.passwordModified ? encryptMD5(user.password): null,
+            email: user.email,
+            status: user.status,
+            roles: user.roles
+        },
         token: localLoad(TOKEN_NAME)!,
         success,
         failure
@@ -114,7 +112,7 @@ function apiModifyUser(user: any, success: Function = defaultSuccess, failure: F
  * @param success 成功回调函数
  * @param failure 失败回调函数
  */
-function apiDeleteUser(id: number, success: Function = defaultSuccess, failure: Function = defaultFailure) {
+function apiDeleteUser(id: number, success?: Function, failure: Function = defaultFailure) {
     return request('/api/user', {
         method: 'delete',
         data: { id },

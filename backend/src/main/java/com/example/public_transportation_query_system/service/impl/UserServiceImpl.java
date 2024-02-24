@@ -35,6 +35,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     RoleServiceImpl roleServiceImpl;
 
     @Autowired
+    UserMapper userMapper;
+
+    @Autowired
     PasswordEncoder passwordEncoder;
 
     @Override
@@ -100,34 +103,37 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public Result<Object> getPageUsers(QueryUserVO query) {
         // 构造查询条件
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.ge(query.getStartDatetime() != null, "register_datetime", query.getStartDatetime());
-        queryWrapper.le(query.getEndDatetime() != null, "register_datetime", query.getEndDatetime());
-        queryWrapper.like(StringUtils.isNotBlank(query.getUsername()), "username", query.getUsername());
+        queryWrapper.ge(query.getStartDatetime() != null, "register_datetime", query.getStartDatetime())
+            .le(query.getEndDatetime() != null, "register_datetime", query.getEndDatetime())
+            .and(StringUtils.isNotBlank(query.getQuery()), i -> i
+                .like("username", query.getQuery())
+                .or()
+                .like("email", query.getQuery())
+            )
+            .orderByAsc("id");
+
         // 分页
         Page<User> page = new Page<>(
             Optional.ofNullable(query.getPageIndex()).orElse(1),
             Optional.ofNullable(query.getPageSize()).orElse(10)
         );
+
+        // 获取分页数据
+        if (query.getFilterFlag() == 0) userMapper.selectPage(page, queryWrapper);
+        if (query.getFilterFlag() == 1) {
+            queryWrapper.eq("user_role.rid", 1);
+            userMapper.selectPage(page, queryWrapper);
+        }
+        if (query.getFilterFlag() == 2) {
+            queryWrapper.gt("user_role.rid", 1);
+            userMapper.selectPage(page, queryWrapper);
+        }
+
         // 构造返回结构
         HashMap<String, Object> map = new HashMap<>();
-        map.put("total", this.count());
-        map.put("list", this.list(page, queryWrapper).stream()
+        map.put("total", page.getTotal());
+        map.put("list", page.getRecords().stream()
             .map(this::getUserBO)
-            // filterFlag 为 0 时不进行过滤
-            // filterFlag 为 1 时筛选角色 id = 1 的用户
-            // filterFlag 为 2 时筛选角色 id > 1 的用户
-            .filter(userBO -> {
-                if (query.getFilterFlag() == 0) return true;
-                if (query.getFilterFlag() == 1) {
-                    return userBO.getRoles().stream()
-                        .anyMatch(role -> role.getId() == 1);
-                }
-                if (query.getFilterFlag() == 2) {
-                    return userBO.getRoles().stream()
-                            .anyMatch(role -> role.getId() > 1);
-                }
-                return false;
-            })
             .toList()
         );
 
@@ -153,13 +159,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (!StringUtils.isBlank(userVO.getEmail()) && this.query().eq("email", userVO.getEmail()).one() != null) {
             return Result.failure(400, "添加失败，邮箱地址重复");
         }
-        // 清除 id 值
-        userVO.setId(null);
 
-        // 构造 User 并加密密码
-        User newUser = userVO.asViewObject(User.class, user -> user
-            .setPassword(passwordEncoder.encode(user.getPassword()))
-        );
+        // 构造 User 并清除 id、加密密码
+        User newUser = userVO.asViewObject(User.class, user -> {
+            user.setId(null);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        });
 
         // 添加用户
         if (this.save(newUser)) {
@@ -176,6 +181,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     public Result<Object> updateByUserVO(UserVO userVO) {
+        // 表单验证
+        if (StringUtils.isBlank(userVO.getUsername()) && StringUtils.isBlank(userVO.getEmail())) {
+            return Result.failure(400, "用户名和邮箱地址不能同时为空");
+        }
+        if (!StringUtils.isBlank(userVO.getUsername()) &&
+                this.query().ne("id", userVO.getId()).eq("username", userVO.getUsername()).one() != null) {
+            return Result.failure(400, "修改失败，用户名重复");
+        }
+        if (!StringUtils.isBlank(userVO.getEmail()) &&
+                this.query().ne("id", userVO.getId()).eq("email", userVO.getEmail()).one() != null) {
+            return Result.failure(400, "修改失败，邮箱地址重复");
+        }
+
         User newUser = userVO.asViewObject(User.class, user -> {
             if (StringUtils.isNotBlank(user.getPassword())) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));

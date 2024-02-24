@@ -18,7 +18,7 @@
                         value-format="YYYY-MM-DD HH:mm:ss"
                         placeholder="结束日期"
                     />
-                    <el-input v-model="query.username" placeholder="用户名" class="handle-input mr10"></el-input>
+                    <el-input v-model="query.query" @change="handleSearch" prefix-icon="Search" clearable placeholder="搜索用户名或邮箱地址" class="handle-input mr10"></el-input>
                     <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
                 </div>
 			</div>
@@ -184,7 +184,7 @@ interface TableItem {
 }
 
 const query = reactive({
-	username: '',
+	query: '',
 	pageIndex: 1,
 	pageSize: 10,
     startDatetime: '',
@@ -223,13 +223,13 @@ const handlePageChange = (val: number) => {
 // 删除操作
 const handleDelete = (index: number, row: any) => {
 	// 二次确认删除
-	ElMessageBox.confirm(`确定要删除 "${row.username}" 吗？`, '提示', {
+	ElMessageBox.confirm(`确定要删除 "${row.username ? row.username : row.email}" 吗？`, '提示', {
 		type: 'warning'
 	})
 		.then(async () => {
-            if ((await apiDeleteUser(row.id)).data.code === 200) {
+            if ((await apiDeleteUser(row.id)).code === 200) {
                 ElMessage.success('删除成功');
-                tableData.value.splice(index, 1);
+                getData();
             } else {
                 ElMessage.warning("删除失败");
             }
@@ -340,18 +340,21 @@ const modifyVisible = ref(false);
 const modifyFormRef = ref<FormInstance>();
 const modifyForm = reactive({
     id: null,
-	username: '',
-	email: '',
+	username: null,
+	email: null,
     status: null,
-    password: '',
+    password: null,
     passwordCheck: '',
+    passwordModified: false,
     roles: [roleList[0]],
 });
+let oldModifyString = '';
 let oldPassword = '';
 const handleModify = (row: any) => {
     oldPassword = row.password;
     modifyForm.passwordCheck = '';
     deepCopy(modifyForm, row);
+    oldModifyString = JSON.stringify(modifyForm);
 
     apiGetRoles((data: any) => {
         deepCopy(roleList, data.data);
@@ -361,7 +364,10 @@ const handleModify = (row: any) => {
 const saveModify = (formEl: FormInstance | undefined) => {
     formEl && formEl.validate((valid: boolean) => {
         if (valid) {
-            if (modifyForm.password === oldPassword) modifyForm.password = '';
+            // 表单未修改
+            if (JSON.stringify(modifyForm) === oldModifyString) return ElMessage.warning('未修改');
+            // 密码未修改
+            if (modifyForm.password !== oldPassword) modifyForm.passwordModified = true;
             apiModifyUser(modifyForm, (data: any) => {
                 modifyVisible.value = false;
                 ElMessage.success(`修改成功 (ID ${modifyForm.id})`);

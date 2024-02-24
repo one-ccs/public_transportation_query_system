@@ -44,3 +44,4 @@ mybatis-plus:
         map-underscore-to-camel-case: true
         # 控制台打印 SQL 语句
         # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    type-aliases-package: com.example.public_transportation_query_system.entity
