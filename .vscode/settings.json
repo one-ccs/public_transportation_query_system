@@ -8,6 +8,7 @@
         "Datetime",
         "Freemarker",
         "gensalt",
+        "jdbc",
         "Mybatis",
         "permiss",
         "Pinia",

@@ -3,6 +3,8 @@ package com.example.public_transportation_query_system.config;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import com.example.public_transportation_query_system.entity.dto.MyUserDetails;
 import com.example.public_transportation_query_system.entity.vo.Result;
@@ -37,6 +41,18 @@ public class SpringSecurityConfig {
 
     @Autowired
     JwtAuthorizeFilter jwtAuthorizeFilter;
+
+    @Autowired
+    private DataSource dataSource;
+
+    @SuppressWarnings("null")
+    @Bean PersistentTokenRepository persistentTokenRepository() {
+        JdbcTokenRepositoryImpl jdbcTokenRepositoryImpl = new JdbcTokenRepositoryImpl();
+        // 自动建表，仅在第一次启动时设置为 true
+        jdbcTokenRepositoryImpl.setCreateTableOnStartup(false);
+        jdbcTokenRepositoryImpl.setDataSource(dataSource);
+        return jdbcTokenRepositoryImpl;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -66,10 +82,16 @@ public class SpringSecurityConfig {
             .successHandler(this::onAuthenticationSuccess)
         )
         .rememberMe(conf -> conf
-            .rememberMeParameter("remember")
-            .rememberMeCookieName("remember")
-            .tokenValiditySeconds(3600 * 24 * 7)
             .useSecureCookie(true)
+            // HTTP 请求参数中的名字
+            .rememberMeParameter("remember")
+            // 保存在 Cookie 中的名字
+            .rememberMeCookieName("remember")
+            // 有效时长 秒
+            .tokenValiditySeconds(3600 * 24 * 7)
+            // 持久层对象
+            .tokenRepository(persistentTokenRepository())
+            .userDetailsService(userServiceImpl)
         )
         .logout(conf -> conf
             // 登出接口默认自动放行
