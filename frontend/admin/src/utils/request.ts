@@ -76,12 +76,12 @@ async function request(url: string, config?: RequestConfig) {
     if (token && tokenType === 'Bearer') headers['Authorization'] = `Bearer ${token}`;
 
     return service({ url, method, params, data, headers }).then((res: AxiosResponse) => {
-        if (res.data.code === 200 && success) success(res.data);
-        if (res.data.code !== 200 && failure) failure(res.data, res.data.code, url);
+        if (res.data.code === 200 && success) return Promise.resolve(success(res.data));
+        if (res.data.code !== 200 && failure) return Promise.resolve(failure(res.data, res.data.code, url));
 
         return Promise.resolve(res.data);
     }).catch((err: AxiosError) => {
-        if (error) error(err);
+        if (error) return Promise.reject(error(err));
 
         return Promise.reject(err);
     });

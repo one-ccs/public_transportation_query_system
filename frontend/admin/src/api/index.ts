@@ -1,5 +1,5 @@
 import { ElMessage } from 'element-plus';
-import { localLoad, localSave } from '../utils/local';
+import { localLoad, localSave } from '../utils/storage';
 import request from '../utils/request';
 import encryptMD5 from '../utils/encryptMD5';
 
@@ -31,7 +31,7 @@ function defaultFailure(data: any, status: number, url: string) {
  * @param failure 失败回调函数
  * @returns Promise
  */
-function apiLogin(username: string, password: string, remember: boolean, success?: Function, failure: Function = defaultFailure) {
+function apiLogin(username: string, password: string, remember: boolean, success: Function = defaultSuccess, failure: Function = defaultFailure) {
     return request('/api/user/login', {
         method: 'post',
         data: {
@@ -55,7 +55,7 @@ function apiLogin(username: string, password: string, remember: boolean, success
  * @param failure 失败回调函数
  * @returns Promise
  */
-function apiPageUser(query: object, success?: Function, failure: Function = defaultFailure) {
+function apiPageUser(query: object, success: Function = defaultSuccess, failure: Function = defaultFailure) {
     return request('/api/user', {
         params: query,
         token: localLoad(TOKEN_NAME)!,
@@ -71,7 +71,7 @@ function apiPageUser(query: object, success?: Function, failure: Function = defa
  * @param failure 失败回调函数
  * @returns Promise
  */
-function apiAddUser(user: any, success?: Function, failure: Function = defaultFailure) {
+function apiAddUser(user: any, success: Function = defaultSuccess, failure: Function = defaultFailure) {
     return request('/api/user', {
         method: 'put',
         data: {
@@ -93,7 +93,7 @@ function apiAddUser(user: any, success?: Function, failure: Function = defaultFa
  * @param failure 失败回调函数
  * @returns Promise
  */
-function apiModifyUser(user: any, success?: Function, failure: Function = defaultFailure) {
+function apiModifyUser(user: any, success: Function = defaultSuccess, failure: Function = defaultFailure) {
     return request('/api/user', {
         method: 'post',
         data: {
@@ -117,7 +117,7 @@ function apiModifyUser(user: any, success?: Function, failure: Function = defaul
  * @param failure 失败回调函数
  * @returns Promise
  */
-function apiDeleteUser(id: number | Array<number>, success?: Function, failure: Function = defaultFailure) {
+function apiDeleteUser(id: number | Array<number>, success: Function = defaultSuccess, failure: Function = defaultFailure) {
     return request('/api/user', {
         method: 'delete',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
@@ -133,7 +133,7 @@ function apiDeleteUser(id: number | Array<number>, success?: Function, failure: 
  * @param failure 失败回调函数
  * @returns Promise
  */
-function apiGetRoles(query: string, success?: Function, failure: Function = defaultFailure) {
+function apiGetRoles(query: string, success: Function = defaultSuccess, failure: Function = defaultFailure) {
     return request('/api/role', {
         params: { query },
         token: localLoad(TOKEN_NAME)!,
@@ -149,7 +149,7 @@ function apiGetRoles(query: string, success?: Function, failure: Function = defa
  * @param failure 失败回调函数
  * @returns Promise
  */
-function apiAddRole(role: any, success?: Function, failure: Function = defaultFailure) {
+function apiAddRole(role: any, success: Function = defaultSuccess, failure: Function = defaultFailure) {
     return request('/api/role', {
         method: 'put',
         data: {
@@ -169,7 +169,7 @@ function apiAddRole(role: any, success?: Function, failure: Function = defaultFa
  * @param failure 失败回调函数
  * @returns Promise
  */
-function apiModifyRole(role: any, success?: Function, failure: Function = defaultFailure) {
+function apiModifyRole(role: any, success: Function = defaultSuccess, failure: Function = defaultFailure) {
     return request('/api/role', {
         method: 'post',
         data: {
@@ -190,7 +190,7 @@ function apiModifyRole(role: any, success?: Function, failure: Function = defaul
  * @param failure 失败回调函数
  * @returns Promise
  */
-function apiDeleteRole(id: number | Array<number>, success?: Function, failure: Function = defaultFailure) {
+function apiDeleteRole(id: number | Array<number>, success: Function = defaultSuccess, failure: Function = defaultFailure) {
     return request('/api/role', {
         method: 'delete',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
