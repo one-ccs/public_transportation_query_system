@@ -5,8 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.public_transportation_query_system.entity.po.Role;
+import com.example.public_transportation_query_system.entity.vo.BaseQuery;
+import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.request.UserVO;
 import com.example.public_transportation_query_system.mapper.RoleMapper;
 import com.example.public_transportation_query_system.service.IRoleService;
@@ -36,5 +40,71 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
      */
     public boolean addRoles(UserVO userVO) {
         return userRoleServiceImpl.saveOrUpdateBatch(userVO.getUserRoleList());
+    }
+
+    /**
+     * 模糊查询角色列表
+     * @param query 英文名或中文名
+     * @return
+     */
+    public Result<Object> getRoles(BaseQuery query) {
+        LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(StringUtils.isNotBlank(query.getQuery()), Role::getName, query.getQuery())
+            .or()
+            .like(StringUtils.isNotBlank(query.getQuery()), Role::getNameZh, query.getQuery());
+
+        return Result.success(this.list(queryWrapper));
+    }
+
+    /**
+     * 添加角色
+     * @param role
+     * @return
+     */
+    public Result<Object> addRole(Role role) {
+        // 表单验证
+        if (StringUtils.isBlank(role.getName())) {
+            return Result.failure(400, "角色英文名不能为空");
+        }
+        if (StringUtils.isBlank(role.getNameZh())) {
+            return Result.failure(400, "角色中文名不能为空");
+        }
+
+        if (this.save(role)) {
+            return Result.success("添加成功");
+        }
+        return Result.failure(400, "添加失败");
+    }
+
+    /**
+     * 修改角色
+     * @param role
+     * @return
+     */
+    public Result<Object> modifyRole(Role role) {
+        // 表单验证
+        if (StringUtils.isBlank(role.getName())) {
+            return Result.failure(400, "角色英文名不能为空");
+        }
+        if (StringUtils.isBlank(role.getNameZh())) {
+            return Result.failure(400, "角色中文名不能为空");
+        }
+
+        if (this.updateById(role)) {
+            return Result.success("修改成功");
+        }
+        return Result.failure(400, "修改失败");
+    }
+
+    /**
+     * 删除角色
+     * @param id
+     * @return
+     */
+    public Result<Object> deleteRole(Integer id) {
+        if (this.removeById(id)) {
+            return Result.success("删除成功");
+        }
+        return Result.failure(400, "删除失败");
     }
 }

@@ -217,8 +217,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return Result.failure(400, "修改失败");
     }
 
-    public Result<Object> deleteUserById(Integer uid) {
-        if (this.removeById(uid)) {
+    public Result<Object> deleteUserById(Integer id) {
+        if (this.removeById(id)) {
             return Result.success("删除成功");
         }
         return Result.failure(400, "删除失败");

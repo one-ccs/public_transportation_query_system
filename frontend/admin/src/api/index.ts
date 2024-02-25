@@ -29,6 +29,7 @@ function defaultFailure(data: any, status: number, url: string) {
  * @param remember 是否记住
  * @param success 成功回调函数
  * @param failure 失败回调函数
+ * @returns Promise
  */
 function apiLogin(username: string, password: string, remember: boolean, success?: Function, failure: Function = defaultFailure) {
     return request('/api/user/login', {
@@ -52,6 +53,7 @@ function apiLogin(username: string, password: string, remember: boolean, success
  * @param query 分页查询信息
  * @param success 成功回调函数
  * @param failure 失败回调函数
+ * @returns Promise
  */
 function apiPageUser(query: object, success?: Function, failure: Function = defaultFailure) {
     return request('/api/user', {
@@ -67,6 +69,7 @@ function apiPageUser(query: object, success?: Function, failure: Function = defa
  * @param user 用户信息
  * @param success 成功回调函数
  * @param failure 失败回调函数
+ * @returns Promise
  */
 function apiAddUser(user: any, success?: Function, failure: Function = defaultFailure) {
     return request('/api/user', {
@@ -88,6 +91,7 @@ function apiAddUser(user: any, success?: Function, failure: Function = defaultFa
  * @param user 用户信息
  * @param success 成功回调函数
  * @param failure 失败回调函数
+ * @returns Promise
  */
 function apiModifyUser(user: any, success?: Function, failure: Function = defaultFailure) {
     return request('/api/user', {
@@ -111,6 +115,7 @@ function apiModifyUser(user: any, success?: Function, failure: Function = defaul
  * @param id 用户 id
  * @param success 成功回调函数
  * @param failure 失败回调函数
+ * @returns Promise
  */
 function apiDeleteUser(id: number, success?: Function, failure: Function = defaultFailure) {
     return request('/api/user', {
@@ -126,9 +131,69 @@ function apiDeleteUser(id: number, success?: Function, failure: Function = defau
  * 获取角色列表
  * @param success 成功回调函数
  * @param failure 失败回调函数
+ * @returns Promise
  */
-function apiGetRoles(success?: Function, failure?: Function) {
+function apiGetRoles(query: string, success?: Function, failure?: Function) {
     return request('/api/role', {
+        params: { query },
+        token: localLoad(TOKEN_NAME)!,
+        success,
+        failure
+    });
+}
+
+/**
+ * 添加角色
+ * @param role 角色信息
+ * @param success 成功回调函数
+ * @param failure 失败回调函数
+ * @returns Promise
+ */
+function apiAddRole(role: any, success?: Function, failure?: Function) {
+    return request('/api/role', {
+        method: 'put',
+        data: {
+            name: role.name,
+            nameZh: role.nameZh
+        },
+        token: localLoad(TOKEN_NAME)!,
+        success,
+        failure
+    });
+}
+
+/**
+ * 修改角色
+ * @param role 角色信息
+ * @param success 成功回调函数
+ * @param failure 失败回调函数
+ * @returns Promise
+ */
+function apiModifyRole(role: any, success?: Function, failure?: Function) {
+    return request('/api/role', {
+        method: 'post',
+        data: {
+            id: role.id,
+            name: role.name,
+            nameZh: role.nameZh
+        },
+        token: localLoad(TOKEN_NAME)!,
+        success,
+        failure
+    });
+}
+
+/**
+ * 删除角色
+ * @param id 角色 id
+ * @param success 成功回调函数
+ * @param failure 失败回调函数
+ * @returns Promise
+ */
+function apiDeleteRole(id: number, success?: Function, failure?: Function) {
+    return request('/api/role', {
+        method: 'delete',
+        data: { id },
         token: localLoad(TOKEN_NAME)!,
         success,
         failure
@@ -146,5 +211,8 @@ export {
     apiModifyUser,
     apiDeleteUser,
     apiGetRoles,
-    fetchData
+    apiAddRole,
+    apiModifyRole,
+    apiDeleteRole,
+    fetchData,
 }

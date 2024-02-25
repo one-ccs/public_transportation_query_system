@@ -37,7 +37,7 @@ service.interceptors.response.use(
 );
 
 interface RequestConfig {
-    method?: string;
+    method?: 'get' | 'post' | 'put' | 'delete' | 'options';
     params?: any;
     data?: any;
     contentType?: 'form' | 'json';

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -20,9 +21,11 @@ public class Role implements Serializable {
     private Integer id;
 
     @Schema(description = "角色")
+    @NotBlank
     private String name;
 
     @Schema(description = "中文名称")
+    @NotBlank
     private String nameZh;
 
     @Override
