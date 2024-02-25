@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.public_transportation_query_system.entity.po.Role;
 import com.example.public_transportation_query_system.entity.vo.BaseQuery;
 import com.example.public_transportation_query_system.entity.vo.Result;
+import com.example.public_transportation_query_system.entity.vo.request.DeleteVO;
 import com.example.public_transportation_query_system.service.impl.RoleServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,7 +46,7 @@ public class RoleController {
 
     @Operation(summary = "删除角色", description = "删除角色接口")
     @DeleteMapping
-    public Result<Object> apiRoleDelete(@RequestBody Role role) {
-        return roleServiceImpl.deleteRole(role.getId());
+    public Result<Object> apiRoleDelete(@RequestBody DeleteVO deleteVO) {
+        return roleServiceImpl.deleteRole(deleteVO);
     }
 }

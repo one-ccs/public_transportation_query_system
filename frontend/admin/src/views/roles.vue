@@ -2,6 +2,7 @@
 	<div>
 		<div class="container">
             <div class="handle-box">
+                <el-button type="danger" :icon="Delete" @click="deleteBatch()">批量删除</el-button>
                 <el-button type="primary" :icon="Plus" @click="handleSave()">新增</el-button>
                 <el-button :icon="RefreshLeft" @click="getData()">刷新</el-button>
 
@@ -10,7 +11,16 @@
                     <el-button type="primary" :icon="Search" @click="handleSearch()">搜索</el-button>
                 </div>
 			</div>
-			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+			<el-table
+                ref="multipleTable"
+                :data="tableData"
+                :default-sort="{ prop: 'id', order: 'ascending' }"
+                border
+                @selection-change="handleSelectionChange"
+                class="table"
+                header-cell-class-name="table-header"
+            >
+                <el-table-column type="selection" width="39" />
 				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
 				<el-table-column prop="name" label="英文名"></el-table-column>
 				<el-table-column prop="nameZh" label="中文名"></el-table-column>
@@ -95,6 +105,26 @@ const getData = () => {
 };
 getData();
 
+// 多选操作
+const multipleSelection = ref<TableItem[]>([]);
+const handleSelectionChange = (val: TableItem[]) => {
+    multipleSelection.value = val;
+};
+// 批量删除
+const deleteBatch = () => {
+	// 二次确认删除
+	ElMessageBox.confirm(`确定要删除 "${multipleSelection.value.length}" 条数据吗？`, '提示', {
+		type: 'warning'
+	})
+		.then(() => {
+            apiDeleteRole(multipleSelection.value.map(item => item.id), () => {
+                ElMessage.success('删除成功');
+                getData();
+            });
+		})
+		.catch(() => {});
+};
+
 // 查询操作
 let searchLocked = false;
 const handleSearch = () => {
@@ -109,16 +139,14 @@ const handleSearch = () => {
 // 删除操作
 const handleDelete = (index: number, row: any) => {
 	// 二次确认删除
-	ElMessageBox.confirm(`确定要删除 "${row.username ? row.username : row.email}" 吗？`, '提示', {
+	ElMessageBox.confirm(`确定要删除角色 "${row.nameZh}" 吗？`, '提示', {
 		type: 'warning'
 	})
-		.then(async () => {
-            if ((await apiDeleteRole(row.id)).code === 200) {
+		.then(() => {
+            apiDeleteRole(row.id, () => {
                 ElMessage.success('删除成功');
                 getData();
-            } else {
-                ElMessage.warning("删除失败");
-            }
+            });
 		})
 		.catch(() => {});
 };

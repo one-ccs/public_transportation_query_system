@@ -20,6 +20,7 @@ import com.example.public_transportation_query_system.entity.po.Role;
 import com.example.public_transportation_query_system.entity.po.User;
 import com.example.public_transportation_query_system.entity.po.UserRole;
 import com.example.public_transportation_query_system.entity.vo.Result;
+import com.example.public_transportation_query_system.entity.vo.request.DeleteVO;
 import com.example.public_transportation_query_system.entity.vo.request.QueryUserVO;
 import com.example.public_transportation_query_system.entity.vo.request.UserVO;
 import com.example.public_transportation_query_system.mapper.UserMapper;
@@ -109,8 +110,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 .like("username", query.getQuery())
                 .or()
                 .like("email", query.getQuery())
-            )
-            .orderByAsc("id");
+            );
 
         // 分页
         Page<User> page = new Page<>(
@@ -154,10 +154,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             return Result.failure(400, "密码不能为空");
         }
         if (!StringUtils.isBlank(userVO.getUsername()) && this.query().eq("username", userVO.getUsername()).one() != null) {
-            return Result.failure(400, "添加失败，用户名重复");
+            return Result.failure(400, "用户名重复");
         }
         if (!StringUtils.isBlank(userVO.getEmail()) && this.query().eq("email", userVO.getEmail()).one() != null) {
-            return Result.failure(400, "添加失败，邮箱地址重复");
+            return Result.failure(400, "邮箱地址重复");
         }
 
         // 构造 User 并清除 id、加密密码
@@ -217,10 +217,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return Result.failure(400, "修改失败");
     }
 
-    public Result<Object> deleteUserById(Integer id) {
-        if (this.removeById(id)) {
-            return Result.success("删除成功");
+    public Result<Object> deleteUserById(DeleteVO deleteVO) {
+        if (deleteVO.getIds() != null) {
+            // 批量删除
+            if (this.removeBatchByIds(deleteVO.getIds())) {
+                return Result.success("批量删除成功");
+            }
+            return Result.failure(400, "批量删除失败");
         }
-        return Result.failure(400, "删除失败");
+        else if (deleteVO.getId() != null) {
+            // 单个删除
+            if (this.removeById(deleteVO.getId())) {
+                return Result.success("删除成功");
+            }
+            return Result.failure(400, "删除失败");
+        }
+        return Result.failure(400, "删除失败，参数 id 和 ids 不能同时为空");
     }
 }

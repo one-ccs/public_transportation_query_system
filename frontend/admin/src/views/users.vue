@@ -2,6 +2,7 @@
 	<div>
 		<div class="container">
             <div class="handle-box">
+                <el-button type="danger" :icon="Delete" @click="deleteBatch()">批量删除</el-button>
                 <el-button type="primary" :icon="Plus" @click="handleSave()">新增</el-button>
                 <el-button :icon="RefreshLeft" @click="getData()">刷新</el-button>
 
@@ -22,12 +23,21 @@
                     <el-button type="primary" :icon="Search" @click="handleSearch()">搜索</el-button>
                 </div>
 			</div>
-			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-				<el-table-column prop="username" label="用户名"></el-table-column>
-				<el-table-column prop="password" label="密码" min-width="200"></el-table-column>
-				<el-table-column prop="email" label="邮箱地址"></el-table-column>
-				<el-table-column prop="registerDatetime" label="注册时间" width="180" align="center"></el-table-column>
+			<el-table
+                ref="multipleTable"
+                :data="tableData"
+                :default-sort="{ prop: 'id', order: 'ascending' }"
+                border
+                @selection-change="handleSelectionChange"
+                class="table"
+                header-cell-class-name="table-header"
+            >
+                <el-table-column type="selection" width="39" />
+				<el-table-column prop="id" label="ID" width="66" align="center" sortable></el-table-column>
+				<el-table-column prop="username" label="用户名" width="125" sortable></el-table-column>
+				<el-table-column prop="password" label="密码" min-width="200" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="email" label="邮箱地址" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="registerDatetime" label="注册时间" align="center" sortable show-overflow-tooltip></el-table-column>
 				<el-table-column label="状态" width="100" align="center">
 					<template #default="scope">
 						<el-tag
@@ -43,7 +53,7 @@
                     </template>
 				</el-table-column>
 
-				<el-table-column label="操作" width="220" align="center">
+				<el-table-column label="操作" width="200" align="center">
 					<template #default="scope">
 						<el-button text :icon="Edit" @click="handleModify(scope.row)" v-permiss="15">
 							修改
@@ -173,6 +183,8 @@ import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
 import { apiAddUser, apiPageUser, apiModifyUser, apiGetRoles, apiDeleteUser } from '../api/index';
 import { deepCopy } from '../utils/copy';
+
+
 interface TableItem {
 	id: number;
 	username: string;
@@ -205,6 +217,26 @@ const getData = () => {
 };
 getData();
 
+// 多选操作
+const multipleSelection = ref<TableItem[]>([]);
+const handleSelectionChange = (val: TableItem[]) => {
+    multipleSelection.value = val;
+};
+// 批量删除
+const deleteBatch = () => {
+	// 二次确认删除
+	ElMessageBox.confirm(`确定要删除 "${multipleSelection.value.length}" 条数据吗？`, '提示', {
+		type: 'warning'
+	})
+		.then(() => {
+            apiDeleteUser(multipleSelection.value.map(item => item.id), () => {
+                ElMessage.success('删除成功');
+                getData();
+            });
+		})
+		.catch(() => {});
+};
+
 // 查询操作
 let searchLocked = false;
 const handleSearch = () => {
@@ -217,14 +249,14 @@ const handleSearch = () => {
 	query.pageIndex = 1;
 	getData();
 };
-const handleSizeChange = (val: number) => {
-    query.pageSize = val;
-    getData();
-}
 // 分页导航
 const handlePageChange = (val: number) => {
 	query.pageIndex = val;
 	getData();
+};
+const handleSizeChange = (val: number) => {
+    query.pageSize = val;
+    getData();
 };
 
 // 删除操作
@@ -233,13 +265,11 @@ const handleDelete = (index: number, row: any) => {
 	ElMessageBox.confirm(`确定要删除 "${row.username ? row.username : row.email}" 吗？`, '提示', {
 		type: 'warning'
 	})
-		.then(async () => {
-            if ((await apiDeleteUser(row.id)).code === 200) {
+		.then(() => {
+            apiDeleteUser(row.id, () => {
                 ElMessage.success('删除成功');
                 getData();
-            } else {
-                ElMessage.warning("删除失败");
-            }
+            });
 		})
 		.catch(() => {});
 };

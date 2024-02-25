@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.public_transportation_query_system.entity.vo.Result;
+import com.example.public_transportation_query_system.entity.vo.request.DeleteVO;
 import com.example.public_transportation_query_system.entity.vo.request.QueryUserVO;
 import com.example.public_transportation_query_system.entity.vo.request.UserVO;
 import com.example.public_transportation_query_system.service.impl.UserServiceImpl;
@@ -47,8 +48,8 @@ public class UserController {
 
     @Operation(summary = "删除用户", description = "删除用户接口")
     @DeleteMapping
-    public Result<Object> apiUserDelete(@RequestBody UserVO userVO) {
-        return userServiceImpl.deleteUserById(userVO.getId());
+    public Result<Object> apiUserDelete(@RequestBody DeleteVO deleteVO) {
+        return userServiceImpl.deleteUserById(deleteVO);
     }
 
     @SecurityRequirements

@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.public_transportation_query_system.entity.po.Role;
 import com.example.public_transportation_query_system.entity.vo.BaseQuery;
 import com.example.public_transportation_query_system.entity.vo.Result;
+import com.example.public_transportation_query_system.entity.vo.request.DeleteVO;
 import com.example.public_transportation_query_system.entity.vo.request.UserVO;
 import com.example.public_transportation_query_system.mapper.RoleMapper;
 import com.example.public_transportation_query_system.service.IRoleService;
@@ -63,6 +64,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
      */
     public Result<Object> addRole(Role role) {
         // 表单验证
+        if (!StringUtils.isBlank(role.getName()) && this.query().eq("name", role.getName()).one() != null) {
+            return Result.failure(400, "角色英文名重复");
+        }
+        if (!StringUtils.isBlank(role.getNameZh()) && this.query().eq("name_zh", role.getNameZh()).one() != null) {
+            return Result.failure(400, "角色中文名重复");
+        }
         if (StringUtils.isBlank(role.getName())) {
             return Result.failure(400, "角色英文名不能为空");
         }
@@ -83,6 +90,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
      */
     public Result<Object> modifyRole(Role role) {
         // 表单验证
+        if (!StringUtils.isBlank(role.getName()) && this.query().eq("name", role.getName()).one() != null) {
+            return Result.failure(400, "角色英文名重复");
+        }
+        if (!StringUtils.isBlank(role.getNameZh()) && this.query().eq("name_zh", role.getNameZh()).one() != null) {
+            return Result.failure(400, "角色中文名重复");
+        }
         if (StringUtils.isBlank(role.getName())) {
             return Result.failure(400, "角色英文名不能为空");
         }
@@ -98,13 +111,24 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     /**
      * 删除角色
-     * @param id
+     * @param deleteVO
      * @return
      */
-    public Result<Object> deleteRole(Integer id) {
-        if (this.removeById(id)) {
-            return Result.success("删除成功");
+    public Result<Object> deleteRole(DeleteVO deleteVO) {
+        if (deleteVO.getIds() != null) {
+            // 批量删除
+            if (this.removeBatchByIds(deleteVO.getIds())) {
+                return Result.success("批量删除成功");
+            }
+            return Result.failure(400, "批量删除失败");
         }
-        return Result.failure(400, "删除失败");
+        else if (deleteVO.getId() != null) {
+            // 单个删除
+            if (this.removeById(deleteVO.getId())) {
+                return Result.success("删除成功");
+            }
+            return Result.failure(400, "删除失败");
+        }
+        return Result.failure(400, "删除失败，参数 id 和 ids 不能同时为空");
     }
 }
