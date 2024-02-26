@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -19,13 +20,14 @@ public class Ad implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @Schema(description = "广告位置索引")
-    private Byte index;
+    @Schema(description = "广告类型")
+    private Byte type;
 
     @Schema(description = "标题")
     private String title;
 
     @Schema(description = "描述")
+    @TableField("`describe`")
     private String describe;
 
     @Schema(description = "广告图片链接")
@@ -46,7 +48,7 @@ public class Ad implements Serializable {
     public String toString() {
         return "Ad{" +
             "id = " + id +
-            ", index = " + index +
+            ", type = " + type +
             ", title = " + title +
             ", describe = " + describe +
             ", imgUrl = " + imgUrl +

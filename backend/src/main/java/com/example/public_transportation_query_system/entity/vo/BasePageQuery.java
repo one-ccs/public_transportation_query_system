@@ -19,6 +19,8 @@ public class BasePageQuery {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endDatetime;
 
+    private String query;
+
     @Override
     public String toString() {
         return "BasePageQuery{" +
@@ -26,6 +28,7 @@ public class BasePageQuery {
             ", pageSize = " + pageSize +
             ", startDatetime = " + startDatetime +
             ", endDatetime = " + endDatetime +
+            ", query = " + query +
         "}";
     }
 }

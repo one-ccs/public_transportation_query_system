@@ -57,43 +57,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @return
      */
     public User getUserByNameOrEmail(String username, String email) {
-        return this.query()
-            .eq("username", username).or()
-            .eq("email", email)
-            .one();
-    }
-
-    /**
-     * 用过用户名查找用户
-     * @param username 用户名
-     * @return
-     */
-    public User getUserByName(String username) {
-        return this.query()
-            .eq("username", username)
+        return this.lambdaQuery()
+            .eq(User::getUsername, username).or()
+            .eq(User::getEmail, email)
             .one();
     }
 
     /**
      * 返回包含角色 (Role) 的 User
      * @param user
-     * @return
+     * @return UserBO
      */
     public UserBO getUserBO(User user) {
         return user.asViewObject(UserBO.class, v -> {
             v.setRoles(roleServiceImpl.getRolesByUid(user.getId()));
         });
-    }
-
-    public Result<Object> register(String username, String password, String email) {
-        if (this.save(new User(username, password, email))) {
-            User newUser = this.getUserByNameOrEmail(username, email);
-            // 添加角色为 用户
-            userRoleServiceImpl.save(new UserRole(null, newUser.getId(), 1));
-
-            return Result.success("注册成功");
-        }
-        return Result.success("注册失败");
     }
 
     /**
@@ -168,9 +146,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         // 添加用户
         if (this.save(newUser)) {
-            // 获取新用户 id
-            User user = this.getUserByName(newUser.getUsername());
-            userVO.setId(user.getId());
+            // 设置新用户的 id
+            userVO.setId(newUser.getId());
             // 设置角色
             if (roleServiceImpl.addRoles(userVO)) {
                 return Result.success("添加成功");
@@ -180,7 +157,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return Result.failure(400, "添加失败");
     }
 
-    public Result<Object> updateByUserVO(UserVO userVO) {
+    public Result<Object> modifyUser(UserVO userVO) {
         // 表单验证
         if (StringUtils.isBlank(userVO.getUsername()) && StringUtils.isBlank(userVO.getEmail())) {
             return Result.failure(400, "用户名和邮箱地址不能同时为空");
@@ -217,7 +194,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return Result.failure(400, "修改失败");
     }
 
-    public Result<Object> deleteUserById(DeleteVO deleteVO) {
+    public Result<Object> deleteUser(DeleteVO deleteVO) {
         if (deleteVO.getIds() != null) {
             // 批量删除
             if (this.removeBatchByIds(deleteVO.getIds())) {
@@ -233,5 +210,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             return Result.failure(400, "删除失败");
         }
         return Result.failure(400, "删除失败，参数 id 和 ids 不能同时为空");
+    }
+
+    /**
+     * 用户注册
+     * @param username 用户名
+     * @param password 密码
+     * @param email 邮箱
+     * @return
+     */
+    public Result<Object> register(String username, String password, String email) {
+        if (this.save(new User(username, password, email))) {
+            User newUser = this.getUserByNameOrEmail(username, email);
+            // 添加角色为 用户
+            userRoleServiceImpl.save(new UserRole(null, newUser.getId(), 1));
+
+            return Result.success("注册成功");
+        }
+        return Result.success("注册失败");
     }
 }

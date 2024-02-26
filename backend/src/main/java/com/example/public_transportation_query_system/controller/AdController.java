@@ -1,14 +1,19 @@
 package com.example.public_transportation_query_system.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.public_transportation_query_system.entity.po.Ad;
+import com.example.public_transportation_query_system.entity.vo.BasePageQuery;
 import com.example.public_transportation_query_system.entity.vo.Result;
-import com.example.public_transportation_query_system.entity.vo.request.QueryNoticeVO;
+import com.example.public_transportation_query_system.entity.vo.request.DeleteVO;
+import com.example.public_transportation_query_system.service.impl.AdServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,27 +23,30 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/ad")
 public class AdController {
 
+    @Autowired
+    AdServiceImpl adServiceImpl;
+
     @Operation(summary = "获取广告列表", description = "获取广告列表接口")
     @GetMapping
-    public Result<Object> apiNoticeGet(QueryNoticeVO queryNoticeVO) {
-        return Result.success(queryNoticeVO);
+    public Result<Object> apiAdGet(BasePageQuery query) {
+        return adServiceImpl.getPageAds(query);
     }
 
     @Operation(summary = "添加广告", description = "添加广告接口")
     @PutMapping
-    public Result<Object> apiNoticePut() {
-        return Result.success();
+    public Result<Object> apiAdPut(@RequestBody Ad ad) {
+        return adServiceImpl.addAd(ad);
     }
 
     @Operation(summary = "修改广告", description = "修改广告接口")
     @PostMapping
-    public Result<Object> apiNoticePost() {
-        return Result.success();
+    public Result<Object> apiAdPost(@RequestBody Ad ad) {
+        return adServiceImpl.modifyAd(ad);
     }
 
     @Operation(summary = "删除广告", description = "删除广告接口")
     @DeleteMapping
-    public Result<Object> apiNoticeDelete() {
-        return Result.success();
+    public Result<Object> apiAdDelete(@RequestBody DeleteVO deleteVO) {
+        return adServiceImpl.deleteAd(deleteVO);
     }
 }

@@ -43,13 +43,13 @@ public class UserController {
     @Operation(summary = "修改用户", description = "修改用户接口")
     @PostMapping
     public Result<Object> apiUserPost(@RequestBody UserVO userVO) {
-        return userServiceImpl.updateByUserVO(userVO);
+        return userServiceImpl.modifyUser(userVO);
     }
 
     @Operation(summary = "删除用户", description = "删除用户接口")
     @DeleteMapping
     public Result<Object> apiUserDelete(@RequestBody DeleteVO deleteVO) {
-        return userServiceImpl.deleteUserById(deleteVO);
+        return userServiceImpl.deleteUser(deleteVO);
     }
 
     @SecurityRequirements
