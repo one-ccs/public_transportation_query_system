@@ -30,7 +30,7 @@ public class UserVO implements BaseData {
      */
     public List<UserRole> getUserRoleList() {
         List<UserRole> userRoleList = new ArrayList<>();
-        roles.forEach(role -> userRoleList.add(new UserRole(null, id, role.getId())));
+        roles.stream().distinct().forEach(role -> userRoleList.add(new UserRole(null, id, role.getId())));
         return userRoleList;
     }
 
