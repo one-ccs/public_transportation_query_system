@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -20,6 +21,7 @@ public class Lost implements Serializable {
     private Integer id;
 
     @Schema(description = "描述")
+    @TableField("`describe`")
     private String describe;
 
     @Schema(description = "图片链接")

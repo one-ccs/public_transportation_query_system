@@ -19,7 +19,7 @@ import com.example.public_transportation_query_system.service.INoticeService;
 @Service
 public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> implements INoticeService {
 
-    public Result<Object> getPageNotices(BasePageQuery query) {
+    public Result<Object> getPageNotice(BasePageQuery query) {
         // 构造查询条件
         LambdaQueryWrapper<Notice> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.ge(query.getStartDatetime() != null, Notice::getReleaseDatetime, query.getStartDatetime())

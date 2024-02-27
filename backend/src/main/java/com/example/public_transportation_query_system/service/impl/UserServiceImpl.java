@@ -79,7 +79,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @param query
      * @return
      */
-    public Result<Object> getPageUsers(QueryUserVO query) {
+    public Result<Object> getPageUser(QueryUserVO query) {
         // 构造查询条件
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.ge(query.getStartDatetime() != null, "register_datetime", query.getStartDatetime())

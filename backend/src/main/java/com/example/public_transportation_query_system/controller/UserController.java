@@ -31,7 +31,7 @@ public class UserController {
     @Operation(summary = "获取用户列表", description = "获取用户列表接口")
     @GetMapping
     public Result<Object> apiUserGet(QueryUserVO query) {
-        return userServiceImpl.getPageUsers(query);
+        return userServiceImpl.getPageUser(query);
     }
 
     @Operation(summary = "添加用户", description = "添加用户接口")

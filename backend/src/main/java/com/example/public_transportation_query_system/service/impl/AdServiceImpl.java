@@ -19,7 +19,7 @@ import com.example.public_transportation_query_system.service.IAdService;
 @Service
 public class AdServiceImpl extends ServiceImpl<AdMapper, Ad> implements IAdService {
 
-    public Result<Object> getPageAds(BasePageQuery query) {
+    public Result<Object> getPageAd(BasePageQuery query) {
         // 构造查询条件
         LambdaQueryWrapper<Ad> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.ge(query.getStartDatetime() != null, Ad::getStartDatetime, query.getStartDatetime())

@@ -29,7 +29,7 @@ public class NoticeController {
     @Operation(summary = "获取公告列表", description = "获取公告列表接口")
     @GetMapping
     public Result<Object> apiNoticeGet(BasePageQuery query) {
-        return noticeServiceImpl.getPageNotices(query);
+        return noticeServiceImpl.getPageNotice(query);
     }
 
     @Operation(summary = "添加公告", description = "添加公告接口")

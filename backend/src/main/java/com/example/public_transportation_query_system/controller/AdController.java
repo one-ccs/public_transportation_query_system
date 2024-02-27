@@ -29,7 +29,7 @@ public class AdController {
     @Operation(summary = "获取广告列表", description = "获取广告列表接口")
     @GetMapping
     public Result<Object> apiAdGet(BasePageQuery query) {
-        return adServiceImpl.getPageAds(query);
+        return adServiceImpl.getPageAd(query);
     }
 
     @Operation(summary = "添加广告", description = "添加广告接口")
