@@ -90,6 +90,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
      */
     public Result<Object> modifyRole(Role role) {
         // 表单验证
+        if (role.getId() == null) {
+            return Result.failure(400, "角色 id 不能为空");
+        }
         if (!StringUtils.isBlank(role.getName()) && this.query().eq("name", role.getName()).one() != null) {
             return Result.failure(400, "角色英文名重复");
         }

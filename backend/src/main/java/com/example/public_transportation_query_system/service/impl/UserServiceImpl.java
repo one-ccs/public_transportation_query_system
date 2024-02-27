@@ -159,15 +159,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     public Result<Object> modifyUser(UserVO userVO) {
         // 表单验证
-        if (StringUtils.isBlank(userVO.getUsername()) && StringUtils.isBlank(userVO.getEmail())) {
+        if (userVO.getId() == null) {
+            return Result.failure(400, "用户 id 不能为空");
+        }
+        if (StringUtils.isBlank(userVO.getUsername()) &&
+                StringUtils.isBlank(userVO.getEmail())) {
             return Result.failure(400, "用户名和邮箱地址不能同时为空");
         }
         if (!StringUtils.isBlank(userVO.getUsername()) &&
-                this.query().ne("id", userVO.getId()).eq("username", userVO.getUsername()).one() != null) {
+            this.query()
+                .ne("id", userVO.getId())
+                .eq("username", userVO.getUsername())
+                .one() != null) {
             return Result.failure(400, "修改失败，用户名重复");
         }
         if (!StringUtils.isBlank(userVO.getEmail()) &&
-                this.query().ne("id", userVO.getId()).eq("email", userVO.getEmail()).one() != null) {
+            this.query()
+                .ne("id", userVO.getId())
+                .eq("email", userVO.getEmail())
+                .one() != null) {
             return Result.failure(400, "修改失败，邮箱地址重复");
         }
 

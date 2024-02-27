@@ -71,6 +71,9 @@ public class AdServiceImpl extends ServiceImpl<AdMapper, Ad> implements IAdServi
 
     public Result<Object> modifyAd(Ad ad) {
         // 表单验证
+        if (ad.getId() == null) {
+            return Result.failure(400, "广告 id 不能为空");
+        }
         if (StringUtils.isBlank(ad.getImgUrl())) {
             return Result.failure(400, "广告图片不能为空");
         }
@@ -82,7 +85,7 @@ public class AdServiceImpl extends ServiceImpl<AdMapper, Ad> implements IAdServi
         }
 
         // 修改广告
-        if (this.save(ad)) {
+        if (this.updateById(ad)) {
             return Result.success("修改成功");
         }
         return Result.failure(400, "修改失败");
