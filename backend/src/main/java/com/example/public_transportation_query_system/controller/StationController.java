@@ -1,13 +1,19 @@
 package com.example.public_transportation_query_system.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.public_transportation_query_system.entity.po.Station;
+import com.example.public_transportation_query_system.entity.vo.BasePageQuery;
 import com.example.public_transportation_query_system.entity.vo.Result;
+import com.example.public_transportation_query_system.entity.vo.request.DeleteVO;
+import com.example.public_transportation_query_system.service.impl.StationServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,27 +23,30 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/station")
 public class StationController {
 
+    @Autowired
+    StationServiceImpl stationServiceImpl;
+
     @Operation(summary = "获取站点列表", description = "获取站点列表接口")
     @GetMapping
-    public Result<Object> apiStationGet() {
-        return Result.success();
+    public Result<Object> apiStationGet(BasePageQuery query) {
+        return stationServiceImpl.getPageStation(query);
     }
 
     @Operation(summary = "添加站点", description = "添加站点接口")
     @PutMapping
-    public Result<Object> apiStationPut() {
-        return Result.success();
+    public Result<Object> apiStationPut(@RequestBody Station station) {
+        return stationServiceImpl.addStation(station);
     }
 
     @Operation(summary = "修改站点", description = "修改站点接口")
     @PostMapping
-    public Result<Object> apiStationPost() {
-        return Result.success();
+    public Result<Object> apiStationPost(@RequestBody Station station) {
+        return stationServiceImpl.modifyStation(station);
     }
 
     @Operation(summary = "删除站点", description = "删除站点接口")
     @DeleteMapping
-    public Result<Object> apiStationDelete() {
-        return Result.success();
+    public Result<Object> apiStationDelete(@RequestBody DeleteVO deleteVO) {
+        return stationServiceImpl.deleteStation(deleteVO);
     }
 }

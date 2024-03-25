@@ -49,4 +49,5 @@ public class NoticeController {
     public Result<Object> apiNoticeDelete(@RequestBody DeleteVO deleteVO) {
         return noticeServiceImpl.deleteNotice(deleteVO);
     }
+
 }

@@ -93,4 +93,5 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         }
         return Result.failure("删除失败，参数 id 和 ids 不能同时为空");
     }
+
 }
