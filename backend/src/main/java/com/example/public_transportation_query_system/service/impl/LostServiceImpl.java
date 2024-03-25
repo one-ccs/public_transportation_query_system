@@ -50,13 +50,13 @@ public class LostServiceImpl extends ServiceImpl<LostMapper, Lost> implements IL
     public Result<Object> addLost(Lost lost) {
         // 表单验证
         if (StringUtils.isBlank(lost.getDescribe())) {
-            return Result.failure(400, "失物描述不能为空");
+            return Result.failure("失物描述不能为空");
         }
         if (StringUtils.isBlank(lost.getAddress())) {
-            return Result.failure(400, "拾取地点不能为空");
+            return Result.failure("拾取地点不能为空");
         }
         if (lost.getPickDatetime() == null) {
-            return Result.failure(400, "拾取时间不能为空");
+            return Result.failure("拾取时间不能为空");
         }
 
         // 清除 id
@@ -66,29 +66,29 @@ public class LostServiceImpl extends ServiceImpl<LostMapper, Lost> implements IL
         if (this.save(lost)) {
             return Result.success("添加成功");
         }
-        return Result.failure(400, "添加失败");
+        return Result.failure("添加失败");
     }
 
     public Result<Object> modifyLost(Lost lost) {
         // 表单验证
         if (lost.getId() == null) {
-            return Result.failure(400, "失物招领 id 不能为空");
+            return Result.failure("失物招领 id 不能为空");
         }
         if (StringUtils.isBlank(lost.getDescribe())) {
-            return Result.failure(400, "失物描述不能为空");
+            return Result.failure("失物描述不能为空");
         }
         if (StringUtils.isBlank(lost.getAddress())) {
-            return Result.failure(400, "拾取地点不能为空");
+            return Result.failure("拾取地点不能为空");
         }
         if (lost.getPickDatetime() == null) {
-            return Result.failure(400, "拾取时间不能为空");
+            return Result.failure("拾取时间不能为空");
         }
 
         // 修改公告
         if (this.updateById(lost)) {
             return Result.success("修改成功");
         }
-        return Result.failure(400, "修改失败");
+        return Result.failure("修改失败");
     }
 
     public Result<Object> deleteLost(DeleteVO deleteVO) {
@@ -97,16 +97,16 @@ public class LostServiceImpl extends ServiceImpl<LostMapper, Lost> implements IL
             if (this.removeBatchByIds(deleteVO.getIds())) {
                 return Result.success("批量删除成功");
             }
-            return Result.failure(400, "批量删除失败");
+            return Result.failure("批量删除失败");
         }
         else if (deleteVO.getId() != null) {
             // 单个删除
             if (this.removeById(deleteVO.getId())) {
                 return Result.success("删除成功");
             }
-            return Result.failure(400, "删除失败");
+            return Result.failure("删除失败");
         }
-        return Result.failure(400, "删除失败，参数 id 和 ids 不能同时为空");
+        return Result.failure("删除失败，参数 id 和 ids 不能同时为空");
     }
 
 }

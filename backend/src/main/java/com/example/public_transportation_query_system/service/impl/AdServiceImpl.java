@@ -50,13 +50,13 @@ public class AdServiceImpl extends ServiceImpl<AdMapper, Ad> implements IAdServi
     public Result<Object> addAd(Ad ad) {
         // 表单验证
         if (StringUtils.isBlank(ad.getImgUrl())) {
-            return Result.failure(400, "广告图片不能为空");
+            return Result.failure("广告图片不能为空");
         }
         if (ad.getStartDatetime() == null) {
-            return Result.failure(400, "开始日期不能为空");
+            return Result.failure("开始日期不能为空");
         }
         if (ad.getEndDatetime() == null) {
-            return Result.failure(400, "结束日期不能为空");
+            return Result.failure("结束日期不能为空");
         }
 
         // 清除 id
@@ -66,29 +66,29 @@ public class AdServiceImpl extends ServiceImpl<AdMapper, Ad> implements IAdServi
         if (this.save(ad)) {
             return Result.success("添加成功");
         }
-        return Result.failure(400, "添加失败");
+        return Result.failure("添加失败");
     }
 
     public Result<Object> modifyAd(Ad ad) {
         // 表单验证
         if (ad.getId() == null) {
-            return Result.failure(400, "广告 id 不能为空");
+            return Result.failure("广告 id 不能为空");
         }
         if (StringUtils.isBlank(ad.getImgUrl())) {
-            return Result.failure(400, "广告图片不能为空");
+            return Result.failure("广告图片不能为空");
         }
         if (ad.getStartDatetime() == null) {
-            return Result.failure(400, "开始日期不能为空");
+            return Result.failure("开始日期不能为空");
         }
         if (ad.getEndDatetime() == null) {
-            return Result.failure(400, "结束日期不能为空");
+            return Result.failure("结束日期不能为空");
         }
 
         // 修改广告
         if (this.updateById(ad)) {
             return Result.success("修改成功");
         }
-        return Result.failure(400, "修改失败");
+        return Result.failure("修改失败");
     }
 
     public Result<Object> deleteAd(DeleteVO deleteVO) {
@@ -97,16 +97,16 @@ public class AdServiceImpl extends ServiceImpl<AdMapper, Ad> implements IAdServi
             if (this.removeBatchByIds(deleteVO.getIds())) {
                 return Result.success("批量删除成功");
             }
-            return Result.failure(400, "批量删除失败");
+            return Result.failure("批量删除失败");
         }
         else if (deleteVO.getId() != null) {
             // 单个删除
             if (this.removeById(deleteVO.getId())) {
                 return Result.success("删除成功");
             }
-            return Result.failure(400, "删除失败");
+            return Result.failure("删除失败");
         }
-        return Result.failure(400, "删除失败，参数 id 和 ids 不能同时为空");
+        return Result.failure("删除失败，参数 id 和 ids 不能同时为空");
     }
 
 }

@@ -24,6 +24,6 @@ public class ValidationController {
     public Result<Void> validateError(ValidationException exception) {
         log.warn("Resolved [{}: {}]", exception.getClass().getName(), exception.getMessage());
 
-        return Result.failure(400, "请求参数有误");
+        return Result.failure("请求参数有误");
     }
 }

@@ -10,31 +10,13 @@ import com.alibaba.fastjson2.JSONWriter;
 public record Result<T>(long id, Integer code, String message, T data) {
 
     /**
-     * 成功（带数据和提示信息）
+     * 成功（数据、提示信息）
      * @param data<T>
      * @param message<String>
      * @return
      */
     public static <T> Result<T> success(String message, T data) {
         return new Result<>(requestId(), 200, message, data);
-    }
-
-    /**
-     * 成功（带数据）
-     * @param data<T>
-     * @return
-     */
-    public static <T> Result<T> success(T data) {
-        return success("请求成功", data);
-    }
-
-    /**
-     * 成功（带提示信息）
-     * @param message<String>
-     * @return
-     */
-    public static <T> Result<T> success(String message) {
-        return success(message, null);
     }
 
     /**
@@ -46,32 +28,25 @@ public record Result<T>(long id, Integer code, String message, T data) {
     }
 
     /**
-     * 未登录
+     * 成功（提示信息）
+     * @param message<String>
      * @return
      */
-    public static <T> Result<T> unauthorized() {
-        return failure(401, "请登录后操作");
+    public static <T> Result<T> success(String message) {
+        return success(message, null);
     }
 
     /**
-     * 无权访问
+     * 成功（数据）
+     * @param data<T>
      * @return
      */
-    public static <T> Result<T> forbidden() {
-        return failure(403, "您无权操作");
+    public static <T> Result<T> success(T data) {
+        return success("请求成功", data);
     }
 
     /**
-     * 失败（带状态码）
-     * @param code<Integer>
-     * @return
-     */
-    public static <T> Result<T> failure(Integer code) {
-        return new Result<>(requestId(), code, "操作失败", null);
-    }
-
-    /**
-     * 失败（带状态码及提示信息）
+     * 失败（状态码、提示信息）
      * @param code<Integer>
      * @param message<String>
      * @return
@@ -79,6 +54,39 @@ public record Result<T>(long id, Integer code, String message, T data) {
     public static <T> Result<T> failure(Integer code, String message) {
         if (message == null) message = "未知错误，操作失败";
         return new Result<>(requestId(), code, message, null);
+    }
+
+    /**
+     * 失败
+     * @return
+     */
+    public static <T> Result<T> failure() {
+        return failure(400, "操作失败");
+    }
+
+    /**
+     * 失败（提示信息）
+     * @param message<String>
+     * @return
+     */
+    public static <T> Result<T> failure(String message) {
+        return failure(400, message);
+    }
+
+    /**
+     * 未登录 （401）
+     * @return
+     */
+    public static <T> Result<T> unauthorized() {
+        return failure(401, "请登录后操作");
+    }
+
+    /**
+     * 无权访问（403）
+     * @return
+     */
+    public static <T> Result<T> forbidden() {
+        return failure(403, "您无权操作");
     }
 
     /**

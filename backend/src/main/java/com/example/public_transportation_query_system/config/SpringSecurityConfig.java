@@ -159,7 +159,7 @@ public class SpringSecurityConfig {
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        response.getWriter().write(Result.failure(400, exception.getMessage()).toJsonString());
+        response.getWriter().write(Result.failure(exception.getMessage()).toJsonString());
     }
 
     /**
@@ -173,7 +173,7 @@ public class SpringSecurityConfig {
         if (jwtUtil.invalidateJwt(authorization)) {
             writer.write(Result.success("登出成功").toJsonString());
         } else {
-            writer.write(Result.failure(400, "登出失败").toJsonString());
+            writer.write(Result.failure("登出失败").toJsonString());
         }
     }
 }

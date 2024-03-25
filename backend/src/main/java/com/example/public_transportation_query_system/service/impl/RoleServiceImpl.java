@@ -65,22 +65,22 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     public Result<Object> addRole(Role role) {
         // 表单验证
         if (!StringUtils.isBlank(role.getName()) && this.query().eq("name", role.getName()).one() != null) {
-            return Result.failure(400, "角色英文名重复");
+            return Result.failure("角色英文名重复");
         }
         if (!StringUtils.isBlank(role.getNameZh()) && this.query().eq("name_zh", role.getNameZh()).one() != null) {
-            return Result.failure(400, "角色中文名重复");
+            return Result.failure("角色中文名重复");
         }
         if (StringUtils.isBlank(role.getName())) {
-            return Result.failure(400, "角色英文名不能为空");
+            return Result.failure("角色英文名不能为空");
         }
         if (StringUtils.isBlank(role.getNameZh())) {
-            return Result.failure(400, "角色中文名不能为空");
+            return Result.failure("角色中文名不能为空");
         }
 
         if (this.save(role)) {
             return Result.success("添加成功");
         }
-        return Result.failure(400, "添加失败");
+        return Result.failure("添加失败");
     }
 
     /**
@@ -91,25 +91,25 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     public Result<Object> modifyRole(Role role) {
         // 表单验证
         if (role.getId() == null) {
-            return Result.failure(400, "角色 id 不能为空");
+            return Result.failure("角色 id 不能为空");
         }
         if (!StringUtils.isBlank(role.getName()) && this.query().eq("name", role.getName()).one() != null) {
-            return Result.failure(400, "角色英文名重复");
+            return Result.failure("角色英文名重复");
         }
         if (!StringUtils.isBlank(role.getNameZh()) && this.query().eq("name_zh", role.getNameZh()).one() != null) {
-            return Result.failure(400, "角色中文名重复");
+            return Result.failure("角色中文名重复");
         }
         if (StringUtils.isBlank(role.getName())) {
-            return Result.failure(400, "角色英文名不能为空");
+            return Result.failure("角色英文名不能为空");
         }
         if (StringUtils.isBlank(role.getNameZh())) {
-            return Result.failure(400, "角色中文名不能为空");
+            return Result.failure("角色中文名不能为空");
         }
 
         if (this.updateById(role)) {
             return Result.success("修改成功");
         }
-        return Result.failure(400, "修改失败");
+        return Result.failure("修改失败");
     }
 
     /**
@@ -123,15 +123,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
             if (this.removeBatchByIds(deleteVO.getIds())) {
                 return Result.success("批量删除成功");
             }
-            return Result.failure(400, "批量删除失败");
+            return Result.failure("批量删除失败");
         }
         else if (deleteVO.getId() != null) {
             // 单个删除
             if (this.removeById(deleteVO.getId())) {
                 return Result.success("删除成功");
             }
-            return Result.failure(400, "删除失败");
+            return Result.failure("删除失败");
         }
-        return Result.failure(400, "删除失败，参数 id 和 ids 不能同时为空");
+        return Result.failure("删除失败，参数 id 和 ids 不能同时为空");
     }
 }

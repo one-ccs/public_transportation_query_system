@@ -46,7 +46,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
     public Result<Object> addNotice(Notice notice) {
         // 表单验证
         if (StringUtils.isBlank(notice.getContent())) {
-            return Result.failure(400, "公告内容不能为空");
+            return Result.failure("公告内容不能为空");
         }
 
         // 清除 id、发布日期
@@ -57,13 +57,13 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         if (this.save(notice)) {
             return Result.success("添加成功");
         }
-        return Result.failure(400, "添加失败");
+        return Result.failure("添加失败");
     }
 
     public Result<Object> modifyNotice(Notice notice) {
         // 表单验证
         if (notice.getId() == null) {
-            return Result.failure(400, "公告 id 不能为空");
+            return Result.failure("公告 id 不能为空");
         }
 
         // 清除发布日期
@@ -73,7 +73,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         if (this.updateById(notice)) {
             return Result.success("修改成功");
         }
-        return Result.failure(400, "修改失败");
+        return Result.failure("修改失败");
     }
 
     public Result<Object> deleteNotice(DeleteVO deleteVO) {
@@ -82,15 +82,15 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
             if (this.removeBatchByIds(deleteVO.getIds())) {
                 return Result.success("批量删除成功");
             }
-            return Result.failure(400, "批量删除失败");
+            return Result.failure("批量删除失败");
         }
         else if (deleteVO.getId() != null) {
             // 单个删除
             if (this.removeById(deleteVO.getId())) {
                 return Result.success("删除成功");
             }
-            return Result.failure(400, "删除失败");
+            return Result.failure("删除失败");
         }
-        return Result.failure(400, "删除失败，参数 id 和 ids 不能同时为空");
+        return Result.failure("删除失败，参数 id 和 ids 不能同时为空");
     }
 }

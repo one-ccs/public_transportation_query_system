@@ -126,16 +126,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public Result<Object> addUser(UserVO userVO) {
         // 表单验证
         if (StringUtils.isBlank(userVO.getUsername()) && StringUtils.isBlank(userVO.getEmail())) {
-            return Result.failure(400, "用户名和邮箱地址不能同时为空");
+            return Result.failure("用户名和邮箱地址不能同时为空");
         }
         if (StringUtils.isBlank(userVO.getPassword())) {
-            return Result.failure(400, "密码不能为空");
+            return Result.failure("密码不能为空");
         }
         if (!StringUtils.isBlank(userVO.getUsername()) && this.query().eq("username", userVO.getUsername()).one() != null) {
-            return Result.failure(400, "用户名重复");
+            return Result.failure("用户名重复");
         }
         if (!StringUtils.isBlank(userVO.getEmail()) && this.query().eq("email", userVO.getEmail()).one() != null) {
-            return Result.failure(400, "邮箱地址重复");
+            return Result.failure("邮箱地址重复");
         }
 
         // 构造 User 并清除 id、加密密码
@@ -152,33 +152,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             if (roleServiceImpl.addRoles(userVO)) {
                 return Result.success("添加成功");
             }
-            return Result.failure(400, "用户角色添加失败");
+            return Result.failure("用户角色添加失败");
         }
-        return Result.failure(400, "添加失败");
+        return Result.failure("添加失败");
     }
 
     public Result<Object> modifyUser(UserVO userVO) {
         // 表单验证
         if (userVO.getId() == null) {
-            return Result.failure(400, "用户 id 不能为空");
+            return Result.failure("用户 id 不能为空");
         }
         if (StringUtils.isBlank(userVO.getUsername()) &&
                 StringUtils.isBlank(userVO.getEmail())) {
-            return Result.failure(400, "用户名和邮箱地址不能同时为空");
+            return Result.failure("用户名和邮箱地址不能同时为空");
         }
         if (!StringUtils.isBlank(userVO.getUsername()) &&
             this.query()
                 .ne("id", userVO.getId())
                 .eq("username", userVO.getUsername())
                 .one() != null) {
-            return Result.failure(400, "修改失败，用户名重复");
+            return Result.failure("修改失败，用户名重复");
         }
         if (!StringUtils.isBlank(userVO.getEmail()) &&
             this.query()
                 .ne("id", userVO.getId())
                 .eq("email", userVO.getEmail())
                 .one() != null) {
-            return Result.failure(400, "修改失败，邮箱地址重复");
+            return Result.failure("修改失败，邮箱地址重复");
         }
 
         User newUser = userVO.asViewObject(User.class, user -> {
@@ -198,10 +198,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             if (userRoleServiceImpl.saveBatch(userVO.getUserRoleList())) {
                 return Result.success("修改成功");
             }
-            return Result.failure(400, "修改用户角色失败");
+            return Result.failure("修改用户角色失败");
         }
 
-        return Result.failure(400, "修改失败");
+        return Result.failure("修改失败");
     }
 
     public Result<Object> deleteUser(DeleteVO deleteVO) {
@@ -210,16 +210,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             if (this.removeBatchByIds(deleteVO.getIds())) {
                 return Result.success("批量删除成功");
             }
-            return Result.failure(400, "批量删除失败");
+            return Result.failure("批量删除失败");
         }
         else if (deleteVO.getId() != null) {
             // 单个删除
             if (this.removeById(deleteVO.getId())) {
                 return Result.success("删除成功");
             }
-            return Result.failure(400, "删除失败");
+            return Result.failure("删除失败");
         }
-        return Result.failure(400, "删除失败，参数 id 和 ids 不能同时为空");
+        return Result.failure("删除失败，参数 id 和 ids 不能同时为空");
     }
 
     /**
