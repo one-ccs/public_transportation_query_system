@@ -19,7 +19,7 @@ import com.example.public_transportation_query_system.service.IRouteService;
 @Service
 public class RouteServiceImpl extends ServiceImpl<RouteMapper, Route> implements IRouteService {
 
-    public Result<Object> getPageRoute(BasePageQuery query) {
+    public Result<Object> getRoutePage(BasePageQuery query) {
         // 构造查询条件
         LambdaQueryWrapper<Route> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.ge(query.getStartDatetime() != null, Route::getFirstTime, query.getStartDatetime())

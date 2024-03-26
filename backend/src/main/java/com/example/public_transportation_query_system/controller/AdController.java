@@ -26,27 +26,33 @@ public class AdController {
     @Autowired
     AdServiceImpl adServiceImpl;
 
-    @Operation(summary = "获取广告列表", description = "获取广告列表接口")
+    @Operation(summary = "获取广告信息", description = "获取广告信息接口")
     @GetMapping
-    public Result<Object> apiAdGet(BasePageQuery query) {
-        return adServiceImpl.getPageAd(query);
+    public Result<Object> get(Integer id) {
+        return Result.success(adServiceImpl.getById(id));
     }
 
     @Operation(summary = "添加广告", description = "添加广告接口")
     @PutMapping
-    public Result<Object> apiAdPut(@RequestBody Ad ad) {
+    public Result<Object> put(@RequestBody Ad ad) {
         return adServiceImpl.addAd(ad);
     }
 
     @Operation(summary = "修改广告", description = "修改广告接口")
     @PostMapping
-    public Result<Object> apiAdPost(@RequestBody Ad ad) {
+    public Result<Object> post(@RequestBody Ad ad) {
         return adServiceImpl.modifyAd(ad);
     }
 
     @Operation(summary = "删除广告", description = "删除广告接口")
     @DeleteMapping
-    public Result<Object> apiAdDelete(@RequestBody DeleteVO deleteVO) {
+    public Result<Object> delete(@RequestBody DeleteVO deleteVO) {
         return adServiceImpl.deleteAd(deleteVO);
+    }
+
+    @Operation(summary = "分页查询广告列表", description = "分页查询广告列表接口")
+    @GetMapping("/pageQuery")
+    public Result<Object> pageQuery(BasePageQuery query) {
+        return adServiceImpl.getAdPage(query);
     }
 }

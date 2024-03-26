@@ -35,7 +35,7 @@
 <script setup lang="ts" name="icon">
 import { computed, ref } from 'vue';
 
-const iconList: Array<string> = [
+const iconList: string[] = [
 	'attentionforbid',
 	'attentionforbidfill',
 	'attention',

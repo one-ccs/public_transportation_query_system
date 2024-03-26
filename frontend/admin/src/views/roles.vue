@@ -3,7 +3,7 @@
 		<div class="container">
             <div class="handle-box">
                 <el-button type="danger" :icon="Delete" @click="deleteBatch()">批量删除</el-button>
-                <el-button type="primary" :icon="Plus" @click="handleSave()">新增</el-button>
+                <el-button type="primary" :icon="Plus" @click="handleAdd()">新增</el-button>
                 <el-button :icon="RefreshLeft" @click="getData()">刷新</el-button>
 
                 <div class="float-end">
@@ -83,8 +83,8 @@
 import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
-import { apiGetRoles, apiAddRole, apiModifyRole, apiDeleteRole } from '../api/index';
-import { deepCopy } from '../utils/copy';
+import { apiRolePageQuery, apiRolePut, apiRolePost, apiRoleDelete } from '@/utils/api';
+import { deepCopy } from '@/utils/copy';
 
 interface TableItem {
 	id: number;
@@ -96,10 +96,10 @@ const query = ref('');
 const tableData = ref<TableItem[]>([]);
 // 获取表格数据
 const getData = () => {
-	apiGetRoles(query.value, (data: any) => {
+	apiRolePageQuery(query.value, (data: ResponseData) => {
         ElMessage.success('角色数据获取成功');
-		tableData.value = data.data;
-    }, (data: any) => {
+		tableData.value = data.data.list;
+    }, (data: ResponseData) => {
         ElMessage.warning('角色数据获取失败');
     });
 };
@@ -117,7 +117,7 @@ const deleteBatch = () => {
 		type: 'warning'
 	})
 		.then(() => {
-            apiDeleteRole(multipleSelection.value.map(item => item.id), () => {
+            apiRoleDelete(multipleSelection.value.map(item => item.id), () => {
                 ElMessage.success('删除成功');
                 getData();
             });
@@ -143,7 +143,7 @@ const handleDelete = (index: number, row: any) => {
 		type: 'warning'
 	})
 		.then(() => {
-            apiDeleteRole(row.id, () => {
+            apiRoleDelete(row.id, () => {
                 ElMessage.success('删除成功');
                 getData();
             });
@@ -163,14 +163,14 @@ const addForm = reactive({
     name: '',
     nameZh: '',
 });
-const handleSave = () => {
+const handleAdd = () => {
 	addVisible.value = true;
 };
 const saveAdd = (formEl: FormInstance | undefined) => {
     formEl && formEl.validate((valid: boolean) => {
         if(!valid) return;
 
-        apiAddRole(addForm, (data: any) => {
+        apiRolePut(addForm, (data: ResponseData) => {
             getData();
             addVisible.value = false;
             ElMessage.success(data.message);
@@ -203,7 +203,7 @@ const saveModify = (formEl: FormInstance | undefined) => {
 
         // 表单未修改
         if (JSON.stringify(modifyForm) === oldModifyString) return ElMessage.warning('未修改');
-        apiModifyRole(modifyForm, (data: any) => {
+        apiRolePost(modifyForm, (data: ResponseData) => {
             getData();
             modifyVisible.value = false;
             ElMessage.success(`修改成功 (ID ${modifyForm.id})`);

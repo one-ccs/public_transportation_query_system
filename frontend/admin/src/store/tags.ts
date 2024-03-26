@@ -6,7 +6,7 @@ interface ListItem {
 	title: string;
 }
 
-export const useTagsStore = defineStore('tags', {
+const useTagsStore = defineStore('tags', {
 	state: () => {
 		return {
 			list: <ListItem[]>[]
@@ -51,3 +51,5 @@ export const useTagsStore = defineStore('tags', {
 		}
 	}
 });
+
+export default useTagsStore;

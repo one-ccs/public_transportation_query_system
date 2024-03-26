@@ -5,12 +5,12 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.public_transportation_query_system.entity.dto.MyUserDetails;
 import com.example.public_transportation_query_system.util.JwtUtil;
 
 import jakarta.servlet.FilterChain;
@@ -35,10 +35,10 @@ public class JwtAuthorizeFilter extends OncePerRequestFilter {
         // 解析 JWT
         DecodedJWT jwt = jwtUtil.resolveJwt(authorization);
         if (jwt != null) {
-            UserDetails userDetails = jwtUtil.toUserDetails(jwt);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            MyUserDetails myUserDetails = jwtUtil.toUserDetails(jwt);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(myUserDetails, null, myUserDetails.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            // 添加认证信息强制认证通过
+            // 强制设置 Authentication 表示认证通过
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             request.setAttribute("id", jwtUtil.toId(jwt));
         }

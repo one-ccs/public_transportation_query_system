@@ -1,4 +1,4 @@
-import axios, {AxiosInstance, AxiosError, AxiosResponse, AxiosRequestConfig} from 'axios';
+import axios, { type AxiosInstance, type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 import { ElMessage } from 'element-plus';
 
 const service:AxiosInstance = axios.create({
@@ -10,11 +10,11 @@ const service:AxiosInstance = axios.create({
 
 // 请求拦截器
 service.interceptors.request.use(
-    (config: AxiosRequestConfig) => {
+    (config: InternalAxiosRequestConfig) => {
         return config;
     },
     (error: AxiosError) => {
-        return Promise.reject();
+        return Promise.reject(error);
     }
 );
 
@@ -36,52 +36,56 @@ service.interceptors.response.use(
     }
 );
 
-interface RequestConfig {
-    method?: 'get' | 'post' | 'put' | 'delete' | 'options';
+export interface RequestConfig {
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS';
     params?: any;
     data?: any;
-    contentType?: 'form' | 'json';
+    contentType?: 'FORM' | 'JSON';
     headers?: { [key: string]: string };
     token?: string,
     tokenType?: 'Bearer';
-    success?: Function;
-    failure?: Function;
-    error?: Function;
+    successCallback?: Function;
+    failureCallback?: Function;
+    errorCallback?: Function;
 }
 
 /**
  * 封装通用请求逻辑并设置默认值, 支持回调函数、Promise、async/await 方式调用
  * @param url 请求链接
- * @param config 配置
+ * @param config 配置 (默认 "GET" "FORM")
  */
 async function request(url: string, config?: RequestConfig) {
     let {
         method = 'GET',
         params = {},
         data = {},
-        contentType = 'json',
+        contentType = 'FORM',
         headers = {},
         token = '',
         tokenType = 'Bearer',
-        success,
-        failure,
-        error
-    } = (config || {});
+        successCallback,
+        failureCallback,
+        errorCallback
+    } = config || {};
 
-    if (method.toLocaleLowerCase() === 'get' && Object.keys(data).length !== 0) console.error('RequestError: "GET" 方法不允许携带 "data" 参数，请检查你的配置。');
-    if (!('Content-Type' in headers)) {
-        if (contentType === 'form') headers['Content-Type'] = 'multipart/form-data';
-        if (contentType === 'json') headers['Content-Type'] = 'application/json';
+    if (method.toLocaleLowerCase() === 'GET' && Object.keys(data).length !== 0) {
+        console.warn('RequestError: "GET" 方法不允许携带 "data" 参数，请检查你的配置。');
     }
-    if (token && tokenType === 'Bearer') headers['Authorization'] = `Bearer ${token}`;
+    if (!('Content-Type' in headers)) {
+        if (contentType === 'FORM') headers['Content-Type'] = 'multipart/form-data';
+        if (contentType === 'JSON') headers['Content-Type'] = 'application/json';
+    }
+    if (token && tokenType === 'Bearer') {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
 
     return service({ url, method, params, data, headers }).then((res: AxiosResponse) => {
-        if (res.data.code === 200 && success) return Promise.resolve(success(res.data));
-        if (res.data.code !== 200 && failure) return Promise.resolve(failure(res.data, res.data.code, url));
+        if (res.data.code === 200 && successCallback) successCallback(res.data);
+        if (res.data.code !== 200 && failureCallback) failureCallback(res.data, res.data.code, url);
 
         return Promise.resolve(res.data);
     }).catch((err: AxiosError) => {
-        if (error) return Promise.reject(error(err));
+        if (errorCallback) errorCallback(err);
 
         return Promise.reject(err);
     });

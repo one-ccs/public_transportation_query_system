@@ -28,28 +28,34 @@ public class UserController {
     @Autowired
     UserServiceImpl userServiceImpl;
 
-    @Operation(summary = "获取用户列表", description = "获取用户列表接口")
+    @Operation(summary = "获取用户信息", description = "获取用户信息接口")
     @GetMapping
-    public Result<Object> apiUserGet(QueryUserVO query) {
-        return userServiceImpl.getPageUser(query);
+    public Result<Object> get(Integer id) {
+        return Result.success(userServiceImpl.getById(id));
     }
 
     @Operation(summary = "添加用户", description = "添加用户接口")
     @PutMapping
-    public Result<Object> apiUserPut(@RequestBody UserVO userVO) {
+    public Result<Object> put(@RequestBody UserVO userVO) {
         return userServiceImpl.addUser(userVO);
     }
 
     @Operation(summary = "修改用户", description = "修改用户接口")
     @PostMapping
-    public Result<Object> apiUserPost(@RequestBody UserVO userVO) {
+    public Result<Object> post(@RequestBody UserVO userVO) {
         return userServiceImpl.modifyUser(userVO);
     }
 
     @Operation(summary = "删除用户", description = "删除用户接口")
     @DeleteMapping
-    public Result<Object> apiUserDelete(@RequestBody DeleteVO deleteVO) {
+    public Result<Object> delete(@RequestBody DeleteVO deleteVO) {
         return userServiceImpl.deleteUser(deleteVO);
+    }
+
+    @Operation(summary = "分页查询用户列表", description = "分页查询用户列表接口")
+    @GetMapping("/pageQuery")
+    public Result<Object> pageQuery(QueryUserVO query) {
+        return userServiceImpl.getUserPage(query);
     }
 
     @SecurityRequirements
@@ -58,4 +64,5 @@ public class UserController {
     public Result<Object> register(String username, String password, @RequestParam(name = "email", defaultValue = "") String email) {
         return userServiceImpl.register(username, password, email);
     }
+
 }

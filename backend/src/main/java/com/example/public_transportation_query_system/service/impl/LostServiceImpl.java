@@ -19,7 +19,7 @@ import com.example.public_transportation_query_system.service.ILostService;
 @Service
 public class LostServiceImpl extends ServiceImpl<LostMapper, Lost> implements ILostService {
 
-    public Result<Object> getPageLost(BasePageQuery query) {
+    public Result<Object> getLostPage(BasePageQuery query) {
         // 构造查询条件
         LambdaQueryWrapper<Lost> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.ge(query.getStartDatetime() != null, Lost::getPickDatetime, query.getStartDatetime())

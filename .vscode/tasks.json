@@ -34,6 +34,16 @@
             "problemMatcher": [],
             "label": "npm: build - frontend/user",
             "detail": "run-p type-check \"build-only {@}\" --"
-        }
+        },
+        {
+            "type": "shell",
+            "command": "cd backend && mvnw spring-boot:run",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always"
+            },
+            "label": "mvnw: run - PublicTransportationQuerySystemApplication",
+            "detail": "mvnw spring-boot:run",
+        },
     ]
 }

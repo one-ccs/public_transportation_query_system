@@ -3,7 +3,7 @@
 		<div class="container">
             <div class="handle-box">
                 <el-button type="danger" :icon="Delete" @click="deleteBatch()">批量删除</el-button>
-                <el-button type="primary" :icon="Plus" @click="handleSave()">新增</el-button>
+                <el-button type="primary" :icon="Plus" @click="handleAdd()">新增</el-button>
                 <el-button :icon="RefreshLeft" @click="getData()">刷新</el-button>
 
                 <div class="float-end">
@@ -178,11 +178,12 @@
 </template>
 
 <script setup lang="ts" name="users">
-import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
-import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
-import { apiAddUser, apiPageUser, apiModifyUser, apiGetRoles, apiDeleteUser } from '../api/index';
-import { deepCopy } from '../utils/copy';
+import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
+import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
+import type { ResponseData, Role, TimeRangePageQuery, UserVo } from '@/utils/interface';
+import { apiUserPut, apiPageUser, apiUserPost, apiRolePageQuery, apiUserDelete } from '@/utils/api';
+import { deepCopy } from '@/utils/copy';
 
 
 interface TableItem {
@@ -192,13 +193,13 @@ interface TableItem {
 	email: string;
 	registerDatetime: string;
 	status: number;
-    roles: Array<Object>;
+    roles: Object[];
 }
 
 const query = reactive({
-	query: '',
 	pageIndex: 1,
 	pageSize: 10,
+	query: '',
     startDatetime: '',
     endDatetime: '',
     filterFlag: 2
@@ -207,11 +208,11 @@ const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
-	apiPageUser(query, (data: any) => {
+	apiPageUser(query, (data: ResponseData) => {
         ElMessage.success('管理员数据获取成功');
 		tableData.value = data.data.list;
 		pageTotal.value = data.data.total || 50;
-    }, (data: any) => {
+    }, (data: ResponseData) => {
         ElMessage.warning('管理员数据获取失败');
     });
 };
@@ -229,7 +230,7 @@ const deleteBatch = () => {
 		type: 'warning'
 	})
 		.then(() => {
-            apiDeleteUser(multipleSelection.value.map(item => item.id), () => {
+            apiUserDelete(multipleSelection.value.map(item => item.id), () => {
                 ElMessage.success('删除成功');
                 getData();
             });
@@ -266,7 +267,7 @@ const handleDelete = (index: number, row: any) => {
 		type: 'warning'
 	})
 		.then(() => {
-            apiDeleteUser(row.id, () => {
+            apiUserDelete(row.id, () => {
                 ElMessage.success('删除成功');
                 getData();
             });
@@ -275,14 +276,14 @@ const handleDelete = (index: number, row: any) => {
 };
 
 // 角色列表，需在线加载
-const roleList = reactive([
-    {id: 1, name: 'user', nameZh: '用户'}
-])
+const roleList = reactive<Role[]>([
+    {id: 1, name: 'user', nameZh: '用户'},
+]);
 const statusList = reactive([
     {value: 0, label: '未激活'},
     {value: 1, label: '已激活'},
     {value: 2, label: '已注销'},
-])
+]);
 
 // 添加用户密码验证
 const validatePassAdd = (rule: any, value: any, callback: any) => {
@@ -295,7 +296,7 @@ const validatePassAdd = (rule: any, value: any, callback: any) => {
         }
         callback();
     }
-}
+};
 const validatePassAdd2 = (rule: any, value: any, callback: any) => {
     if (value === '') {
         callback(new Error('请二次确认密码'));
@@ -304,7 +305,7 @@ const validatePassAdd2 = (rule: any, value: any, callback: any) => {
     } else {
         callback();
     }
-}
+};
 // 添加表格验证
 const addRules: FormRules = {
 	username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
@@ -326,9 +327,9 @@ const addForm = reactive({
     email: '',
     roles: [roleList[0]],
 });
-const handleSave = () => {
-    apiGetRoles('', (data: any) => {
-        deepCopy(roleList, data.data);
+const handleAdd = () => {
+    apiRolePageQuery({} as TimeRangePageQuery, (data: ResponseData) => {
+        deepCopy(roleList, data.data.list);
     })
     addForm.passwordCheck = '';
 	addVisible.value = true;
@@ -337,7 +338,7 @@ const saveAdd = (formEl: FormInstance | undefined) => {
     formEl && formEl.validate((valid: boolean) => {
         if (!valid) return;
 
-        apiAddUser(addForm, (data: any) => {
+        apiUserPut(addForm, (data: ResponseData) => {
             ElMessage.success(data.message);
             addVisible.value = false;
             getData();
@@ -375,12 +376,7 @@ const modifyRules: FormRules = {
 // 表格修改时弹窗和保存
 const modifyVisible = ref(false);
 const modifyFormRef = ref<FormInstance>();
-const modifyForm = reactive({
-    id: null,
-	username: null,
-	email: null,
-    status: null,
-    password: null,
+const modifyForm = reactive<UserVo>({
     passwordCheck: '',
     passwordModified: false,
     roles: [roleList[0]],
@@ -393,8 +389,8 @@ const handleModify = (row: any) => {
     deepCopy(modifyForm, row);
     oldModifyString = JSON.stringify(modifyForm);
 
-    apiGetRoles('', (data: any) => {
-        deepCopy(roleList, data.data);
+    apiRolePageQuery({} as TimeRangePageQuery, (data: ResponseData) => {
+        deepCopy(roleList, data.data.list);
     });
 	modifyVisible.value = true;
 };
@@ -406,7 +402,7 @@ const saveModify = (formEl: FormInstance | undefined) => {
         if (JSON.stringify(modifyForm) === oldModifyString) return ElMessage.warning('未修改');
         // 密码未修改
         if (modifyForm.password !== oldPassword) modifyForm.passwordModified = true;
-        apiModifyUser(modifyForm, (data: any) => {
+        apiUserPost(modifyForm, (data: ResponseData) => {
             modifyVisible.value = false;
             ElMessage.success(`修改成功 (ID ${modifyForm.id})`);
             getData();

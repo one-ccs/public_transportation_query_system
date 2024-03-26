@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,12 +41,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public MyUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = this.getUserByNameOrEmail(username, username);
         if (user == null) throw new UsernameNotFoundException("不存在该用户");
         List<Role> roles = roleServiceImpl.getRolesByUid(user.getId());
 
-        return new MyUserDetails(username, user.getPassword(), roles, user);
+        return new MyUserDetails(username, user, roles);
     }
 
     /**
@@ -79,7 +78,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @param query
      * @return
      */
-    public Result<Object> getPageUser(QueryUserVO query) {
+    public Result<Object> getUserPage(QueryUserVO query) {
         // 构造查询条件
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.ge(query.getStartDatetime() != null, "register_datetime", query.getStartDatetime())

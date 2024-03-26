@@ -26,28 +26,34 @@ public class NoticeController {
     @Autowired
     NoticeServiceImpl noticeServiceImpl;
 
-    @Operation(summary = "获取公告列表", description = "获取公告列表接口")
+    @Operation(summary = "获取公告信息", description = "获取公告信息接口")
     @GetMapping
-    public Result<Object> apiNoticeGet(BasePageQuery query) {
-        return noticeServiceImpl.getPageNotice(query);
+    public Result<Object> get(Integer id) {
+        return Result.success(noticeServiceImpl.getById(id));
     }
 
     @Operation(summary = "添加公告", description = "添加公告接口")
     @PutMapping
-    public Result<Object> apiNoticePut(@RequestBody Notice notice) {
+    public Result<Object> put(@RequestBody Notice notice) {
         return noticeServiceImpl.addNotice(notice);
     }
 
     @Operation(summary = "修改公告", description = "修改公告接口")
     @PostMapping
-    public Result<Object> apiNoticePost(@RequestBody Notice notice) {
+    public Result<Object> post(@RequestBody Notice notice) {
         return noticeServiceImpl.modifyNotice(notice);
     }
 
     @Operation(summary = "删除公告", description = "删除公告接口")
     @DeleteMapping
-    public Result<Object> apiNoticeDelete(@RequestBody DeleteVO deleteVO) {
+    public Result<Object> delete(@RequestBody DeleteVO deleteVO) {
         return noticeServiceImpl.deleteNotice(deleteVO);
+    }
+
+    @Operation(summary = "分页查询公告列表", description = "分页查询公告列表接口")
+    @GetMapping("/pageQuery")
+    public Result<Object> pageQuery(BasePageQuery query) {
+        return noticeServiceImpl.getNoticePage(query);
     }
 
 }

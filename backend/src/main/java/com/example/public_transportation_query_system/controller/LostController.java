@@ -26,27 +26,33 @@ public class LostController {
     @Autowired
     LostServiceImpl lostServiceImpl;
 
-    @Operation(summary = "获取失物招领列表", description = "获取失物招领列表接口")
+    @Operation(summary = "获取失物招领信息", description = "获取失物招领信息接口")
     @GetMapping
-    public Result<Object> apiLostGet(BasePageQuery query) {
-        return lostServiceImpl.getPageLost(query);
+    public Result<Object> get(Integer id) {
+        return Result.success(lostServiceImpl.getById(id));
     }
 
     @Operation(summary = "添加失物招领", description = "添加失物招领接口")
     @PutMapping
-    public Result<Object> apiLostPut(@RequestBody Lost lost) {
+    public Result<Object> put(@RequestBody Lost lost) {
         return lostServiceImpl.addLost(lost);
     }
 
     @Operation(summary = "修改失物招领", description = "修改失物招领接口")
     @PostMapping
-    public Result<Object> apiLostPost(@RequestBody Lost lost) {
+    public Result<Object> post(@RequestBody Lost lost) {
         return lostServiceImpl.modifyLost(lost);
     }
 
     @Operation(summary = "删除失物招领", description = "删除失物招领接口")
     @DeleteMapping
-    public Result<Object> apiLostDelete(@RequestBody DeleteVO deleteVO) {
+    public Result<Object> delete(@RequestBody DeleteVO deleteVO) {
         return lostServiceImpl.deleteLost(deleteVO);
+    }
+
+    @Operation(summary = "分页查询失物招领列表", description = "分页查询失物招领列表接口")
+    @GetMapping("/pageQuey")
+    public Result<Object> pageQuery(BasePageQuery query) {
+        return lostServiceImpl.getLostPage(query);
     }
 }

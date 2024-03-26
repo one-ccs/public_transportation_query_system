@@ -19,7 +19,7 @@ import com.example.public_transportation_query_system.service.IStationService;
 @Service
 public class StationServiceImpl extends ServiceImpl<StationMapper, Station> implements IStationService {
 
-    public Result<Object> getPageStation(BasePageQuery query) {
+    public Result<Object> getStationPage(BasePageQuery query) {
         // 构造查询条件
         LambdaQueryWrapper<Station> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper

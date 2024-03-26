@@ -2,9 +2,9 @@
 	<div class="login-wrap">
 		<div class="ms-login">
 			<div class="ms-title">重庆公交查询后台管理系统</div>
-			<el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
+			<el-form :model="loginForm" :rules="rules" ref="loginFormRef" label-width="0px" class="ms-content">
 				<el-form-item prop="username">
-					<el-input v-model="param.username" placeholder="username">
+					<el-input v-model="loginForm.username" placeholder="username">
 						<template #prepend>
 							<el-button :icon="User"></el-button>
 						</template>
@@ -14,8 +14,8 @@
 					<el-input
 						type="password"
 						placeholder="password"
-						v-model="param.password"
-						@keyup.enter="submitForm(login)"
+						v-model="loginForm.password"
+						@keyup.enter="submitForm(loginFormRef)"
 					>
 						<template #prepend>
 							<el-button :icon="Lock"></el-button>
@@ -23,10 +23,10 @@
 					</el-input>
 				</el-form-item>
                 <el-form-item>
-                    <el-checkbox v-model="param.remember">记住我</el-checkbox>
+                    <el-checkbox v-model="loginForm.remember">记住我</el-checkbox>
                 </el-form-item>
 				<div class="login-btn">
-					<el-button type="primary" @click="submitForm(login)">登录</el-button>
+					<el-button type="primary" @click="submitForm(loginFormRef)">登录</el-button>
 				</div>
 			</el-form>
 		</div>
@@ -34,23 +34,19 @@
 </template>
 
 <script setup lang="ts">
+import type { FormInstance, FormRules } from 'element-plus';
 import { ref, reactive } from 'vue';
-import { useTagsStore } from '../store/tags';
-import { usePermissStore } from '../store/permiss';
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import type { FormInstance, FormRules } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
-import { apiLogin } from '../api/index';
+import type { ResponseData, UserLogin } from '@/utils/interface';
+import { apiLogin } from '@/utils/api';
+import useTagsStore from '@/store/tags';
+import usePermissStore from '@/store/permiss';
 
-interface LoginInfo {
-	username: string;
-	password: string;
-    remember: boolean;
-}
 
 const router = useRouter();
-const param = reactive<LoginInfo>({
+const loginForm = reactive<UserLogin>({
 	username: 'admin',
 	password: '',
     remember: false,
@@ -67,19 +63,19 @@ const rules: FormRules = {
 	password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 };
 const permiss = usePermissStore();
-const login = ref<FormInstance>();
+const loginFormRef = ref<FormInstance>();
 const submitForm = (formEl: FormInstance | undefined) => {
     formEl && formEl.validate(async (valid: boolean) => {
         if (!valid) return;
 
-        apiLogin(param.username, param.password, param.remember, (data: any) => {
+        apiLogin(loginForm, (data: ResponseData) => {
             if (data.data.roles.includes('user') && data.data.roles.length === 1) {
                 return ElMessage.warning('您无权登录该系统！');
             }
 
             ElMessage.success('登录成功');
-            localStorage.setItem('ms_username', param.username);
-            const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'user'];
+            localStorage.setItem('ms_username', loginForm.username);
+            const keys = permiss.defaultList[loginForm.username == 'admin' ? 'admin' : 'user'];
             permiss.handleSet(keys);
             localStorage.setItem('ms_keys', JSON.stringify(keys));
             router.push('/');
@@ -96,7 +92,7 @@ tags.clearTags();
 	position: relative;
 	width: 100%;
 	height: 100%;
-	background-image: url(../assets/img/login-bg.jpg);
+	background-image: url(@/assets/img/login-bg.jpg);
 	background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;

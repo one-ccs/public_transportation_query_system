@@ -18,7 +18,7 @@ import com.example.public_transportation_query_system.service.impl.RouteServiceI
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "3-线路信息", description = "线路信息接口")
+@Tag(name = "3-线路", description = "线路接口")
 @RestController
 @RequestMapping("/api/route")
 public class RouteController {
@@ -26,27 +26,34 @@ public class RouteController {
     @Autowired
     RouteServiceImpl routeServiceImpl;
 
-    @Operation(summary = "获取线路信息列表", description = "获取线路信息列表接口")
+    @Operation(summary = "获取线路信息", description = "获取线路信息接口")
     @GetMapping
-    public Result<Object> apiRouteGet(BasePageQuery query) {
-        return routeServiceImpl.getPageRoute(query);
+    public Result<Object> get(Integer id) {
+        return Result.success(routeServiceImpl.getById(id));
     }
 
-    @Operation(summary = "添加线路信息", description = "添加线路信息接口")
+    @Operation(summary = "添加线路", description = "添加线路接口")
     @PutMapping
-    public Result<Object> apiRoutePut(@RequestBody Route route) {
+    public Result<Object> put(@RequestBody Route route) {
         return routeServiceImpl.addRoute(route);
     }
 
-    @Operation(summary = "修改线路信息", description = "修改线路信息接口")
+    @Operation(summary = "修改线路", description = "修改线路接口")
     @PostMapping
-    public Result<Object> apiRoutePost(@RequestBody Route route) {
+    public Result<Object> post(@RequestBody Route route) {
         return routeServiceImpl.modifyRoute(route);
     }
 
-    @Operation(summary = "删除线路信息", description = "删除线路信息接口")
+    @Operation(summary = "删除线路", description = "删除线路接口")
     @DeleteMapping
-    public Result<Object> apiRouteDelete(@RequestBody DeleteVO deleteVO) {
+    public Result<Object> delete(@RequestBody DeleteVO deleteVO) {
         return routeServiceImpl.deleteRoute(deleteVO);
     }
+
+    @Operation(summary = "分页查询线路列表", description = "分页查询线路列表接口")
+    @GetMapping("/pageQuery")
+    public Result<Object> pageQuery(BasePageQuery query) {
+        return routeServiceImpl.getRoutePage(query);
+    }
+
 }

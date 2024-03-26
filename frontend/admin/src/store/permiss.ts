@@ -4,7 +4,7 @@ interface ObjectList {
 	[key: string]: string[];
 }
 
-export const usePermissStore = defineStore('permiss', {
+const usePermissStore = defineStore('permiss', {
 	state: () => {
 		const keys = localStorage.getItem('ms_keys');
 		return {
@@ -21,3 +21,5 @@ export const usePermissStore = defineStore('permiss', {
 		}
 	}
 });
+
+export default usePermissStore;

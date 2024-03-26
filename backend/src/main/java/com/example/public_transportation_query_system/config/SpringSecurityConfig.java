@@ -137,11 +137,8 @@ public class SpringSecurityConfig {
      * 登录成功
      */
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
-        String token = jwtUtil.createJWT(
-            myUserDetails,
-            myUserDetails.getUser().getId(),
-            myUserDetails.getUser().getUsername());
+        MyUserDetails myUserDetails = (MyUserDetails)authentication.getPrincipal();
+        String token = jwtUtil.createJWT(myUserDetails);
 
         AuthorizeVO authorizeVO = myUserDetails.getUser().asViewObject(AuthorizeVO.class, v -> {
             v.setToken(token);

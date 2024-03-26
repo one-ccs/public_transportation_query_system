@@ -17,8 +17,6 @@ import lombok.Data;
 @Data
 public class MyUserDetails implements UserDetails {
 
-    private User user;
-
 	private String username;
 
 	private String password;
@@ -33,16 +31,21 @@ public class MyUserDetails implements UserDetails {
 
 	private List<Role> roles = new ArrayList<>();
 
+    private User user;
+
 	public MyUserDetails(String username, String password, List<Role> roles) {
 		this(username, password, true, true, true, true, roles, null);
 	}
 
-	public MyUserDetails(String username, String password, List<Role> roles, User user) {
-		this(username, password, true, true, true, true, roles, user);
+	public MyUserDetails(String username, User user, List<Role> roles) {
+		this(username, user.getPassword(), true, true, true, true, roles, user);
 	}
 
-	public MyUserDetails(String username, String password, boolean enabled, boolean accountNonExpired,
-			boolean credentialsNonExpired, boolean accountNonLocked, List<Role> roles, User user) {
+	public MyUserDetails(
+        String username, String password, boolean enabled,
+        boolean accountNonExpired, boolean credentialsNonExpired,
+        boolean accountNonLocked, List<Role> roles, User user
+    ) {
 		Assert.isTrue(username != null && !"".equals(username) && password != null,
 				"MyUserDetails{用户名和密码不能为空}");
 		this.username = username;

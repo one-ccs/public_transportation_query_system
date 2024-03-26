@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useSidebarStore } from '../store/sidebar';
+import useSidebarStore from '@/store/sidebar';
 import { useRoute } from 'vue-router';
 
 const items = [

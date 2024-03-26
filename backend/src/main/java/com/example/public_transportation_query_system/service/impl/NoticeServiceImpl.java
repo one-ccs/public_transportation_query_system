@@ -3,12 +3,15 @@ package com.example.public_transportation_query_system.service.impl;
 import java.util.HashMap;
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.public_transportation_query_system.entity.dto.MyUserDetails;
 import com.example.public_transportation_query_system.entity.po.Notice;
 import com.example.public_transportation_query_system.entity.vo.BasePageQuery;
 import com.example.public_transportation_query_system.entity.vo.Result;
@@ -19,7 +22,7 @@ import com.example.public_transportation_query_system.service.INoticeService;
 @Service
 public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> implements INoticeService {
 
-    public Result<Object> getPageNotice(BasePageQuery query) {
+    public Result<Object> getNoticePage(BasePageQuery query) {
         // 构造查询条件
         LambdaQueryWrapper<Notice> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.ge(query.getStartDatetime() != null, Notice::getReleaseDatetime, query.getStartDatetime())
@@ -52,6 +55,11 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         // 清除 id、发布日期
         notice.setId(null);
         notice.setReleaseDatetime(null);
+
+        // 设置发布用户 id
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MyUserDetails myUserDetails = (MyUserDetails)authentication.getPrincipal();
+        notice.setUserId(myUserDetails.getUser().getId());
 
         // 添加公告
         if (this.save(notice)) {

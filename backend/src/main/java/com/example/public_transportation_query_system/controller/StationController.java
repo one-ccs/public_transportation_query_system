@@ -18,7 +18,7 @@ import com.example.public_transportation_query_system.service.impl.StationServic
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "4-站点信息", description = "站点信息接口")
+@Tag(name = "4-站点信息", description = "站点接口")
 @RestController
 @RequestMapping("/api/station")
 public class StationController {
@@ -26,27 +26,34 @@ public class StationController {
     @Autowired
     StationServiceImpl stationServiceImpl;
 
-    @Operation(summary = "获取站点列表", description = "获取站点列表接口")
+    @Operation(summary = "获取站点信息", description = "获取站点信息接口")
     @GetMapping
-    public Result<Object> apiStationGet(BasePageQuery query) {
-        return stationServiceImpl.getPageStation(query);
+    public Result<Object> get(Integer id) {
+        return Result.success(stationServiceImpl.getById(id));
     }
 
     @Operation(summary = "添加站点", description = "添加站点接口")
     @PutMapping
-    public Result<Object> apiStationPut(@RequestBody Station station) {
+    public Result<Object> put(@RequestBody Station station) {
         return stationServiceImpl.addStation(station);
     }
 
     @Operation(summary = "修改站点", description = "修改站点接口")
     @PostMapping
-    public Result<Object> apiStationPost(@RequestBody Station station) {
+    public Result<Object> post(@RequestBody Station station) {
         return stationServiceImpl.modifyStation(station);
     }
 
     @Operation(summary = "删除站点", description = "删除站点接口")
     @DeleteMapping
-    public Result<Object> apiStationDelete(@RequestBody DeleteVO deleteVO) {
+    public Result<Object> delete(@RequestBody DeleteVO deleteVO) {
         return stationServiceImpl.deleteStation(deleteVO);
     }
+
+    @Operation(summary = "分页查询站点列表", description = "分页查询站点列表接口")
+    @GetMapping("/pageQuery")
+    public Result<Object> pageQuery(BasePageQuery query) {
+        return stationServiceImpl.getStationPage(query);
+    }
+
 }

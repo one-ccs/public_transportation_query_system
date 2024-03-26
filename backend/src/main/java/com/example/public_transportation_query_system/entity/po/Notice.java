@@ -19,20 +19,28 @@ public class Notice implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    @Schema(description = "发布用户 id")
+    private Integer userId;
+
+    @Schema(description = "标题")
+    private String title;
+
     @Schema(description = "内容")
     private String content;
+
+    @Schema(description = "状态（0 不显示、1 显示）")
+    private Byte status;
 
     @Schema(description = "发布日期")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime releaseDatetime;
 
-    @Schema(description = "状态（0 不显示、1 显示）")
-    private Byte status;
-
     @Override
     public String toString() {
         return "Notice{" +
             "id = " + id +
+            "userId = " + userId +
+            ", title = " + title +
             ", content = " + content +
             ", releaseDatetime = " + releaseDatetime +
             ", status = " + status +

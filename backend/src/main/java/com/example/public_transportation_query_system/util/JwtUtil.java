@@ -1,6 +1,8 @@
 package com.example.public_transportation_query_system.util;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -8,8 +10,6 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
@@ -19,6 +19,9 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.public_transportation_query_system.common.GlobalVariable;
+import com.example.public_transportation_query_system.entity.dto.MyUserDetails;
+import com.example.public_transportation_query_system.entity.po.Role;
+import com.example.public_transportation_query_system.entity.po.User;
 
 @Component
 public class JwtUtil {
@@ -28,17 +31,15 @@ public class JwtUtil {
 
     /**
      * 创建 JWT
-     * @param userDetails
-     * @param id
-     * @param username
+     * @param myUserDetails
      * @return String
      */
-    public String createJWT(UserDetails userDetails, Integer id, String username) {
+    public String createJWT(MyUserDetails myUserDetails) {
         return JWT.create()
             .withJWTId(UUID.randomUUID().toString())
-            .withClaim("id", id)
-            .withClaim("username", username)
-            .withClaim("authorities", userDetails.getAuthorities().stream()
+            .withClaim("id", myUserDetails.getUser().getId())
+            .withClaim("username", myUserDetails.getUsername())
+            .withClaim("authorities", myUserDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList()
             )
@@ -109,13 +110,21 @@ public class JwtUtil {
         }
     }
 
-    public UserDetails toUserDetails(DecodedJWT jwt) {
+    public MyUserDetails toUserDetails(DecodedJWT jwt) {
         Map<String, Claim> claims = jwt.getClaims();
-        return User
-            .withUsername(claims.get("username").asString())
-            .password("未设置")
-            .authorities(claims.get("authorities").asArray(String.class))
-            .build();
+        Integer id = claims.get("id").asInt();
+        String username = claims.get("username").asString();
+        String[] authorities = claims.get("authorities").asArray(String.class);
+
+        List<Role> roles = new ArrayList<>();
+        for (String authority : authorities) {
+            roles.add(new Role(null, authority.replaceAll("ROLE_", ""), null));
+        }
+        return new MyUserDetails(
+            username,
+            User.builder().id(id).password("未设置").build(),
+            roles
+        );
     }
 
     public Integer toId(DecodedJWT jwt) {
