@@ -43,18 +43,4 @@ public class Ad implements Serializable {
     @Schema(description = "结束日期")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDatetime;
-
-    @Override
-    public String toString() {
-        return "Ad{" +
-            "id = " + id +
-            ", type = " + type +
-            ", title = " + title +
-            ", describe = " + describe +
-            ", imgUrl = " + imgUrl +
-            ", jumpUrl = " + jumpUrl +
-            ", startDatetime = " + startDatetime +
-            ", endDatetime = " + endDatetime +
-        "}";
-    }
 }

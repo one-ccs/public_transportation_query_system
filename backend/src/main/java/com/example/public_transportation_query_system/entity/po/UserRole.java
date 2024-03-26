@@ -26,13 +26,4 @@ public class UserRole implements Serializable {
 
     @Schema(description = "角色id")
     private Integer rid;
-
-    @Override
-    public String toString() {
-        return "UserRole{" +
-            "id = " + id +
-            ", uid = " + uid +
-            ", rid = " + rid +
-        "}";
-    }
 }

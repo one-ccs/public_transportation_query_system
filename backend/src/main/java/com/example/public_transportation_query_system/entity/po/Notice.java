@@ -34,16 +34,4 @@ public class Notice implements Serializable {
     @Schema(description = "发布日期")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime releaseDatetime;
-
-    @Override
-    public String toString() {
-        return "Notice{" +
-            "id = " + id +
-            "userId = " + userId +
-            ", title = " + title +
-            ", content = " + content +
-            ", releaseDatetime = " + releaseDatetime +
-            ", status = " + status +
-        "}";
-    }
 }

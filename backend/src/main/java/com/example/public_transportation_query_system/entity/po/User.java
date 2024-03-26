@@ -45,16 +45,4 @@ public class User implements Serializable, BaseData {
     public User(String username, String password, String email) {
         this(null, username, password, email, null, null);
     }
-
-    @Override
-    public String toString() {
-        return "User{" +
-            "id = " + id +
-            ", username = " + username +
-            ", password = " + password +
-            ", email = " + email +
-            ", status = " + status +
-            ", registerDatetime = " + registerDatetime +
-        "}";
-    }
 }

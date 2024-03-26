@@ -33,15 +33,4 @@ public class Route implements Serializable {
 
     @Schema(description = "开通状态（0 计划开通、1 正常运营、2 暂停运营）")
     private Byte status;
-
-    @Override
-    public String toString() {
-        return "Route{" +
-            "id = " + id +
-            ", no = " + no +
-            ", firstTime = " + firstTime +
-            ", lastTime = " + lastTime +
-            ", status = " + status +
-        "}";
-    }
 }

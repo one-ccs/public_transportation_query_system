@@ -20,15 +20,4 @@ public class BasePageQuery {
     private Date endDatetime;
 
     private String query;
-
-    @Override
-    public String toString() {
-        return "BasePageQuery{" +
-            "pageIndex = " + pageIndex +
-            ", pageSize = " + pageSize +
-            ", startDatetime = " + startDatetime +
-            ", endDatetime = " + endDatetime +
-            ", query = " + query +
-        "}";
-    }
 }

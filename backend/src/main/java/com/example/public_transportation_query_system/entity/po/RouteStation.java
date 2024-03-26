@@ -27,14 +27,4 @@ public class RouteStation implements Serializable {
 
     @Schema(description = "站点在线路中的顺序")
     private Byte sequence;
-
-    @Override
-    public String toString() {
-        return "RouteStation{" +
-            "id = " + id +
-            ", routeId = " + routeId +
-            ", stationId = " + stationId +
-            ", sequence = " + sequence +
-        "}";
-    }
 }

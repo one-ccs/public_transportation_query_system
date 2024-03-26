@@ -5,11 +5,4 @@ import lombok.Data;
 @Data
 public class BaseQuery {
     private String query;
-
-    @Override
-    public String toString() {
-        return "BaseQuery{" +
-            "query = " + query +
-        "}";
-    }
 }

@@ -40,17 +40,4 @@ public class Lost implements Serializable {
 
     @Schema(description = "认领状态（0 待认领、1 已认领）")
     private Byte status;
-
-    @Override
-    public String toString() {
-        return "Lost{" +
-            "id = " + id +
-            ", describe = " + describe +
-            ", imgUrl = " + imgUrl +
-            ", address = " + address +
-            ", pickDatetime = " + pickDatetime +
-            ", claimDatetime = " + claimDatetime +
-            ", status = " + status +
-        "}";
-    }
 }

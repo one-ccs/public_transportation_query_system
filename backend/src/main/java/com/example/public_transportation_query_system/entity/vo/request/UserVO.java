@@ -33,15 +33,4 @@ public class UserVO implements BaseData {
         roles.stream().distinct().forEach(role -> userRoleList.add(new UserRole(null, id, role.getId())));
         return userRoleList;
     }
-
-    @Override
-    public String toString() {
-        return "UserVO{" +
-            "id = " + id +
-            ", username = " + username +
-            ", password = " + password +
-            ", email = " + email +
-            ", roles = [" + roles + "]" +
-        "}";
-    }
 }

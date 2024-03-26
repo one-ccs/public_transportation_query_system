@@ -25,17 +25,4 @@ public class UserBO {
     private Byte status;
 
     private List<Role> roles;
-
-    @Override
-    public String toString() {
-        return "UserBO{" +
-            "id = " + id +
-            ", username = " + username +
-            ", password = " + password +
-            ", email = " + email +
-            ", status = " + status +
-            ", registerDatetime = " + registerDatetime +
-            ", roles = " + roles +
-        "}";
-    }
 }
