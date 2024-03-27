@@ -18,7 +18,7 @@ springdoc:
     swagger-ui:
         enabled: true
         # GUI 访问接口
-        path: /api/docs
+        path: /api-docs
         # API 排序
         tags-sorter: alpha
         # HTTP 方法排序
@@ -26,7 +26,7 @@ springdoc:
     api-docs:
         enabled: true
         # JSON 访问接口
-        path: /api/api-docs
+        path: /api-json
     show-login-endpoint: true
 
 mybatis-plus:

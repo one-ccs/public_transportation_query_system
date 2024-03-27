@@ -60,9 +60,9 @@ public class SpringSecurityConfig {
             // 放行 error 接口
             .requestMatchers("/error").permitAll()
             // 放行 SpringDoc
-            .requestMatchers("/api/docs").permitAll()
-            .requestMatchers("/api/api-docs/**").permitAll()
-            .requestMatchers("/api/swagger-ui/**").permitAll()
+            .requestMatchers("/api-json/**").permitAll()
+            .requestMatchers("/api-docs/**").permitAll()
+            .requestMatchers("/swagger-ui/**").permitAll()
             // 放行 SpringDoc 的 actuator
             .requestMatchers("/actuator/**").permitAll()
             // 放行 登录、登出、注册接口

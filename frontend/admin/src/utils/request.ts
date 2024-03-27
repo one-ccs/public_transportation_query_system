@@ -31,8 +31,9 @@ service.interceptors.response.use(
         return response;
     },
     (error: AxiosError) => {
+        if (error.code === 'ERR_NETWORK') return ElMessage.error('网络连接超时，请稍后重试');
         ElMessage.error('发生了一些错误，请联系管理员。')
-        return Promise.reject();
+        return Promise.reject(error);
     }
 );
 

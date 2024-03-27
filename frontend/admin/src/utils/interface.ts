@@ -21,6 +21,7 @@ export interface Route {
     status?: number;
     firstTime?: string;
     lastTime?: string;
+    openingDatetime?: string;
 };
 
 export interface Station {
@@ -29,6 +30,7 @@ export interface Station {
     longitude?: number;
     sitename?: string;
     status?: number;
+    openingDatetime?: string;
 };
 
 export interface Notice {
