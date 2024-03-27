@@ -18,7 +18,7 @@ import com.example.public_transportation_query_system.service.impl.StationServic
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "4-站点信息", description = "站点接口")
+@Tag(name = "4-站点", description = "站点接口")
 @RestController
 @RequestMapping("/api/station")
 public class StationController {

@@ -1,5 +1,6 @@
 package com.example.public_transportation_query_system.config;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +79,7 @@ public class SpringDocConfig {
     @Bean
     public GroupedOpenApi totalApi() {
         return GroupedOpenApi.builder()
-            .group("1-总览")
+            .group("0-总览")
             .pathsToMatch("/api/**")
             .addOpenApiCustomizer(sortTagsAlphabetically())
             .build();
@@ -87,8 +88,16 @@ public class SpringDocConfig {
     @Bean
     public GroupedOpenApi accountApi() {
         return GroupedOpenApi.builder()
-            .group("2-用户")
+            .group("1-用户")
             .pathsToMatch("/api/user/**")
+            .build();
+    }
+
+    @Bean
+    public GroupedOpenApi RoleApi() {
+        return GroupedOpenApi.builder()
+            .group("2-角色")
+            .pathsToMatch("/api/role/**")
             .build();
     }
 
@@ -124,6 +133,14 @@ public class SpringDocConfig {
             .build();
     }
 
+    @Bean
+    public GroupedOpenApi adApi() {
+        return GroupedOpenApi.builder()
+            .group("7-广告")
+            .pathsToMatch("/api/ad/**")
+            .build();
+    }
+
     /**
      * 手动添加登录登出接口
      * @return PathItems
@@ -145,6 +162,7 @@ public class SpringDocConfig {
                         .example("admin")
                     )
                 )
+                .security(new ArrayList<>())
                 .addParametersItem(new QueryParameter()
                     .name("password")
                     .required(true)
