@@ -3,11 +3,12 @@ package com.example.public_transportation_query_system.service.impl;
 import java.util.HashMap;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,27 +17,37 @@ import com.example.public_transportation_query_system.entity.po.Notice;
 import com.example.public_transportation_query_system.entity.vo.BasePageQuery;
 import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.request.DeleteVO;
+import com.example.public_transportation_query_system.entity.vo.response.NoticeVO;
 import com.example.public_transportation_query_system.mapper.NoticeMapper;
 import com.example.public_transportation_query_system.service.INoticeService;
 
 @Service
 public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> implements INoticeService {
 
+    @Autowired
+    NoticeMapper noticeMapper;
+
     public Result<Object> getNoticePage(BasePageQuery query) {
         // 构造查询条件
-        LambdaQueryWrapper<Notice> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.ge(query.getStartDatetime() != null, Notice::getReleaseDatetime, query.getStartDatetime())
-            .le(query.getEndDatetime() != null, Notice::getReleaseDatetime, query.getEndDatetime())
-            .like(StringUtils.isNotBlank(query.getQuery()), Notice::getContent, query.getQuery());
+        QueryWrapper<NoticeVO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ge(query.getStartDatetime() != null, "release_datetime", query.getStartDatetime())
+            .le(query.getEndDatetime() != null, "release_datetime", query.getEndDatetime())
+            .and(StringUtils.isNotBlank(query.getQuery()), i -> i
+                .like("username", query.getQuery())
+                .or()
+                .like("title", query.getQuery())
+                .or()
+                .like("content", query.getQuery())
+            );
 
         // 分页
-        Page<Notice> page = new Page<>(
+        Page<NoticeVO> page = new Page<>(
             Optional.ofNullable(query.getPageIndex()).orElse(1),
             Optional.ofNullable(query.getPageSize()).orElse(10)
         );
 
         // 获取分页数据
-        this.page(page, queryWrapper);
+        noticeMapper.selectPage(page, queryWrapper);
 
         // 构造返回结构
         HashMap<String, Object> map = new HashMap<>();
@@ -74,7 +85,8 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
             return Result.failure("公告 id 不能为空");
         }
 
-        // 清除发布日期
+        // 清除发布用户 id、发布日期
+        notice.setUserId(null);
         notice.setReleaseDatetime(null);
 
         // 修改公告

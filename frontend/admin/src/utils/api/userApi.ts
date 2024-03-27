@@ -38,6 +38,7 @@ export function apiUserPut(user: UserVo, successCallback: Function = defaultSucc
             ...user,
             password: user.password ? encryptMD5(user.password) : null,
         },
+        contentType: 'JSON',
         token: globalStore.data.token,
         successCallback,
         failureCallback,
@@ -58,6 +59,7 @@ export function apiUserPost(user: UserVo, successCallback: Function = defaultSuc
             ...user,
             password: user.passwordModified ? encryptMD5(user.password!): null,
         },
+        contentType: 'JSON',
         token: globalStore.data.token,
         successCallback,
         failureCallback,
@@ -75,6 +77,7 @@ export function apiUserDelete(id: number | number[], successCallback: Function =
     return request('/api/user', {
         method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
+        contentType: 'JSON',
         token: globalStore.data.token,
         successCallback,
         failureCallback,

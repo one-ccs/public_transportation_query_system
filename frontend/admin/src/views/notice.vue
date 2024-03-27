@@ -118,9 +118,6 @@
 				<el-form-item label="发布用户" prop="username">
 					<el-input v-model="modifyForm.username" disabled></el-input>
 				</el-form-item>
-				<el-form-item label="发布用户 ID" prop="userId">
-					<el-input v-model="modifyForm.userId" disabled></el-input>
-				</el-form-item>
 				<el-form-item label="标题" prop="title">
 					<el-input v-model="modifyForm.title"></el-input>
 				</el-form-item>
@@ -129,7 +126,7 @@
 				</el-form-item>
                 <el-form-item label="状态" prop="status">
                     <el-select
-                        v-model="addForm.status"
+                        v-model="modifyForm.status"
                         placeholder="请选择状态"
                     >
                         <el-option
@@ -294,7 +291,11 @@ const modifyRules: FormRules = {
 const modifyVisible = ref(false);
 const modifyFormRef = ref<FormInstance>();
 type NoticeExtra = Notice & { username?: string };
-const modifyForm = reactive<NoticeExtra>({});
+const modifyForm = reactive<NoticeExtra>({
+    title: undefined,
+    content: undefined,
+    status: undefined,
+});
 let oldModifyString = '';
 const handleModify = (row: any) => {
     deepCopy(modifyForm, row);

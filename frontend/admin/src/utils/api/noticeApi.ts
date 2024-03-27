@@ -35,6 +35,7 @@ export function apiNoticePut(notice: Notice, successCallback: Function = default
         data: {
             ...notice,
         },
+        contentType: 'JSON',
         token: globalStore.data.token,
         successCallback,
         failureCallback,
@@ -54,6 +55,7 @@ export function apiNoticePost(notice: Notice, successCallback: Function = defaul
         data: {
             ...notice,
         },
+        contentType: 'JSON',
         token: globalStore.data.token,
         successCallback,
         failureCallback,
@@ -71,6 +73,7 @@ export function apiNoticeDelete(id: number | number[], successCallback: Function
     return request('/api/notice', {
         method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
+        contentType: 'JSON',
         token: globalStore.data.token,
         successCallback,
         failureCallback,

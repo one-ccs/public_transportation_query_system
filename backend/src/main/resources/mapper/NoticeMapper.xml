@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.public_transportation_query_system.mapper.NoticeMapper">
-
+    <select id="selectPage" resultType="NoticeVO">
+        SELECT
+            notice.id,
+            notice.user_id,
+            notice.title,
+            notice.content,
+            notice.release_datetime,
+            notice.`status`,
+            `user`.username
+        FROM
+            notice
+            INNER JOIN
+            `user`
+            ON
+                notice.user_id = `user`.id
+        ${ew.customSqlSegment}
+    </select>
 </mapper>

@@ -49,9 +49,10 @@ public class ErrorPageController extends AbstractErrorController {
      */
     private Optional<String> convertErrorMessage(HttpStatus status){
         String value = switch (status.value()) {
-            case 400 -> "请求的参数有误";
+            case 400 -> "请求参数有误";
             case 404 -> "请求的接口不存在";
-            case 405 -> "请求的方法有误";
+            case 405 -> "请求方法有误";
+            case 415 -> "请求体类型有误";
             case 500 -> "内部错误，请联系管理员";
             default -> null;
         };
