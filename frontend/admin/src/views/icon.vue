@@ -17,7 +17,7 @@
 			<span>&lt;i class=&quot;el-icon-lx-emojifill&quot;&gt;&lt;/i&gt;</span>
 		</p>
 		<br />
-		<h2>图标</h2>
+		<h2>图标 1</h2>
 		<div class="search-box">
 			<el-input class="search" size="large" v-model="keyword" clearable placeholder="请输入图标名称"></el-input>
 		</div>
@@ -165,7 +165,7 @@ const iconList: string[] = [
 const keyword = ref('');
 const list = computed(() => {
 	return iconList.filter(item => {
-		return item.indexOf(keyword.value) !== -1;
+		return item.toLowerCase().includes(keyword.value.toLowerCase());
 	});
 });
 </script>

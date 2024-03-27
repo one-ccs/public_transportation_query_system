@@ -1,5 +1,6 @@
 import 'element-plus/dist/index.css';
 import './assets/css/icon.css';
+import '@/assets/css/font_830376_qzecyukz0s.css'
 
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
