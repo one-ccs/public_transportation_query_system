@@ -23,6 +23,8 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
         // 构造查询条件
         LambdaQueryWrapper<Station> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper
+            .ge(query.getStartDatetime() != null, Station::getOpeningDatetime, query.getStartDatetime())
+            .le(query.getEndDatetime() != null, Station::getOpeningDatetime, query.getEndDatetime())
             .like(StringUtils.isNotBlank(query.getQuery()), Station::getSitename, query.getQuery());
 
         // 分页

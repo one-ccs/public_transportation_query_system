@@ -115,6 +115,14 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
+				<el-form-item label="开通日期">
+                    <el-date-picker
+                        v-model="addForm.openingDatetime"
+                        type="datetime"
+                        value-format="YYYY-MM-DD HH:mm:ss"
+                        placeholder="请选择开通日期"
+                    />
+				</el-form-item>
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
@@ -174,7 +182,7 @@
                         v-model="modifyForm.openingDatetime"
                         type="datetime"
                         value-format="YYYY-MM-DD HH:mm:ss"
-                        placeholder="请选择开通时间"
+                        placeholder="请选择开通日期"
                     />
 				</el-form-item>
 			</el-form>

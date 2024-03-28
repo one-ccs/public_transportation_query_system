@@ -22,8 +22,9 @@ public class RouteServiceImpl extends ServiceImpl<RouteMapper, Route> implements
     public Result<Object> getRoutePage(BasePageQuery query) {
         // 构造查询条件
         LambdaQueryWrapper<Route> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.ge(query.getStartDatetime() != null, Route::getFirstTime, query.getStartDatetime())
-            .le(query.getEndDatetime() != null, Route::getLastTime, query.getEndDatetime())
+        queryWrapper
+            .ge(query.getStartDatetime() != null, Route::getOpeningDatetime, query.getStartDatetime())
+            .le(query.getEndDatetime() != null, Route::getOpeningDatetime, query.getEndDatetime())
             .like(StringUtils.isNotBlank(query.getQuery()), Route::getNo, query.getQuery());
 
         // 分页
