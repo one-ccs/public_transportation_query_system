@@ -1,14 +1,17 @@
 package com.example.public_transportation_query_system.service.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.public_transportation_query_system.entity.bo.StationBO;
 import com.example.public_transportation_query_system.entity.po.Station;
 import com.example.public_transportation_query_system.entity.vo.BasePageQuery;
 import com.example.public_transportation_query_system.entity.vo.Result;
@@ -18,6 +21,18 @@ import com.example.public_transportation_query_system.service.IStationService;
 
 @Service
 public class StationServiceImpl extends ServiceImpl<StationMapper, Station> implements IStationService {
+
+    @Autowired
+    StationMapper stationMapper;
+
+    /**
+     * 返回 routeId 对应的所有 站点
+     * @param routeId 线路 id
+     * @return
+     */
+    public List<StationBO> getStationsByRouteId(Integer routeId) {
+        return stationMapper.getStationsByRouteId(routeId);
+    }
 
     public Result<Object> getStationPage(BasePageQuery query) {
         // 构造查询条件

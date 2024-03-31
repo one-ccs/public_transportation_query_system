@@ -56,7 +56,7 @@ export interface RequestConfig {
  * @param config 配置 (默认 "GET" "FORM")
  */
 async function request(url: string, config?: RequestConfig) {
-    let {
+    const {
         method = 'GET',
         params = {},
         data = {},

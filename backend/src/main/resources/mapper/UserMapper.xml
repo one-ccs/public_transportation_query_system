@@ -3,7 +3,12 @@
 <mapper namespace="com.example.public_transportation_query_system.mapper.UserMapper">
     <select id="selectPage" resultType="User">
         SELECT DISTINCT
-            `user`.*
+            `user`.id,
+            `user`.username,
+            `user`.`password`,
+            `user`.email,
+            `user`.register_datetime,
+            `user`.`status`
         FROM
             `user`
             INNER JOIN user_role ON `user`.id = user_role.uid

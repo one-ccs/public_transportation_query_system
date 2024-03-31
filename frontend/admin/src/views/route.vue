@@ -35,8 +35,19 @@
                 <el-table-column type="selection" width="39" />
 				<el-table-column prop="id" label="ID" width="66" align="center" sortable></el-table-column>
 				<el-table-column prop="no" label="线路号" width="125" align="center"></el-table-column>
-				<el-table-column prop="firstTime" label="首班时间" align="center"></el-table-column>
-				<el-table-column prop="lastTime" label="末班时间" align="center"></el-table-column>
+				<el-table-column prop="firstTime" label="首班时间" width="125" align="center"></el-table-column>
+				<el-table-column prop="lastTime" label="末班时间" width="125" align="center"></el-table-column>
+				<el-table-column label="途经站点" min-width="200" show-overflow-tooltip>
+                    <template #default="scope">
+                        <el-tag
+                            v-for="(item, index) in scope.row.stations"
+                            :key="item.id"
+							:type="item.status == 0 ? 'info': 'success'"
+                        >
+							{{ i18n(index + 1, 'serialNumber') }}{{ item.sitename }}
+                        </el-tag>
+                    </template>
+                </el-table-column>
 				<el-table-column label="开通状态" width="88" align="center">
 					<template #default="scope">
 						<el-tag
@@ -46,7 +57,7 @@
 						</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column prop="openingDatetime" label="开通日期" align="center" sortable></el-table-column>
+				<el-table-column prop="openingDatetime" label="开通日期" width="160" align="center" sortable></el-table-column>
 
 				<el-table-column label="操作" width="200" align="center">
 					<template #default="scope">
@@ -103,7 +114,8 @@
                         placeholder="请选择状态"
                     >
                         <el-option
-                            v-for="item in statusList" :key="item.value"
+                            v-for="item in statusList"
+                            :key="item.value"
                             :label="item.label"
                             :value="item.value"
                         >
@@ -133,7 +145,7 @@
 		</el-dialog>
 
 		<!-- 修改弹出框 -->
-		<el-dialog title="修改" v-model="modifyVisible" width="30%">
+		<el-dialog title="修改" v-model="modifyVisible">
 			<el-form :model="modifyForm" ref="modifyFormRef" :rules="modifyRules" label-width="70px">
 				<el-form-item label="ID" prop="id">
 					<el-input v-model="modifyForm.id" disabled></el-input>
@@ -159,13 +171,55 @@
                         placeholder="请选择末班时间"
                     />
 				</el-form-item>
+                <el-form-item label="途径站点">
+                    <el-select
+                        v-model="modifyForm.stations"
+                        value-key="id"
+                        multiple
+                        filterable
+                        remote
+                        reserve-keyword
+                        placeholder="请选择途径站点"
+                        :remote-method="stationRemote"
+                        :loading="remoteLoading"
+                    >
+                        <template #tag>
+                            <draggable
+                                v-model="modifyForm.stations"
+                                item-key="id"
+                                @onDragEnd="console.log(123)"
+                            >
+                                <template #item="{ element }">
+                                    <el-tag
+                                        :type="element.status == 0 ? 'info': 'success'"
+                                    >
+                                        {{ i18n(element.sequence, 'serialNumber') }}{{ element.sitename }}
+                                    </el-tag>
+                                </template>
+                            </draggable>
+                        </template>
+                        <el-option
+                            v-for="item in stationList"
+                            :key="item.id"
+                            :label="item.sitename"
+                            :value="item"
+                        >
+                            <el-tag
+                                :type="item.status == 0 ? 'info': 'success'"
+                            >
+                                {{ item.sitename }}
+                            </el-tag>
+                        </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="开通状态" prop="status">
                     <el-select
                         v-model="modifyForm.status"
                         placeholder="请选择状态"
                     >
                         <el-option
-                            v-for="item in statusList" :key="item.value"
+                            v-for="item in statusList"
+                            :key="item.value"
                             :label="item.label"
                             :value="item.value"
                         >
@@ -197,31 +251,24 @@
 </template>
 
 <script setup lang="ts" name="users">
-import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
-import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
-import type { ResponseData, Route } from '@/utils/interface';
-import { apiRouteDelete, apiRoutePageQuery, apiRoutePost, apiRoutePut } from '@/utils/api';
+import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
+import { Delete, Edit, Plus, RefreshLeft, Search } from '@element-plus/icons-vue';
+import draggable from 'vuedraggable';
+import type { ResponseData, RouteBO, Station, PageQuery, TimeRangePageQuery } from '@/utils/interface';
+import { apiRouteDelete, apiRoutePageQuery, apiRoutePost, apiRoutePut, apiStationPageQuery } from '@/utils/api';
 import { deepCopy } from '@/utils/copy';
+import i18n from '@/utils/i18n';
 
 
-interface TableItem {
-	id: number;
-	no: string;
-	firstTime: string;
-	lastTime: string;
-	status: number;
-	openingDatetime: string;
-}
-
-const query = reactive({
+const query = reactive<TimeRangePageQuery>({
 	pageIndex: 1,
 	pageSize: 10,
 	query: '',
     startDatetime: '',
     endDatetime: '',
 });
-const tableData = ref<TableItem[]>([]);
+const tableData = ref<RouteBO[]>([]);
 const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
@@ -235,9 +282,31 @@ const getData = () => {
 };
 getData();
 
+// 远程加载站点列表
+const stationList = ref<Station[]>([]);
+const remoteLoading = ref(false);
+const stationQuery = reactive<PageQuery>({
+	pageIndex: 1,
+	pageSize: 10,
+	query: '',
+});
+const stationRemote = (query: string) => {
+    remoteLoading.value = true;
+    stationQuery.query = query;
+
+    apiStationPageQuery(stationQuery, (data: ResponseData) => {
+        remoteLoading.value = false;
+        stationList.value = data.data.list;
+    }, (data: ResponseData) => {
+        remoteLoading.value = false;
+        ElMessage.warning('站点列表获取失败');
+    });
+};
+stationRemote('');
+
 // 多选操作
-const multipleSelection = ref<TableItem[]>([]);
-const handleSelectionChange = (val: TableItem[]) => {
+const multipleSelection = ref<RouteBO[]>([]);
+const handleSelectionChange = (val: RouteBO[]) => {
     multipleSelection.value = val;
 };
 // 批量删除
@@ -247,7 +316,7 @@ const deleteBatch = () => {
 		type: 'warning'
 	})
     .then(() => {
-        apiRouteDelete(multipleSelection.value.map(item => item.id), () => {
+        apiRouteDelete(multipleSelection.value.map(item => item.id!), () => {
             ElMessage.success('删除成功');
             getData();
         });
@@ -305,7 +374,7 @@ const addRules: FormRules = {
 // 表格添加时弹窗和保存
 const addVisible = ref(false);
 const addFormRef = ref<FormInstance>();
-const addForm = reactive<Route>({
+const addForm = reactive<RouteBO>({
     status: 1,
 });
 const handleAdd = () => {
@@ -330,13 +399,7 @@ const modifyRules: FormRules = {
 // 表格修改时弹窗和保存
 const modifyVisible = ref(false);
 const modifyFormRef = ref<FormInstance>();
-const modifyForm = reactive<Route>({
-    no: undefined,
-    firstTime: undefined,
-    lastTime: undefined,
-    status: undefined,
-    openingDatetime: undefined,
-});
+const modifyForm = reactive<RouteBO>({});
 let oldModifyString = '';
 const handleModify = (row: any) => {
     deepCopy(modifyForm, row);

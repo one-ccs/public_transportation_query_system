@@ -1,5 +1,5 @@
 import { defaultSuccessCallback, defaultFailureCallback } from '.';
-import type { Role, TimeRangePageQuery } from '@/utils/interface';
+import type { PageQuery, Role } from '@/utils/interface';
 import request from '@/utils/request';
 import useGlobalStore from '@/store/global';
 
@@ -88,7 +88,7 @@ export function apiRoleDelete(id: number | number[], successCallback: Function =
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiRolePageQuery(query: TimeRangePageQuery, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
+export function apiRolePageQuery(query: PageQuery, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
     return request('/api/role/pageQuery', {
         params: {
             ...query,

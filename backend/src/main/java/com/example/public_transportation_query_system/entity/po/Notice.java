@@ -16,6 +16,7 @@ public class Notice implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Schema(description = "公告 id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 

@@ -8,4 +8,6 @@ import com.example.public_transportation_query_system.entity.po.RouteStation;
 @Mapper
 public interface RouteStationMapper extends BaseMapper<RouteStation> {
 
+    boolean deleteAllByRouteId(Integer id);
+
 }

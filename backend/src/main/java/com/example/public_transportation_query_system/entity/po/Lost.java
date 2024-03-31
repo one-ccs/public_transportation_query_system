@@ -17,6 +17,7 @@ public class Lost implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Schema(description = "失物招领 id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 

@@ -37,7 +37,7 @@
 				<el-table-column prop="username" label="用户名" width="125" sortable></el-table-column>
 				<el-table-column prop="password" label="密码" min-width="200" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="email" label="邮箱地址" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="registerDatetime" label="注册时间" align="center" sortable show-overflow-tooltip></el-table-column>
+				<el-table-column prop="registerDatetime" label="注册时间" width="160" align="center" sortable></el-table-column>
 				<el-table-column label="状态" width="100" align="center">
 					<template #default="scope">
 						<el-tag
@@ -181,7 +181,7 @@
 import { Delete, Edit, Plus, RefreshLeft, Search } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
-import type { ResponseData, TimeRangePageQuery, UserVo } from '@/utils/interface';
+import type { ResponseData, TimeRangePageQuery, UserVO } from '@/utils/interface';
 import { apiPageUser, apiRolePageQuery, apiUserDelete, apiUserPost, apiUserPut } from '@/utils/api';
 import { deepCopy } from '@/utils/copy';
 
@@ -376,7 +376,7 @@ const modifyRules: FormRules = {
 // 表格修改时弹窗和保存
 const modifyVisible = ref(false);
 const modifyFormRef = ref<FormInstance>();
-const modifyForm = reactive<UserVo>({
+const modifyForm = reactive<UserVO>({
     passwordCheck: '',
     passwordModified: false,
     roles: [roleList[0]],

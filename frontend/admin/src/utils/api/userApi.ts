@@ -1,5 +1,5 @@
 import { defaultFailureCallback, defaultSuccessCallback } from '.';
-import type { UserLogin, TimeRangePageQuery, UserVo, ResponseData } from '@/utils/interface';
+import type { UserLogin, UserVO, ResponseData, PageQuery } from '@/utils/interface';
 import request from '@/utils/request';
 import encryptMD5 from '@/utils/encryptMD5';
 import useGlobalStore from '@/store/global';
@@ -31,7 +31,7 @@ export function apiUserGet(id: number, successCallback: Function = defaultSucces
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserPut(user: UserVo, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
+export function apiUserPut(user: UserVO, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
     return request('/api/user', {
         method: 'PUT',
         data: {
@@ -52,7 +52,7 @@ export function apiUserPut(user: UserVo, successCallback: Function = defaultSucc
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserPost(user: UserVo, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
+export function apiUserPost(user: UserVO, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
     return request('/api/user', {
         method: 'POST',
         data: {
@@ -91,7 +91,7 @@ export function apiUserDelete(id: number | number[], successCallback: Function =
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiPageUser(query: TimeRangePageQuery, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
+export function apiPageUser(query: PageQuery, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
     return request('/api/user/pageQuery', {
         params: {
             ...query,

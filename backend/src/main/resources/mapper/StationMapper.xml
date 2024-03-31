@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.public_transportation_query_system.mapper.StationMapper">
-
+    <select id="getStationsByRouteId" resultType="StationBO">
+        SELECT
+            station.id,
+            station.sitename,
+            station.longitude,
+            station.latitude,
+            station.`status`,
+            station.opening_datetime,
+            route_station.route_id,
+            route_station.sequence
+        FROM
+            station
+            INNER JOIN
+            route_station
+            ON
+                station.id = route_station.station_id
+        WHERE
+            route_station.route_id = #{routeId}
+    </select>
 </mapper>

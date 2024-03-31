@@ -1,5 +1,5 @@
 import { defaultSuccessCallback, defaultFailureCallback } from '.';
-import type { Station, TimeRangePageQuery } from '@/utils/interface';
+import type { PageQuery, Station } from '@/utils/interface';
 import request from '@/utils/request';
 import useGlobalStore from '@/store/global';
 
@@ -86,7 +86,7 @@ export function apiStationDelete(id: number | number[], successCallback: Functio
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiStationPageQuery(query: TimeRangePageQuery, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
+export function apiStationPageQuery(query: PageQuery, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
     return request('/api/station/pageQuery', {
         params: {
             ...query,

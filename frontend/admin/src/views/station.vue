@@ -46,7 +46,7 @@
 						</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column prop="openingDatetime" label="开通日期" align="center" sortable></el-table-column>
+				<el-table-column prop="openingDatetime" label="开通日期" width="160" align="center" sortable></el-table-column>
 
 				<el-table-column label="操作" width="200" align="center">
 					<template #default="scope">
@@ -176,28 +176,19 @@
 import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
-import type { ResponseData, Station } from '@/utils/interface';
+import type { ResponseData, Station, TimeRangePageQuery } from '@/utils/interface';
 import { apiStationDelete, apiStationPageQuery, apiStationPost, apiStationPut } from '@/utils/api';
 import { deepCopy } from '@/utils/copy';
 
 
-interface TableItem {
-	id: number;
-	no: string;
-	firstTime: string;
-	lastTime: string;
-	status: number;
-	openingDatetime: string;
-}
-
-const query = reactive({
+const query = reactive<TimeRangePageQuery>({
 	pageIndex: 1,
 	pageSize: 10,
 	query: '',
     startDatetime: '',
     endDatetime: '',
 });
-const tableData = ref<TableItem[]>([]);
+const tableData = ref<Station[]>([]);
 const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
@@ -212,8 +203,8 @@ const getData = () => {
 getData();
 
 // 多选操作
-const multipleSelection = ref<TableItem[]>([]);
-const handleSelectionChange = (val: TableItem[]) => {
+const multipleSelection = ref<Station[]>([]);
+const handleSelectionChange = (val: Station[]) => {
     multipleSelection.value = val;
 };
 // 批量删除
@@ -223,7 +214,7 @@ const deleteBatch = () => {
 		type: 'warning'
 	})
     .then(() => {
-        apiStationDelete(multipleSelection.value.map(item => item.id), () => {
+        apiStationDelete(multipleSelection.value.map(item => item.id!), () => {
             ElMessage.success('删除成功');
             getData();
         });

@@ -63,7 +63,16 @@ export interface Ad {
     endDatetime?: string;
 };
 
-/* --------- dto --------- */
+/* --------- BO --------- */
+
+export interface StationBO extends Station {
+    routeId?: number;
+    sequence?: number;
+};
+
+export interface RouteBO extends Route {
+    stations?: StationBO[];
+};
 
 /* --------- vo --------- */
 
@@ -92,8 +101,8 @@ export interface UserLogin {
     remember: boolean;
 };
 
-export interface UserVo extends User {
+export interface UserVO extends User {
     roles?: Role[];
     passwordCheck: string;
     passwordModified?: boolean;
-}
+};

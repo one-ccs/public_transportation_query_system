@@ -14,7 +14,7 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
     @Autowired
     UserRoleMapper userRoleMapper;
 
-    public void removeBatchByUid(Integer uid) {
-        userRoleMapper.removeBatchByUid(uid);
+    public boolean deleteAllByUid(Integer uid) {
+        return userRoleMapper.deleteAllByUid(uid);
     }
 }

@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.public_transportation_query_system.entity.po.Route;
 import com.example.public_transportation_query_system.entity.vo.BasePageQuery;
 import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.request.DeleteVO;
+import com.example.public_transportation_query_system.entity.vo.request.RouteVO;
 import com.example.public_transportation_query_system.service.impl.RouteServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,13 +34,13 @@ public class RouteController {
 
     @Operation(summary = "添加线路", description = "添加线路接口")
     @PutMapping
-    public Result<Object> put(@RequestBody Route route) {
+    public Result<Object> put(@RequestBody RouteVO route) {
         return routeServiceImpl.addRoute(route);
     }
 
     @Operation(summary = "修改线路", description = "修改线路接口")
     @PostMapping
-    public Result<Object> post(@RequestBody Route route) {
+    public Result<Object> post(@RequestBody RouteVO route) {
         return routeServiceImpl.modifyRoute(route);
     }
 

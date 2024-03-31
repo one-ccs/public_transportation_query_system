@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.example.public_transportation_query_system.entity.vo.BaseData;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,10 +16,11 @@ import lombok.Data;
 
 @Data
 @Schema(name = "Route", description = "线路表")
-public class Route implements Serializable {
+public class Route implements Serializable, BaseData {
 
     private static final long serialVersionUID = 1L;
 
+    @Schema(description = "线路 id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 

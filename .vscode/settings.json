@@ -19,7 +19,8 @@
         "springframework",
         "tinyint",
         "userdetails",
-        "varchar"
+        "varchar",
+        "vuedraggable"
     ],
     "maven.view": "flat"
 }

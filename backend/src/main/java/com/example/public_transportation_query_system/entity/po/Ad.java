@@ -17,6 +17,7 @@ public class Ad implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Schema(description = "广告 id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 

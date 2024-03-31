@@ -16,6 +16,7 @@ public class Station implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Schema(description = "站点 id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
