@@ -1,14 +1,35 @@
-import './assets/main.css'
+import 'vant/es/toast/style';
+import 'vant/es/dialog/style';
+import 'vant/es/notify/style';
+import 'vant/es/image-preview/style';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import 'font-awesome/css/font-awesome.min.css';
 
-import App from './App.vue'
-import router from './router'
+import '@/assets/css/main.css';
 
-const app = createApp(App)
+import { createApp } from 'vue';
+import { Lazyload } from 'vant';
 
-app.use(createPinia())
-app.use(router)
+import App from './App.vue';
+import pinia from './stores/pinia';
+import router from './router';
 
-app.mount('#app')
+import useGlobalStore from './stores/global';
+import useUserStore from './stores/user';
+import useNoticeStore from './stores/notice';
+
+const app = createApp(App);
+
+app.use(pinia);
+app.use(router);
+app.use(Lazyload);
+
+// 异步初始化 store
+setTimeout(() => {
+    useGlobalStore().init();
+    useNoticeStore().init();
+}, 0);
+// 同步初始化 store
+useUserStore().init();
+
+app.mount('#app');

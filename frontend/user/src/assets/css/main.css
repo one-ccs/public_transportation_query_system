@@ -1,0 +1,99 @@
+@import './base.css';
+
+
+/* 覆写框架样式 */
+.van-nav-bar {
+    width: 100%;
+}
+.van-cell {
+    align-items: center;
+}
+.van-cell__title {
+    flex: 1 0 auto !important;
+    margin-right: 8px;
+}
+.van-cell__value {
+    flex: 1 1 auto !important;
+}
+
+.translucent {
+    --van-cell-group-background: #0000;
+    --van-cell-background: #0000;
+    --van-grid-item-content-background: #0000;
+}
+
+.translucent-half {
+    --van-cell-group-background: #0000;
+    --van-cell-background: #fffa;
+    --van-grid-item-content-background: #fffa;
+}
+
+.fa {
+    width: 16px;
+    height: 16px;
+    text-align: center;
+}
+
+/* 显示规定属性样式 防止优先级过低 不生效 */
+[hidden] {
+    display: none !important;
+}
+
+/* 自定义样式 */
+:root {
+    --border-radius: var(--van-radius-lg);
+    --client-width: 100%;
+    --text-color: #333;
+    --background-color: #F2F5FC;
+    --bottom-menu-height: 80px;
+    --box-shadow-light: 0 0 5px 0 #3333;
+    --box-shadow-light-2: 0 2px 5px 0 #3333;
+}
+
+@media screen and (min-width: 768px) {
+    :root {
+        --client-width: 560px;
+    }
+}
+
+#app {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #181818;
+}
+
+.view {
+    z-index: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-color);
+    box-shadow: var(--box-shadow-light);
+}
+
+.view .view {
+    z-index: 99;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.view-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.link-button {
+    color: var(--text-color);
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+}
