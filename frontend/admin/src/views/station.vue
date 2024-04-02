@@ -172,7 +172,7 @@
 	</div>
 </template>
 
-<script setup lang="ts" name="users">
+<script setup lang="ts" name="station">
 import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
@@ -193,11 +193,11 @@ const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
 	apiStationPageQuery(query, (data: ResponseData) => {
-        ElMessage.success('线路数据获取成功');
+        ElMessage.success('站点数据获取成功');
 		tableData.value = data.data.list;
 		pageTotal.value = data.data.total || 50;
     }, (data: ResponseData) => {
-        ElMessage.warning('线路数据获取失败');
+        ElMessage.warning('站点数据获取失败');
     });
 };
 getData();

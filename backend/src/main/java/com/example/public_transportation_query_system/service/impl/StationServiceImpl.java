@@ -54,6 +54,7 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
         // 构造返回结构
         HashMap<String, Object> map = new HashMap<>();
         map.put("total", page.getTotal());
+        map.put("finished", !page.hasNext());
         map.put("list", page.getRecords());
 
         return Result.success("查询成功", map);

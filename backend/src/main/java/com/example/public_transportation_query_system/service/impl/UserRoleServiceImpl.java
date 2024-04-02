@@ -14,7 +14,7 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
     @Autowired
     UserRoleMapper userRoleMapper;
 
-    public boolean deleteAllByUid(Integer uid) {
+    public int deleteAllByUid(Integer uid) {
         return userRoleMapper.deleteAllByUid(uid);
     }
 }

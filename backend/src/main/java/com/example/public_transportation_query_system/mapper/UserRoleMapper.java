@@ -8,6 +8,6 @@ import com.example.public_transportation_query_system.entity.po.UserRole;
 @Mapper
 public interface UserRoleMapper extends BaseMapper<UserRole> {
 
-    boolean deleteAllByUid(Integer uid);
+    int deleteAllByUid(Integer uid);
 
 }

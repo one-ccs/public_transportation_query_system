@@ -14,7 +14,7 @@ public class RouteStationServiceImpl extends ServiceImpl<RouteStationMapper, Rou
     @Autowired
     RouteStationMapper routeStationMapper;
 
-    public boolean deleteAllByRouteId(Integer id) {
+    public int deleteAllByRouteId(Integer id) {
         return routeStationMapper.deleteAllByRouteId(id);
     }
 

@@ -191,9 +191,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 更新用户信息
         if (this.updateById(newUser)) {
             // 删除旧角色信息
-            if (!userRoleServiceImpl.deleteAllByUid(userVO.getId())) {
-                return Result.failure("修改失败，删除旧角色信息失败");
-            }
+            userRoleServiceImpl.deleteAllByUid(userVO.getId());
             // 添加新角色信息
             if (userRoleServiceImpl.saveBatch(userVO.getUserRoleList())) {
                 return Result.success("修改成功");

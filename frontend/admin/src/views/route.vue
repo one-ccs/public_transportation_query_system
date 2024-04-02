@@ -85,10 +85,13 @@
 		</div>
 
 		<!-- 添加弹出框 -->
-		<el-dialog title="添加" v-model="addVisible" width="30%">
+		<el-dialog title="添加" v-model="addVisible">
 			<el-form :model="addForm" ref="addFormRef" :rules="addRules" label-width="70px">
 				<el-form-item label="线路号" prop="no">
-					<el-input v-model="addForm.no"></el-input>
+					<el-input
+                        v-model="addForm.no"
+                        placeholder="请输入线路号"
+                    ></el-input>
 				</el-form-item>
 				<el-form-item label="首班时间">
                     <el-time-select
@@ -108,6 +111,53 @@
                         placeholder="请选择末班时间"
                     />
 				</el-form-item>
+                <el-form-item label="途径站点">
+                    <el-select
+                        v-model="addForm.stations"
+                        v-infinite-load
+                        value-key="id"
+                        :teleported="false"
+                        clearable
+                        multiple
+                        filterable
+                        remote
+                        reserve-keyword
+                        placeholder="请选择途径站点（拖拽排序）"
+                        :remote-method="stationRemote"
+                        :loading="remoteLoading"
+                        @change="updateSequence(addForm.stations)"
+                    >
+                        <template #tag>
+                            <draggable
+                                v-model="addForm.stations"
+                                item-key="id"
+                                @end="updateSequence(addForm.stations)"
+                            >
+                                <template #item="{ element }">
+                                    <el-tag
+                                        :type="element.status == 0 ? 'info': 'success'"
+                                    >
+                                        {{ i18n(element.sequence, 'serialNumber') }}{{ element.sitename }}
+                                    </el-tag>
+                                </template>
+                            </draggable>
+                        </template>
+                        <template #default>
+                            <el-option
+                                v-for="item in stationList"
+                                :key="item.id"
+                                :label="item.sitename"
+                                :value="item"
+                            >
+                                <el-tag
+                                    :type="item.status == 0 ? 'info': 'success'"
+                                >
+                                    {{ item.sitename }}
+                                </el-tag>
+                            </el-option>
+                        </template>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="开通状态" prop="status">
                     <el-select
                         v-model="addForm.status"
@@ -151,7 +201,10 @@
 					<el-input v-model="modifyForm.id" disabled></el-input>
 				</el-form-item>
 				<el-form-item label="线路号" prop="no">
-					<el-input v-model="modifyForm.no"></el-input>
+					<el-input
+                        v-model="modifyForm.no"
+                        placeholder="请输入线路号"
+                    ></el-input>
 				</el-form-item>
 				<el-form-item label="首班时间">
                     <el-time-select
@@ -174,20 +227,24 @@
                 <el-form-item label="途径站点">
                     <el-select
                         v-model="modifyForm.stations"
+                        v-infinite-load
                         value-key="id"
+                        :teleported="false"
+                        clearable
                         multiple
                         filterable
                         remote
                         reserve-keyword
-                        placeholder="请选择途径站点"
+                        placeholder="请选择途径站点（拖拽排序）"
                         :remote-method="stationRemote"
                         :loading="remoteLoading"
+                        @change="updateSequence(modifyForm.stations)"
                     >
                         <template #tag>
                             <draggable
                                 v-model="modifyForm.stations"
                                 item-key="id"
-                                @onDragEnd="console.log(123)"
+                                @end="updateSequence(modifyForm.stations)"
                             >
                                 <template #item="{ element }">
                                     <el-tag
@@ -198,18 +255,20 @@
                                 </template>
                             </draggable>
                         </template>
-                        <el-option
-                            v-for="item in stationList"
-                            :key="item.id"
-                            :label="item.sitename"
-                            :value="item"
-                        >
-                            <el-tag
-                                :type="item.status == 0 ? 'info': 'success'"
+                        <template #default>
+                            <el-option
+                                v-for="item in stationList"
+                                :key="item.id"
+                                :label="item.sitename"
+                                :value="item"
                             >
-                                {{ item.sitename }}
-                            </el-tag>
-                        </el-option>
+                                <el-tag
+                                    :type="item.status == 0 ? 'info': 'success'"
+                                >
+                                    {{ item.sitename }}
+                                </el-tag>
+                            </el-option>
+                        </template>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="开通状态" prop="status">
@@ -250,12 +309,12 @@
 	</div>
 </template>
 
-<script setup lang="ts" name="users">
-import { reactive, ref } from 'vue';
+<script setup lang="ts" name="route">
+import { onMounted, reactive, ref } from 'vue';
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
 import { Delete, Edit, Plus, RefreshLeft, Search } from '@element-plus/icons-vue';
 import draggable from 'vuedraggable';
-import type { ResponseData, RouteBO, Station, PageQuery, TimeRangePageQuery } from '@/utils/interface';
+import type { ResponseData, RouteBO, Station, PageQuery, TimeRangePageQuery, StationBO } from '@/utils/interface';
 import { apiRouteDelete, apiRoutePageQuery, apiRoutePost, apiRoutePut, apiStationPageQuery } from '@/utils/api';
 import { deepCopy } from '@/utils/copy';
 import i18n from '@/utils/i18n';
@@ -285,15 +344,23 @@ getData();
 // 远程加载站点列表
 const stationList = ref<Station[]>([]);
 const remoteLoading = ref(false);
+const remoteLoadingFinished = ref(false);
 const stationQuery = reactive<PageQuery>({
 	pageIndex: 1,
 	pageSize: 10,
 	query: '',
 });
+let lastQuery: string | null = null;
 const stationRemote = (query: string) => {
-    remoteLoading.value = true;
-    stationQuery.query = query;
+    if (query == lastQuery) return;
+    lastQuery = query;
 
+    // 重置相关变量
+    stationQuery.pageIndex = 1;
+    stationQuery.query = query;
+    remoteLoadingFinished.value = false;
+
+    remoteLoading.value = true;
     apiStationPageQuery(stationQuery, (data: ResponseData) => {
         remoteLoading.value = false;
         stationList.value = data.data.list;
@@ -303,6 +370,35 @@ const stationRemote = (query: string) => {
     });
 };
 stationRemote('');
+
+// 触底加载站点列表
+const infiniteLoad = () => {
+    stationQuery.pageIndex++;
+
+    apiStationPageQuery(stationQuery, (data: ResponseData) => {
+        remoteLoading.value = false;
+        remoteLoadingFinished.value = data.data.finished;
+        stationList.value.push(...data.data.list);
+    }, (data: ResponseData) => {
+        remoteLoading.value = false;
+        ElMessage.warning('站点列表获取失败');
+    });
+};
+
+// 触底加载指令
+const vInfiniteLoad = {
+    mounted: (el: Element, binding: any) => {
+        const scrollElement = el.querySelector('.el-select-dropdown__wrap');
+        scrollElement?.addEventListener('scroll', (event: Event) => {
+            const bottom = scrollElement.scrollHeight - scrollElement.scrollTop - scrollElement.clientHeight;
+
+            // 加载下一页
+            if (bottom <= 5 && !remoteLoadingFinished.value && !remoteLoading.value) {
+                infiniteLoad();
+            }
+        });
+    },
+};
 
 // 多选操作
 const multipleSelection = ref<RouteBO[]>([]);
@@ -377,9 +473,11 @@ const addFormRef = ref<FormInstance>();
 const addForm = reactive<RouteBO>({
     status: 1,
 });
+// 点击添加按钮
 const handleAdd = () => {
 	addVisible.value = true;
 };
+// 保存添加
 const saveAdd = (formEl: FormInstance | undefined) => {
     formEl && formEl.validate((valid: boolean) => {
         if (!valid) return;
@@ -401,11 +499,13 @@ const modifyVisible = ref(false);
 const modifyFormRef = ref<FormInstance>();
 const modifyForm = reactive<RouteBO>({});
 let oldModifyString = '';
+// 点击修改按钮
 const handleModify = (row: any) => {
     deepCopy(modifyForm, row);
     oldModifyString = JSON.stringify(modifyForm);
 	modifyVisible.value = true;
 };
+// 保存修改
 const saveModify = (formEl: FormInstance | undefined) => {
     formEl && formEl.validate((valid: boolean) => {
         if (!valid) return;
@@ -418,6 +518,11 @@ const saveModify = (formEl: FormInstance | undefined) => {
             getData();
         });
     });
+};
+
+// 更新站点排序
+const updateSequence = (stations?: StationBO[]) => {
+    stations?.forEach((station, index) => station.sequence = index + 1);
 };
 </script>
 
