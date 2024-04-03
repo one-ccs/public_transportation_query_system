@@ -10,4 +10,6 @@ import RightSlideRouterView from '@/components/RightSlideRouterView.vue';
 </template>
 
 <style scoped lang="less">
+.client-wrapper {
+}
 </style>

@@ -60,7 +60,7 @@
     position: relative;
     width: 100%;
     height: 100%;
-    background-color: #181818;
+    background-color: #3B3B3B;
 }
 
 .view {
@@ -83,7 +83,7 @@
     left: 0;
 }
 
-.view-container {
+.client-wrapper {
     position: relative;
     width: 100%;
     height: 100%;

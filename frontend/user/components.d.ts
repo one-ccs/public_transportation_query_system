@@ -12,10 +12,13 @@ declare module 'vue' {
     RightSlideRouterView: typeof import('./src/components/RightSlideRouterView.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SearchBar: typeof import('./src/components/SearchBar.vue')['default']
     Tabbar: typeof import('./src/components/Tabbar.vue')['default']
     TabBar: typeof import('./src/components/TabBar.vue')['default']
     VanEmpty: typeof import('vant/es')['Empty']
+    VanImage: typeof import('vant/es')['Image']
     VanNavBar: typeof import('vant/es')['NavBar']
+    VanSearch: typeof import('vant/es')['Search']
     VanTabbar: typeof import('vant/es')['Tabbar']
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
   }
