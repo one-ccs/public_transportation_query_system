@@ -13,6 +13,7 @@ import { Lazyload } from 'vant';
 import App from './App.vue';
 import pinia from './stores/pinia';
 import router from './router';
+import BaiduMap from 'vue-baidu-map-3x';
 
 import useGlobalStore from './stores/global';
 import useUserStore from './stores/user';
@@ -23,6 +24,9 @@ const app = createApp(App);
 app.use(pinia);
 app.use(router);
 app.use(Lazyload);
+app.use(BaiduMap, {
+    ak: 'GOxeRne4nOOokIgNZiUyPvv7mdXP3Ahr',
+})
 
 // 异步初始化 store
 setTimeout(() => {

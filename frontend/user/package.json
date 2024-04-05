@@ -15,6 +15,8 @@
     "pinia": "^2.1.7",
     "vant": "^4.8.8",
     "vue": "^3.4.21",
+    "vue-baidu-map-3x": "^1.0.37",
+    "vue-baidu-map-offline": "^1.0.7",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
