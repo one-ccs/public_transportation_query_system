@@ -1,18 +1,16 @@
 import { defineStore } from "pinia";
-import { localLoad, localRemove, localSave } from "../utils/storage";
+import { localLoad, localRemove, localSave } from "@/utils/storage";
 
 const useGlobalStore = defineStore("global", {
     state: () => ({
         isInit: false,
         keyName: "globalStore",
         data: {
-            version: '0.0.1',
+            token: '',
         },
-        apiHost: 'http://127.0.0.1:8080/api',
-        defaultAvatarUrl: '/static/img/avatar.jpg',
     }),
     getters: {
-
+        token: (state) => state.data.token,
     },
     actions: {
         init(force=false) {
@@ -32,6 +30,9 @@ const useGlobalStore = defineStore("global", {
         clear() {
             localRemove(this.keyName);
             return this;
+        },
+        setToken(token: string) {
+            this.data.token = token;
         },
     }
 });

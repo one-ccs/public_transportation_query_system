@@ -48,6 +48,7 @@
     --bottom-menu-height: 80px;
     --box-shadow-light: 0 0 5px 0 #3333;
     --box-shadow-light-2: 0 2px 5px 0 #3333;
+    --search-bar-height: 58px;
 }
 
 @media screen and (min-width: 768px) {

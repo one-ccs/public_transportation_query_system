@@ -1,22 +1,11 @@
 import axios, { type AxiosInstance, type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 import { showFailToast } from 'vant';
-import useUserStore from '@/stores/user';
-import pinia from '@/stores/pinia';
 
-
-const userStore = useUserStore(pinia);
-
-
-const service: AxiosInstance = axios.create({
-    baseURL: 'http://127.0.0.1:5001',
+const service:AxiosInstance = axios.create({
+    baseURL: 'http://127.0.0.1:8080',
     timeout: 5000,
-    // withCredentials: true
-    // 设置允许携带 cookie, 否则登录后 flask.session 无法无法设置 cookie,
-    // 且服务器的 Access-Control-Allow-Origin 不能设置为 '*', 需要设置白名单进行过滤
-    // 且需要设置 Access-Control-Allow-Credentials: 'true'
-    withCredentials: true,
     // 小于 500 的状态码不抛出错误
-    validateStatus: status => (status < 500),
+    validateStatus: (status: number) => status < 500,
 });
 
 // 请求拦截器
@@ -32,25 +21,17 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
     (response: AxiosResponse) => {
-        // 未登录，或登录已过期
-        if (response.data.code === 401) {
-            showFailToast('未登录\n即将跳转登录页...');
-            userStore.clear();
-            setTimeout(() => {
-                // 使用 location.href 跳转 而不是 router 防止某些情况下页面不改变的 bug
-                location.href = '/login';
-            }, 800);
-            return response;
-        }
         return response;
     },
     (error: AxiosError) => {
+        if (error.code === 'ERR_NETWORK') return showFailToast('网络连接超时，请稍后重试');
         showFailToast('发生了一些错误，请联系管理员。')
         return Promise.reject(error);
     }
 );
 
 export interface RequestConfig {
+    url: string;
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS';
     params?: any;
     data?: any;
@@ -68,8 +49,9 @@ export interface RequestConfig {
  * @param url 请求链接
  * @param config 配置 (默认 "GET" "FORM")
  */
-async function request(url: string, config?: RequestConfig) {
+async function request(config: RequestConfig) {
     const {
+        url,
         method = 'GET',
         params = {},
         data = {},

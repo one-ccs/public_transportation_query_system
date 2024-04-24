@@ -10,7 +10,7 @@ const useGlobalStore = defineStore("global", {
         },
     }),
     getters: {
-
+        token: (state) => state.data.token,
     },
     actions: {
         init(force=false) {
@@ -30,6 +30,9 @@ const useGlobalStore = defineStore("global", {
         clear() {
             localRemove(this.keyName);
             return this;
+        },
+        setToken(token: string) {
+            this.data.token = token;
         },
     }
 });

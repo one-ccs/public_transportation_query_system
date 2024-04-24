@@ -41,8 +41,8 @@ import { ElMessage } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
 import type { ResponseData, UserLogin } from '@/utils/interface';
 import { apiLogin } from '@/utils/api';
-import useTagsStore from '@/store/tags';
-import usePermissStore from '@/store/permiss';
+import useTagsStore from '@/stores/tags';
+import usePermissStore from '@/stores/permiss';
 
 
 const router = useRouter();

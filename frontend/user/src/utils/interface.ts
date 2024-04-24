@@ -1,109 +1,78 @@
 /* --------- po --------- */
 
 export interface User {
-    id: number;
-    username: string;
-    passwordHash: string;
-    email: string;
-    role: number;
-    avatar: string;
-    createDatetime: string;
+    id?: number;
+    username?: string;
+    password?: string;
+    email?: string;
+    status?: number;
+    registerDatetime?: string;
 };
 
-export interface Admin {
-    id: number;
-    userId: number;
-    name: string;
-    gender: string;
-    telephone: string;
+export interface Role {
+    id?: number;
+    name?: string;
+    nameZh?: string;
 };
 
-export interface Teacher {
-    id: number;
-    userId: number;
-    name: string;
-    gender: string;
-    telephone: string;
+export interface Route {
+    id?: number;
+    no?: string;
+    status?: number;
+    firstTime?: string;
+    lastTime?: string;
+    openingDatetime?: string;
 };
 
-export interface Student {
-    id: number;
-    userId: number;
-    teacherId: number;
-    name: string;
-    gender: string;
-    department: string;
-    faculty: string;
-    major: string;
-    grade: string;
-    _class: string;
-};
-
-export interface Leave {
-    id: number;
-    userId: number;
-    state: ELeaveState;
-    category: ELeaveCategory;
-    applyDatetime: string;
-    startDatetime: string;
-    endDatetime: string;
-    duration: number;
-    leaveReason: string;
-    annexUrl: string;
-    cancelDatetime: string;
-    revokeDatetime: string;
-    revokeLongitude: number;
-    revokeLatitude: number;
-    approver1Id: number;
-    a1Datetime: string;
-    approver2Id: number;
-    a2Datetime: string;
-    revokeId: number;
-    rejectDatetime: string;
-    rejectReason: string;
+export interface Station {
+    id?: number;
+    longitude?: number;
+    latitude?: number;
+    sitename?: string;
+    status?: number;
+    openingDatetime?: string;
 };
 
 export interface Notice {
-    id: number;
-    userId: number;
-    title: string;
-    content: string;
-    releaseDatetime: string;
+    id?: number;
+    userId?: number;
+    title?: string;
+    content?: string;
+    status?: number;
+    releaseDatetime?: string;
 };
 
-export type RoleEn = 'student' | 'teacher' | 'admin';
-
-export enum ERole {
-    admin = 9,
-    teacher = 1,
-    student = 0,
+export interface Lost {
+    id?: number;
+    status?: number;
+    describe?: string;
+    imgUrl?: string;
+    address?: string;
+    pickDatetime?: string;
+    claimDatetime?: string;
 };
 
-export enum ELeaveState {
-    PENDING,      /* 待审批 */
-    WITHDRAWN,    /* 已撤回 */
-    APPROVING,    /* 审批中 */
-    REJECTED,     /* 已驳回 */
-    CANCEL,       /* 待销假 */
-    CANCELING,    /* 销假中 */
-    DONE,         /* 已完成 */
+export interface Ad {
+    id?: number;
+    type?: number;
+    title?: string;
+    describe?: string;
+    imgUrl?: string;
+    jumpUrl?: string;
+    startDatetime?: string;
+    endDatetime?: string;
 };
 
-export enum ELeaveCategory {
-    PERSONAL,     /* 事假 */
-    SICK,         /* 病假 */
-    PUBLIC,       /* 公假 */
-    LEAVE_SCHOOL, /* 出校申请 */
+/* --------- BO --------- */
+
+export interface StationBO extends Station {
+    routeId?: number;
+    sequence?: number;
+    distance?: number;
 };
 
-/* --------- dto --------- */
-
-export interface UnionUser extends User, Admin, Teacher, Student {
-    name: string;
-    teacherName: string;
-    admissionDate: string;
-    school: string;
-    expires: number | null;
+export interface RouteBO extends Route {
+    stations?: StationBO[];
 };
 
 /* --------- vo --------- */
@@ -125,12 +94,13 @@ export interface TimeRangePageQuery extends PageQuery {
     endDatetime: string;
 };
 
-export interface LeavePageQuery extends PageQuery {
-    state: number;
-    category: number;
+export interface NearbyQuery {
+    longitude: number | null;
+    latitude: number | null;
+    distance: number;
 };
 
-export interface LoginUser {
+export interface UserLogin {
     username: string;
     email?: string;
     password: string;
@@ -138,10 +108,8 @@ export interface LoginUser {
     remember: boolean;
 };
 
-export interface LeaveAddForm {
-    category: number;
-    startDatetime: string;
-    endDatetime: string;
-    leaveSchool: boolean;
-    leaveReason: string;
+export interface UserVO extends User {
+    roles?: Role[];
+    passwordCheck: string;
+    passwordModified?: boolean;
 };

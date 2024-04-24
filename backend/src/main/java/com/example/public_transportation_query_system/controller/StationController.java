@@ -60,7 +60,7 @@ public class StationController {
     @Operation(summary = "查询附近站点", description = "查询附近站点")
     @AnonymousAuth
     @GetMapping("/nearby")
-    public Result<Object> nearby(double longitude, double latitude, double distance) {
+    public Result<Object> nearby(Double longitude, Double latitude, Double distance) {
         return stationServiceImpl.nearby(longitude, latitude, distance);
     }
 

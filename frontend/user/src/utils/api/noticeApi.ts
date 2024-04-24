@@ -1,57 +1,102 @@
-import { defaultFailureCallback, defaultSuccessCallback } from ".";
-import type { Notice, TimeRangePageQuery } from "../interface";
-import request from "../request";
+import { defaultSuccessCallback, defaultFailureCallback } from '.';
+import type { Notice, PageQuery } from '@/utils/interface';
+import request from '@/utils/request';
+import useGlobalStore from '@/stores/global';
 
+const globalStore = useGlobalStore();
 
-export function apiNoticeGet(id: number, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/notice', {
-        method: 'GET',
-        params: {
+/**
+ * 获取公告信息
+ * @param successCallback 成功回调函数
+ * @param failureCallback 失败回调函数
+ * @returns Promise
+ */
+export function apiNoticeGet(id: number, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/notice',
+		params: {
             id,
         },
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
 }
 
-export function apiNoticePut(notice: Notice, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/notice', {
-        method: 'PUT',
+/**
+ * 添加公告
+ * @param notice 公告信息
+ * @param successCallback 成功回调函数
+ * @param failureCallback 失败回调函数
+ * @returns Promise
+ */
+export function apiNoticePut(notice: Notice, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/notice',
+		method: 'PUT',
         data: {
             ...notice,
         },
+        contentType: 'JSON',
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
 }
 
-export function apiNoticePost(notice: Notice, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/notice', {
-        method: 'POST',
+/**
+ * 修改公告
+ * @param notice 公告信息
+ * @param successCallback 成功回调函数
+ * @param failureCallback 失败回调函数
+ * @returns Promise
+ */
+export function apiNoticePost(notice: Notice, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/notice',
+		method: 'POST',
         data: {
             ...notice,
         },
+        contentType: 'JSON',
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
 }
 
-export function apiNoticeDelete(id: number, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/notice', {
-        method: 'DELETE',
-        data: {
-            id,
-        },
+/**
+ * 删除公告
+ * @param id 公告 id
+ * @param successCallback 成功回调函数
+ * @param failureCallback 失败回调函数
+ * @returns Promise
+ */
+export function apiNoticeDelete(id: number | number[], successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/notice',
+		method: 'DELETE',
+        data: id.hasOwnProperty('length') ? { ids: id } : { id },
+        contentType: 'JSON',
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
 }
 
-export function apiNoticePageQuery(query: TimeRangePageQuery, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/notice/pageQuery', {
-        params: {
+/**
+ * 分页查询公告列表
+ * @param successCallback 成功回调函数
+ * @param failureCallback 失败回调函数
+ * @returns Promise
+ */
+export function apiNoticePageQuery(query: PageQuery, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/notice/pageQuery',
+		params: {
             ...query,
         },
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });

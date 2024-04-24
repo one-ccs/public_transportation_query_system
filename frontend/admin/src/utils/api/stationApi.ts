@@ -1,7 +1,7 @@
 import { defaultSuccessCallback, defaultFailureCallback } from '.';
 import type { PageQuery, Station } from '@/utils/interface';
 import request from '@/utils/request';
-import useGlobalStore from '@/store/global';
+import useGlobalStore from '@/stores/global';
 
 const globalStore = useGlobalStore();
 
@@ -11,12 +11,13 @@ const globalStore = useGlobalStore();
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiStationGet(id: number, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/station', {
-        params: {
+export function apiStationGet(id: number, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/station',
+		params: {
             id,
         },
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -29,14 +30,15 @@ export function apiStationGet(id: number, successCallback: Function = defaultSuc
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiStationPut(station: Station, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/station', {
-        method: 'PUT',
+export function apiStationPut(station: Station, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/station',
+		method: 'PUT',
         data: {
             ...station,
         },
         contentType: 'JSON',
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -49,14 +51,15 @@ export function apiStationPut(station: Station, successCallback: Function = defa
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiStationPost(station: Station, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/station', {
-        method: 'POST',
+export function apiStationPost(station: Station, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/station',
+		method: 'POST',
         data: {
             ...station,
         },
         contentType: 'JSON',
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -69,12 +72,13 @@ export function apiStationPost(station: Station, successCallback: Function = def
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiStationDelete(id: number | number[], successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/station', {
-        method: 'DELETE',
+export function apiStationDelete(id: number | number[], successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/station',
+		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
         contentType: 'JSON',
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -86,12 +90,13 @@ export function apiStationDelete(id: number | number[], successCallback: Functio
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiStationPageQuery(query: PageQuery, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/station/pageQuery', {
-        params: {
+export function apiStationPageQuery(query: PageQuery, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/station/pageQuery',
+		params: {
             ...query,
         },
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });

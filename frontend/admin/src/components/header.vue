@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import useSidebarStore from '@/store/sidebar';
+import useSidebarStore from '@/stores/sidebar';
 import imgurl from '@/assets/img/img.jpg';
 
 const username: string | null = localStorage.getItem('ms_username');

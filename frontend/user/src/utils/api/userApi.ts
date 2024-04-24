@@ -1,9 +1,10 @@
-import { closeToast, showLoadingToast } from 'vant';
-import { defaultSuccessCallback, defaultFailureCallback } from '.';
-import type { ResponseData, User, LoginUser, TimeRangePageQuery } from '../interface';
-import request from '../request';
-import encryptMD5 from '../encryptMD5';
+import { defaultFailureCallback, defaultSuccessCallback } from '.';
+import type { UserLogin, UserVO, ResponseData, PageQuery } from '@/utils/interface';
+import request from '@/utils/request';
+import encryptMD5 from '@/utils/encryptMD5';
+import useGlobalStore from '@/stores/global';
 
+const globalStore = useGlobalStore();
 
 /**
  * 获取用户信息
@@ -12,47 +13,57 @@ import encryptMD5 from '../encryptMD5';
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserGet(id: number, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/user', {
-        params: {
+export function apiUserGet(id: number, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/user',
+		params: {
             id,
         },
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
 }
 
 /**
- * 添加用户信息
+ * 添加用户
  * @param user 用户信息
  * @param successCallback 成功回调函数
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserPut(user: User, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/user', {
-        method: 'PUT',
+export function apiUserPut(user: UserVO, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/user',
+		method: 'PUT',
         data: {
             ...user,
+            password: user.password ? encryptMD5(user.password) : null,
         },
+        contentType: 'JSON',
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
 }
 
 /**
- * 修改用户信息
+ * 修改用户
  * @param user 用户信息
  * @param successCallback 成功回调函数
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserPost(user: User, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/user', {
-        method: 'POST',
+export function apiUserPost(user: UserVO, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/user',
+		method: 'POST',
         data: {
             ...user,
+            password: user.passwordModified ? encryptMD5(user.password!): null,
         },
+        contentType: 'JSON',
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -65,29 +76,32 @@ export function apiUserPost(user: User, successCallback: Function = defaultSucce
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserDelete(id: number, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/user', {
-        method: 'PUT',
-        data: {
-            id,
-        },
+export function apiUserDelete(id: number | number[], successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/user',
+		method: 'DELETE',
+        data: id.hasOwnProperty('length') ? { ids: id } : { id },
+        contentType: 'JSON',
+        token: globalStore.token,
         successCallback,
         failureCallback,
-    });
+    })
 }
 
 /**
- * 分页查询用户信息
- * @param query 查询参数 { pageIndex, pageSize, query, startDatetime, endDatetime }
+ * 分页获取用户列表
+ * @param query 分页查询信息
  * @param successCallback 成功回调函数
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserPageQuery(query: TimeRangePageQuery, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/user', {
-        data: {
+export function apiPageUser(query: PageQuery, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/user/pageQuery',
+		params: {
             ...query,
         },
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -102,39 +116,19 @@ export function apiUserPageQuery(query: TimeRangePageQuery, successCallback: Fun
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiLogin(user: LoginUser, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    showLoadingToast({
-        message: '登录中...',
-        forbidClick: true,
-    });
-    return request('/api/user/login', {
-        method: 'POST',
+export function apiLogin(user: UserLogin, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/user/login',
+		method: 'POST',
         data: {
-            username: user.username,
-            password: encryptMD5(user.password),
-            remember: user.remember,
+            ...user,
+            password: user.password ? encryptMD5(user.password!): null,
         },
         successCallback: (data: ResponseData) => {
-            closeToast();
+            globalStore.setToken(data.data.token);
+            globalStore.save();
             successCallback && successCallback(data);
         },
-        failureCallback: (data: ResponseData) => {
-            closeToast();
-            failureCallback && failureCallback(data);
-        }
-    });
-}
-
-/**
- * 登出
- * @param successCallback 成功回调函数
- * @param failureCallback 失败回调函数
- * @returns Promise
- */
-export function apiLogout(successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/user/logout', {
-        method: 'POST',
-        successCallback,
         failureCallback,
     });
 }

@@ -30,6 +30,7 @@ const onSearch = () => {
     justify-content: flex-start;
     padding: 0 18px;
     width: 100%;
+    height: var(--search-bar-height);
     background-color: #fff;
 
     .search-box {

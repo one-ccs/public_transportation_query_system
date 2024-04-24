@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
-import usePermissStore from '@/store/permiss';
+import usePermissStore from '@/stores/permiss';
 import Home from '@/views/home.vue';
 
 const routes: RouteRecordRaw[] = [

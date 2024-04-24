@@ -1,10 +1,9 @@
-import { showSuccessToast, showFailToast } from 'vant';
-import type { ResponseData } from '../interface';
-
+import { showFailToast, showSuccessToast } from 'vant';
+import type { ResponseData } from '@/utils/interface';
 
 /**
  * 默认成功处理函数
- * @param data 响应数据
+ * @param data 请求数据
  */
 export function defaultSuccessCallback(data: ResponseData) {
     showSuccessToast(data.message);
@@ -12,19 +11,16 @@ export function defaultSuccessCallback(data: ResponseData) {
 
 /**
  * 默认失败处理函数
- * @param data 响应数据
- * @param status 响应状态码
+ * @param data 请求数据
+ * @param status 请求状态
  * @param url 请求地址
  */
 export function defaultFailureCallback(data: ResponseData, status: number, url: string) {
-    if (data.code === 401) return;
     showFailToast(data.message);
 }
 
 export * from './userApi';
-export * from './adminApi';
-export * from './teacherApi';
-export * from './studentApi';
-export * from './leaveApi';
+export * from './roleApi';
+export * from './routeApi';
+export * from './stationApi';
 export * from './noticeApi';
-export * from './uploadApi';

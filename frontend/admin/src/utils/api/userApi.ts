@@ -2,7 +2,7 @@ import { defaultFailureCallback, defaultSuccessCallback } from '.';
 import type { UserLogin, UserVO, ResponseData, PageQuery } from '@/utils/interface';
 import request from '@/utils/request';
 import encryptMD5 from '@/utils/encryptMD5';
-import useGlobalStore from '@/store/global';
+import useGlobalStore from '@/stores/global';
 
 const globalStore = useGlobalStore();
 
@@ -13,12 +13,13 @@ const globalStore = useGlobalStore();
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserGet(id: number, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/user', {
-        params: {
+export function apiUserGet(id: number, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/user',
+		params: {
             id,
         },
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -31,15 +32,16 @@ export function apiUserGet(id: number, successCallback: Function = defaultSucces
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserPut(user: UserVO, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/user', {
-        method: 'PUT',
+export function apiUserPut(user: UserVO, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/user',
+		method: 'PUT',
         data: {
             ...user,
             password: user.password ? encryptMD5(user.password) : null,
         },
         contentType: 'JSON',
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -52,15 +54,16 @@ export function apiUserPut(user: UserVO, successCallback: Function = defaultSucc
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserPost(user: UserVO, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/user', {
-        method: 'POST',
+export function apiUserPost(user: UserVO, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/user',
+		method: 'POST',
         data: {
             ...user,
             password: user.passwordModified ? encryptMD5(user.password!): null,
         },
         contentType: 'JSON',
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -73,12 +76,13 @@ export function apiUserPost(user: UserVO, successCallback: Function = defaultSuc
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserDelete(id: number | number[], successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/user', {
-        method: 'DELETE',
+export function apiUserDelete(id: number | number[], successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/user',
+		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
         contentType: 'JSON',
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     })
@@ -91,12 +95,13 @@ export function apiUserDelete(id: number | number[], successCallback: Function =
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiPageUser(query: PageQuery, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/user/pageQuery', {
-        params: {
+export function apiPageUser(query: PageQuery, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/user/pageQuery',
+		params: {
             ...query,
         },
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -111,15 +116,16 @@ export function apiPageUser(query: PageQuery, successCallback: Function = defaul
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiLogin(user: UserLogin, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/user/login', {
-        method: 'POST',
+export function apiLogin(user: UserLogin, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/user/login',
+		method: 'POST',
         data: {
             ...user,
             password: user.password ? encryptMD5(user.password!): null,
         },
         successCallback: (data: ResponseData) => {
-            globalStore.data.token = data.data.token;
+            globalStore.setToken(data.data.token);
             globalStore.save();
             successCallback && successCallback(data);
         },

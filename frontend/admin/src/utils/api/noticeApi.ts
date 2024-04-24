@@ -1,7 +1,7 @@
 import { defaultSuccessCallback, defaultFailureCallback } from '.';
 import type { Notice, PageQuery } from '@/utils/interface';
 import request from '@/utils/request';
-import useGlobalStore from '@/store/global';
+import useGlobalStore from '@/stores/global';
 
 const globalStore = useGlobalStore();
 
@@ -11,12 +11,13 @@ const globalStore = useGlobalStore();
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiNoticeGet(id: number, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/notice', {
-        params: {
+export function apiNoticeGet(id: number, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/notice',
+		params: {
             id,
         },
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -29,14 +30,15 @@ export function apiNoticeGet(id: number, successCallback: Function = defaultSucc
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiNoticePut(notice: Notice, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/notice', {
-        method: 'PUT',
+export function apiNoticePut(notice: Notice, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/notice',
+		method: 'PUT',
         data: {
             ...notice,
         },
         contentType: 'JSON',
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -49,14 +51,15 @@ export function apiNoticePut(notice: Notice, successCallback: Function = default
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiNoticePost(notice: Notice, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/notice', {
-        method: 'POST',
+export function apiNoticePost(notice: Notice, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/notice',
+		method: 'POST',
         data: {
             ...notice,
         },
         contentType: 'JSON',
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -69,12 +72,13 @@ export function apiNoticePost(notice: Notice, successCallback: Function = defaul
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiNoticeDelete(id: number | number[], successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/notice', {
-        method: 'DELETE',
+export function apiNoticeDelete(id: number | number[], successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/notice',
+		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
         contentType: 'JSON',
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -86,12 +90,13 @@ export function apiNoticeDelete(id: number | number[], successCallback: Function
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiNoticePageQuery(query: PageQuery, successCallback: Function = defaultSuccessCallback, failureCallback: Function = defaultFailureCallback) {
-    return request('/api/notice/pageQuery', {
-        params: {
+export function apiNoticePageQuery(query: PageQuery, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
+    return request({
+		url: '/api/notice/pageQuery',
+		params: {
             ...query,
         },
-        token: globalStore.data.token,
+        token: globalStore.token,
         successCallback,
         failureCallback,
     });

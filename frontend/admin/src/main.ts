@@ -9,8 +9,8 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 import App from './App.vue';
 import router from './router';
 
-import useGlobalStore from './store/global';
-import usePermissStore from './store/permiss';
+import useGlobalStore from './stores/global';
+import usePermissStore from './stores/permiss';
 
 const app = createApp(App);
 app.use(createPinia());

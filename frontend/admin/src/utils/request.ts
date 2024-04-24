@@ -38,6 +38,7 @@ service.interceptors.response.use(
 );
 
 export interface RequestConfig {
+    url: string;
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS';
     params?: any;
     data?: any;
@@ -55,8 +56,9 @@ export interface RequestConfig {
  * @param url 请求链接
  * @param config 配置 (默认 "GET" "FORM")
  */
-async function request(url: string, config?: RequestConfig) {
+async function request(config: RequestConfig) {
     const {
+        url,
         method = 'GET',
         params = {},
         data = {},
