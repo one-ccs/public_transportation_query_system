@@ -14,7 +14,6 @@ import com.example.public_transportation_query_system.entity.vo.BasePageQuery;
 import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.request.DeleteVO;
 import com.example.public_transportation_query_system.service.impl.StationServiceImpl;
-import com.example.public_transportation_query_system.util.annotation.AnonymousAuth;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -57,11 +56,16 @@ public class StationController {
         return stationServiceImpl.getStationPage(query);
     }
 
-    @Operation(summary = "查询附近站点", description = "查询附近站点")
-    @AnonymousAuth
+    @Operation(summary = "查询附近站点", description = "查询附近站点接口")
     @GetMapping("/nearby")
     public Result<Object> nearby(Double longitude, Double latitude, Double distance) {
         return stationServiceImpl.nearby(longitude, latitude, distance);
+    }
+
+    @Operation(summary = "查询经过站点的线路", description = "查询经过站点的线路接口")
+    @GetMapping("/routes")
+    public Result<Object> routes(Integer id) {
+        return stationServiceImpl.routes(id);
     }
 
 }

@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.public_transportation_query_system.entity.bo.RouteBO;
 import com.example.public_transportation_query_system.entity.bo.StationBO;
 import com.example.public_transportation_query_system.entity.po.Station;
 import com.example.public_transportation_query_system.entity.vo.BasePageQuery;
@@ -23,16 +24,10 @@ import com.example.public_transportation_query_system.service.IStationService;
 public class StationServiceImpl extends ServiceImpl<StationMapper, Station> implements IStationService {
 
     @Autowired
-    StationMapper stationMapper;
+    RouteServiceImpl routeServiceImpl;
 
-    /**
-     * 返回 routeId 对应的所有 站点
-     * @param routeId 线路 id
-     * @return
-     */
-    public List<StationBO> getStationsByRouteId(Integer routeId) {
-        return stationMapper.getStationsByRouteId(routeId);
-    }
+    @Autowired
+    StationMapper stationMapper;
 
     public Result<Object> getStationPage(BasePageQuery query) {
         // 构造查询条件
@@ -114,7 +109,23 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
         }
         if (distance == null) distance = 800D;
 
-        return Result.success(stationMapper.nearby(longitude, latitude, distance));
+        List<StationBO> stations = stationMapper.nearby(longitude, latitude, distance);
+
+        stations.forEach(station -> station
+            .setRoutes(routeServiceImpl.routesOfStation(station.getId()))
+        );
+
+        return Result.success(stations);
+    }
+
+    public Result<Object> routes(Integer id) {
+        // 表单验证
+        if (id == null) {
+            return Result.failure("站点 id 不能为空");
+        }
+        List<RouteBO> routes = routeServiceImpl.routesOfStation(id);
+
+        return Result.success(routes);
     }
 
 }

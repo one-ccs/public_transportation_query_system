@@ -1,6 +1,7 @@
 package com.example.public_transportation_query_system.service.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +20,33 @@ import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.request.DeleteVO;
 import com.example.public_transportation_query_system.entity.vo.request.RouteVO;
 import com.example.public_transportation_query_system.mapper.RouteMapper;
+import com.example.public_transportation_query_system.mapper.StationMapper;
 import com.example.public_transportation_query_system.service.IRouteService;
 
 @Service
 public class RouteServiceImpl extends ServiceImpl<RouteMapper, Route> implements IRouteService {
 
     @Autowired
-    StationServiceImpl stationServiceImpl;
+    RouteStationServiceImpl routeStationServiceImpl;
 
     @Autowired
-    RouteStationServiceImpl routeStationServiceImpl;
+    StationMapper stationMapper;
+
+    @Autowired
+    RouteMapper routeMapper;
+
+    /**
+     * 返回经过某站点的所有线路（包含站点列表）
+     * @param stationId
+     * @return
+     */
+    public List<RouteBO> routesOfStation(Integer stationId) {
+        List<Route> routes = routeMapper.routesOfStation(stationId);
+
+        return routes.stream()
+            .map(this::getRouteBO)
+            .toList();
+    }
 
     /**
      * 返回包含站点列表的线路
@@ -37,8 +55,17 @@ public class RouteServiceImpl extends ServiceImpl<RouteMapper, Route> implements
      */
     public RouteBO getRouteBO(Route route) {
         return route.asViewObject(RouteBO.class, v -> {
-            v.setStations(stationServiceImpl.getStationsByRouteId(route.getId()));
+            v.setStations(this.stationsOfRoute(route.getId()));
         });
+    }
+
+    /**
+     * 返回线路中包含的所有站点
+     * @param routeId 线路 id
+     * @return
+     */
+    public List<StationBO> stationsOfRoute(Integer routeId) {
+        return stationMapper.stationsOfRoute(routeId);
     }
 
     public Result<Object> getRoutePage(BasePageQuery query) {

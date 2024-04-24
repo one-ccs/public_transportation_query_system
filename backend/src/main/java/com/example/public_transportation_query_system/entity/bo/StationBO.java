@@ -1,6 +1,7 @@
 package com.example.public_transportation_query_system.entity.bo;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -27,5 +28,7 @@ public class StationBO {
     private Byte sequence;
 
     private Double distance;
+
+    private List<RouteBO> routes;
 
 }

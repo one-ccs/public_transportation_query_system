@@ -2,7 +2,6 @@ package com.example.public_transportation_query_system.config;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -20,9 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.example.public_transportation_query_system.entity.dto.MyUserDetails;
@@ -80,28 +77,30 @@ public class SpringSecurityConfig {
                 .requestMatchers("/api/user/login").permitAll()
                 .requestMatchers("/api/user/logout").permitAll()
                 .requestMatchers("/api/user/register").permitAll()
-                // 对用户放行 查询、失物招领相关接口接口
+                // 放行查询接口
                 .requestMatchers(HttpMethod.GET).permitAll()
+                // 放行失物招领相关接口
                 .requestMatchers("/api/lost/**").permitAll();
 
             // 放行 AnonymousAuth 注解的接口
-            Map<RequestMappingInfo, HandlerMethod> handlerMethodMap = requestMappingHandlerMapping.getHandlerMethods();
-            handlerMethodMap.forEach((info, method) -> {
-                PathPatternsRequestCondition pathPatternsRequestCondition = info.getPathPatternsCondition();
+            requestMappingHandlerMapping
+                .getHandlerMethods()
+                .forEach((info, method) -> {
+                    PathPatternsRequestCondition pathPatternsRequestCondition = info.getPathPatternsCondition();
 
-                if (method.getMethodAnnotation(AnonymousAuth.class) != null &&
-                    pathPatternsRequestCondition != null
-                ) {
-                    pathPatternsRequestCondition.getPatterns().forEach(pattern -> {
-                        try {
-                            conf.requestMatchers(pattern.getPatternString()).permitAll();
-                        }
-                        catch (Exception e) {
-                            System.err.println("放行匿名接口 " + pattern.getPatternString() + " 失败");
-                            System.err.println(e);
-                        }
-                    });
-                }
+                    if (method.getMethodAnnotation(AnonymousAuth.class) != null &&
+                        pathPatternsRequestCondition != null
+                    ) {
+                        pathPatternsRequestCondition.getPatterns().forEach(pattern -> {
+                            try {
+                                conf.requestMatchers(pattern.getPatternString()).permitAll();
+                            }
+                            catch (Exception e) {
+                                System.err.println("放行匿名接口 " + pattern.getPatternString() + " 失败");
+                                System.err.println(e);
+                            }
+                        });
+                    }
             });
 
             // 其它所有接口均需 管理员权限

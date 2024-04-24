@@ -11,7 +11,7 @@ import com.example.public_transportation_query_system.entity.po.Station;
 @Mapper
 public interface StationMapper extends BaseMapper<Station> {
 
-    List<StationBO> getStationsByRouteId(Integer routeId);
+    List<StationBO> stationsOfRoute(Integer routeId);
     List<StationBO> nearby(double longitude, double latitude, double distance);
 
 }
