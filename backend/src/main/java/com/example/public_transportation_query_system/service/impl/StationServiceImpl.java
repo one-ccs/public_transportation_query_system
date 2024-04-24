@@ -107,4 +107,10 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
         return Result.failure("删除失败，参数 id 和 ids 不能同时为空");
     }
 
+    public Result<Object> nearby(double longitude, double latitude, double distance) {
+        if (distance == 0) distance = 200;
+
+        return Result.success(stationMapper.nearby(longitude, latitude, distance));
+    }
+
 }

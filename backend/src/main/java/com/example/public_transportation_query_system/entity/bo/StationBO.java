@@ -26,4 +26,6 @@ public class StationBO {
 
     private Byte sequence;
 
+    private Double distance;
+
 }

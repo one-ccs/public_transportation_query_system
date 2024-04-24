@@ -20,4 +20,19 @@
         WHERE
             route_station.route_id = #{routeId}
     </select>
+
+    <select id="nearby" resultType="StationBO">
+        SELECT
+            station.id,
+            station.sitename,
+            station.longitude,
+            station.latitude,
+            station.`status`,
+            station.opening_datetime,
+            TRUNCATE(ST_DISTANCE_SPHERE(Point(#{longitude}, #{latitude}), Point(station.longitude, station.latitude)) ,2) AS distance
+        FROM
+            station
+        HAVING
+            distance <![CDATA[ <= ]]> #{distance}
+    </select>
 </mapper>

@@ -2,6 +2,7 @@ package com.example.public_transportation_query_system.config;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -19,6 +20,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.example.public_transportation_query_system.entity.dto.MyUserDetails;
 import com.example.public_transportation_query_system.entity.vo.Result;
@@ -26,12 +31,16 @@ import com.example.public_transportation_query_system.entity.vo.response.Authori
 import com.example.public_transportation_query_system.filter.JwtAuthorizeFilter;
 import com.example.public_transportation_query_system.service.impl.UserServiceImpl;
 import com.example.public_transportation_query_system.util.JwtUtil;
+import com.example.public_transportation_query_system.util.annotation.AnonymousAuth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 public class SpringSecurityConfig {
+
+    @Autowired
+    RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -55,26 +64,49 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.authorizeHttpRequests(conf -> conf
-            // 放行 error 接口
-            .requestMatchers("/error").permitAll()
-            // 放行 SpringDoc
-            .requestMatchers("/api-json/**").permitAll()
-            .requestMatchers("/api-docs/**").permitAll()
-            .requestMatchers("/swagger-ui/**").permitAll()
-            // 放行 SpringDoc 的 actuator
-            .requestMatchers("/actuator/**").permitAll()
-            // 放行 登录、登出、注册接口
-            .requestMatchers("/api/user/login").permitAll()
-            .requestMatchers("/api/user/logout").permitAll()
-            .requestMatchers("/api/user/register").permitAll()
-            // 对用户放行 查询、失物招领相关接口接口
-            .requestMatchers(HttpMethod.GET).hasAnyRole("user", "admin", "userAdmin", "systemAdmin", "superAdmin")
-            .requestMatchers("/api/lost/**").hasAnyRole("user", "admin", "userAdmin", "systemAdmin", "superAdmin")
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity.authorizeHttpRequests(conf -> {
+            // 基本配置
+            conf
+                // 放行 error 接口
+                .requestMatchers("/error").permitAll()
+                // 放行 SpringDoc
+                .requestMatchers("/api-json/**").permitAll()
+                .requestMatchers("/api-docs/**").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
+                // 放行 SpringDoc 的 actuator
+                .requestMatchers("/actuator/**").permitAll()
+                // 放行 登录、登出、注册接口
+                .requestMatchers("/api/user/login").permitAll()
+                .requestMatchers("/api/user/logout").permitAll()
+                .requestMatchers("/api/user/register").permitAll()
+                // 对用户放行 查询、失物招领相关接口接口
+                .requestMatchers(HttpMethod.GET).permitAll()
+                .requestMatchers("/api/lost/**").permitAll();
+
+            // 放行 AnonymousAuth 注解的接口
+            Map<RequestMappingInfo, HandlerMethod> handlerMethodMap = requestMappingHandlerMapping.getHandlerMethods();
+            handlerMethodMap.forEach((info, method) -> {
+                PathPatternsRequestCondition pathPatternsRequestCondition = info.getPathPatternsCondition();
+
+                if (method.getMethodAnnotation(AnonymousAuth.class) != null &&
+                    pathPatternsRequestCondition != null
+                ) {
+                    pathPatternsRequestCondition.getPatterns().forEach(pattern -> {
+                        try {
+                            conf.requestMatchers(pattern.getPatternString()).permitAll();
+                        }
+                        catch (Exception e) {
+                            System.err.println("放行匿名接口 " + pattern.getPatternString() + " 失败");
+                            System.err.println(e);
+                        }
+                    });
+                }
+            });
+
             // 其它所有接口均需 管理员权限
-            .anyRequest().hasAnyRole("admin", "userAdmin", "systemAdmin", "superAdmin")
-        )
+            conf.anyRequest().hasAnyRole("admin", "userAdmin", "systemAdmin", "superAdmin");
+        })
         .formLogin(conf -> conf
             // 登录接口默认自动放行
             .loginProcessingUrl("/api/user/login")
