@@ -16,6 +16,7 @@ import router from './router';
 
 import useGlobalStore from './stores/global';
 import useNoticeStore from './stores/notice';
+import useHistoryStore from './stores/history';
 
 const app = createApp(App);
 
@@ -27,6 +28,7 @@ app.use(Lazyload);
 setTimeout(() => {
     useGlobalStore().init();
     useNoticeStore().init();
+    useHistoryStore().init();
 }, 0);
 
 app.mount('#app');

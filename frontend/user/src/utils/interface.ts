@@ -69,6 +69,7 @@ export interface StationBO extends Station {
     routeId?: number;
     sequence?: number;
     distance?: number;
+    routes?: RouteBO[];
 };
 
 export interface RouteBO extends Route {
