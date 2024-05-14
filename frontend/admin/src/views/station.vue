@@ -209,6 +209,8 @@ const handleSelectionChange = (val: Station[]) => {
 };
 // 批量删除
 const deleteBatch = () => {
+    if (!multipleSelection.value.length) return ElMessage.warning('未选择任何数据');
+
 	// 二次确认删除
 	ElMessageBox.confirm(`确定要删除 "${multipleSelection.value.length}" 条数据吗？`, '提示', {
 		type: 'warning'

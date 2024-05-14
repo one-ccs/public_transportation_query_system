@@ -1,6 +1,5 @@
-import { defaultFailureCallback, defaultSuccessCallback } from '.';
+import { api } from '.';
 import type { UserLogin, UserVO, ResponseData, PageQuery } from '@/utils/interface';
-import request from '@/utils/request';
 import encryptMD5 from '@/utils/encryptMD5';
 import useGlobalStore from '@/stores/global';
 
@@ -13,8 +12,8 @@ const globalStore = useGlobalStore();
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserGet(id: number, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiUserGet(id: number, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/user',
 		params: {
             id,
@@ -32,8 +31,8 @@ export function apiUserGet(id: number, successCallback = defaultSuccessCallback,
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserPut(user: UserVO, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiUserPut(user: UserVO, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/user',
 		method: 'PUT',
         data: {
@@ -54,8 +53,8 @@ export function apiUserPut(user: UserVO, successCallback = defaultSuccessCallbac
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserPost(user: UserVO, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiUserPost(user: UserVO, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/user',
 		method: 'POST',
         data: {
@@ -76,8 +75,8 @@ export function apiUserPost(user: UserVO, successCallback = defaultSuccessCallba
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiUserDelete(id: number | number[], successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiUserDelete(id: number | number[], successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/user',
 		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
@@ -95,8 +94,8 @@ export function apiUserDelete(id: number | number[], successCallback = defaultSu
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiPageUser(query: PageQuery, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiPageUser(query: PageQuery, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/user/pageQuery',
 		params: {
             ...query,
@@ -116,8 +115,8 @@ export function apiPageUser(query: PageQuery, successCallback = defaultSuccessCa
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiLogin(user: UserLogin, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiLogin(user: UserLogin, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/user/login',
 		method: 'POST',
         data: {

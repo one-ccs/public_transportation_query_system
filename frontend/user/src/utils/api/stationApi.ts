@@ -1,6 +1,5 @@
-import { defaultSuccessCallback, defaultFailureCallback } from '.';
+import { api } from '.';
 import type { NearbyQuery, PageQuery, Station } from '@/utils/interface';
-import request from '@/utils/request';
 import useGlobalStore from '@/stores/global';
 
 const globalStore = useGlobalStore();
@@ -11,8 +10,8 @@ const globalStore = useGlobalStore();
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiStationGet(id: number, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiStationGet(id: number, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/station',
 		params: {
             id,
@@ -29,8 +28,8 @@ export function apiStationGet(id: number, successCallback = defaultSuccessCallba
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiStationPageQuery(query: PageQuery, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiStationPageQuery(query: PageQuery, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/station/pageQuery',
 		params: {
             ...query,
@@ -41,8 +40,8 @@ export function apiStationPageQuery(query: PageQuery, successCallback = defaultS
     });
 }
 
-export function apiStationNearby(query: NearbyQuery, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiStationNearby(query: NearbyQuery, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/station/nearby',
 		params: {
             ...query,

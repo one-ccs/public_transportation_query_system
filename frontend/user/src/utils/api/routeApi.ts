@@ -1,6 +1,5 @@
-import { defaultSuccessCallback, defaultFailureCallback } from '.';
+import { api } from '.';
 import type { PageQuery, Route } from '@/utils/interface';
-import request from '@/utils/request';
 import useGlobalStore from '@/stores/global';
 
 const globalStore = useGlobalStore();
@@ -11,8 +10,8 @@ const globalStore = useGlobalStore();
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiRouteGet(id: number, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiRouteGet(id: number, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/route',
 		params: {
             id,
@@ -30,8 +29,8 @@ export function apiRouteGet(id: number, successCallback = defaultSuccessCallback
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiRoutePut(route: Route, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiRoutePut(route: Route, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/route',
 		method: 'PUT',
         data: {
@@ -51,8 +50,8 @@ export function apiRoutePut(route: Route, successCallback = defaultSuccessCallba
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiRoutePost(route: Route, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiRoutePost(route: Route, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/route',
 		method: 'POST',
         data: {
@@ -72,8 +71,8 @@ export function apiRoutePost(route: Route, successCallback = defaultSuccessCallb
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiRouteDelete(id: number | number[], successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiRouteDelete(id: number | number[], successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/route',
 		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
@@ -90,8 +89,8 @@ export function apiRouteDelete(id: number | number[], successCallback = defaultS
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiRoutePageQuery(query: PageQuery, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiRoutePageQuery(query: PageQuery, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/route/pageQuery',
 		params: {
             ...query,

@@ -1,5 +1,6 @@
 import { ElMessage } from 'element-plus';
 import type { ResponseData } from '@/utils/interface';
+import request, { type RequestConfig } from '../request';
 import tableJson from '@/assets/table.json';
 
 /**
@@ -27,6 +28,19 @@ export function fetchData() {
         data: tableJson
     });
 };
+
+/**
+ * 二次封装 添加默认回调函数 添加刷新令牌逻辑
+ * @param config 请求配置
+ * @returns
+ */
+export function api(config: RequestConfig) {
+    return request({
+        ...config,
+        successCallback: config.successCallback || defaultSuccessCallback,
+        failureCallback: config.failureCallback || defaultFailureCallback,
+    });
+}
 
 export * from './userApi';
 export * from './roleApi';

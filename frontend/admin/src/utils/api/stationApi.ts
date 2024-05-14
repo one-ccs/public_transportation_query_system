@@ -1,6 +1,5 @@
-import { defaultSuccessCallback, defaultFailureCallback } from '.';
+import { api } from '.';
 import type { PageQuery, Station } from '@/utils/interface';
-import request from '@/utils/request';
 import useGlobalStore from '@/stores/global';
 
 const globalStore = useGlobalStore();
@@ -11,8 +10,8 @@ const globalStore = useGlobalStore();
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiStationGet(id: number, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiStationGet(id: number, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/station',
 		params: {
             id,
@@ -30,8 +29,8 @@ export function apiStationGet(id: number, successCallback = defaultSuccessCallba
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiStationPut(station: Station, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiStationPut(station: Station, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/station',
 		method: 'PUT',
         data: {
@@ -51,8 +50,8 @@ export function apiStationPut(station: Station, successCallback = defaultSuccess
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiStationPost(station: Station, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiStationPost(station: Station, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/station',
 		method: 'POST',
         data: {
@@ -72,8 +71,8 @@ export function apiStationPost(station: Station, successCallback = defaultSucces
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiStationDelete(id: number | number[], successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiStationDelete(id: number | number[], successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/station',
 		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
@@ -90,8 +89,8 @@ export function apiStationDelete(id: number | number[], successCallback = defaul
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiStationPageQuery(query: PageQuery, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiStationPageQuery(query: PageQuery, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/station/pageQuery',
 		params: {
             ...query,

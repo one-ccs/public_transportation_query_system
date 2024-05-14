@@ -1,6 +1,5 @@
-import { defaultSuccessCallback, defaultFailureCallback } from '.';
+import { api } from '.';
 import type { PageQuery, Role } from '@/utils/interface';
-import request from '@/utils/request';
 import useGlobalStore from '@/stores/global';
 
 const globalStore = useGlobalStore();
@@ -12,8 +11,8 @@ const globalStore = useGlobalStore();
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiRoleGet(id: number, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiRoleGet(id: number, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/role',
 		params: {
             id,
@@ -31,8 +30,8 @@ export function apiRoleGet(id: number, successCallback = defaultSuccessCallback,
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiRolePut(role: Role, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiRolePut(role: Role, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/role',
 		method: 'PUT',
         data: {
@@ -52,8 +51,8 @@ export function apiRolePut(role: Role, successCallback = defaultSuccessCallback,
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiRolePost(role: Role, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiRolePost(role: Role, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/role',
 		method: 'POST',
         data: {
@@ -73,8 +72,8 @@ export function apiRolePost(role: Role, successCallback = defaultSuccessCallback
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiRoleDelete(id: number | number[], successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiRoleDelete(id: number | number[], successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/role',
 		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
@@ -92,8 +91,8 @@ export function apiRoleDelete(id: number | number[], successCallback = defaultSu
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiRolePageQuery(query: PageQuery, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiRolePageQuery(query: PageQuery, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/role/pageQuery',
 		params: {
             ...query,

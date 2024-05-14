@@ -1,6 +1,5 @@
-import { defaultSuccessCallback, defaultFailureCallback } from '.';
+import { api } from '.';
 import type { Notice, PageQuery } from '@/utils/interface';
-import request from '@/utils/request';
 import useGlobalStore from '@/stores/global';
 
 const globalStore = useGlobalStore();
@@ -11,8 +10,8 @@ const globalStore = useGlobalStore();
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiNoticeGet(id: number, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiNoticeGet(id: number, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/notice',
 		params: {
             id,
@@ -30,8 +29,8 @@ export function apiNoticeGet(id: number, successCallback = defaultSuccessCallbac
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiNoticePut(notice: Notice, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiNoticePut(notice: Notice, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/notice',
 		method: 'PUT',
         data: {
@@ -51,8 +50,8 @@ export function apiNoticePut(notice: Notice, successCallback = defaultSuccessCal
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiNoticePost(notice: Notice, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiNoticePost(notice: Notice, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/notice',
 		method: 'POST',
         data: {
@@ -72,8 +71,8 @@ export function apiNoticePost(notice: Notice, successCallback = defaultSuccessCa
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiNoticeDelete(id: number | number[], successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiNoticeDelete(id: number | number[], successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/notice',
 		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
@@ -90,8 +89,8 @@ export function apiNoticeDelete(id: number | number[], successCallback = default
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiNoticePageQuery(query: PageQuery, successCallback = defaultSuccessCallback, failureCallback = defaultFailureCallback) {
-    return request({
+export function apiNoticePageQuery(query: PageQuery, successCallback?: Function, failureCallback?: Function) {
+    return api({
 		url: '/api/notice/pageQuery',
 		params: {
             ...query,
