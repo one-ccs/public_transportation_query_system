@@ -70,7 +70,7 @@ const items = [
         subs: [
             {
                 index: '/users',
-                title: '用户管理',
+                title: '普通用户管理',
                 permiss: '2',
             },
             {

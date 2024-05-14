@@ -19,6 +19,7 @@ const onRefreshClick = () => {
     getNearbyList();
 };
 
+// 获取附近站点列表
 const getNearbyList = () => {
     getCurrentPosition((pos: GeolocationPosition) => {
         query.longitude = pos.coords.longitude;
@@ -123,20 +124,16 @@ onMounted(() => {
                         margin-bottom: 12px;
                         color: #333;
 
-                        .route-no {
-                            font-weight: bold;
-                        }
                         .time {
                             margin-left: auto;
                             font-size: .9rem;
-                            font-weight: bold;
                         }
                     }
                     .describe {
                         display: flex;
                         align-items: center;
                         justify-content: flex-start;
-                        color: #666;
+                        color: #888;
                         font-size: .9rem;
 
                         .state {

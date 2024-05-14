@@ -25,7 +25,7 @@ const routes: RouteRecordRaw[] = [
                 path: '/users',
                 name: 'users',
                 meta: {
-                    title: '用户管理',
+                    title: '普通用户管理',
                     permiss: '',
                 },
                 component: () => import(/* webpackChunkName: "table" */ '@/views/users.vue'),
