@@ -110,12 +110,6 @@ const items = [
         permiss: '6',
     },
     {
-        icon: 'Tickets',
-        index: '/ad',
-        title: '广告管理',
-        permiss: '7',
-    },
-    {
         icon: 'Calendar',
         index: '2',
         title: '表格相关',

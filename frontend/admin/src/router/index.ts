@@ -85,15 +85,6 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "table" */ '@/views/lost.vue'),
             },
             {
-                path: '/ad',
-                name: 'ad',
-                meta: {
-                    title: '广告管理',
-                    permiss: '',
-                },
-                component: () => import(/* webpackChunkName: "table" */ '@/views/ad.vue'),
-            },
-            {
                 path: '/table',
                 name: 'basetable',
                 meta: {
