@@ -11,6 +11,8 @@ import router from './router';
 
 import useGlobalStore from './stores/global';
 import usePermissStore from './stores/permiss';
+import useUserStore from './stores/user';
+
 
 const app = createApp(App);
 app.use(createPinia());
@@ -18,6 +20,7 @@ app.use(router);
 
 // 初始化 store
 useGlobalStore().init();
+useUserStore().init();
 
 // 注册elementplus图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

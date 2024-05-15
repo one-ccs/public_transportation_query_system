@@ -1,4 +1,11 @@
 const map = {
+    zh: {
+        'user': '用户',
+        'admin': '管理员',
+        'userAdmin': '用户管理员',
+        'systemAdmin': '系统管理员',
+        'superAdmin': '超级管理员',
+    },
     serialNumber: {
         1:  '①',
         2:  '②',

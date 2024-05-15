@@ -6,8 +6,8 @@
 					<div class="user-info">
 						<el-avatar :size="120" :src="imgurl" />
 						<div class="user-info-cont">
-							<div class="user-info-name">{{ name }}</div>
-							<div>{{ role }}</div>
+							<div class="user-info-name">{{ userStore.userInfo.username }}</div>
+							<div :title="userStore.roles.join(', ')">{{ userStore.role }}</div>
 						</div>
 					</div>
 					<div class="user-info-list">
@@ -18,21 +18,6 @@
 						上次登录地点：
 						<span>东莞</span>
 					</div>
-				</el-card>
-				<el-card shadow="hover" style="height: 252px">
-					<template #header>
-						<div class="clearfix">
-							<span>语言详情</span>
-						</div>
-					</template>
-					Vue
-					<el-progress :percentage="79.4" color="#42b983"></el-progress>
-					TypeScript
-					<el-progress :percentage="14" color="#f1e05a"></el-progress>
-					CSS
-					<el-progress :percentage="5.6"></el-progress>
-					HTML
-					<el-progress :percentage="1" color="#f56c6c"></el-progress>
 				</el-card>
 			</el-col>
 			<el-col :span="16">
@@ -71,34 +56,6 @@
 						</el-card>
 					</el-col>
 				</el-row>
-				<el-card shadow="hover" style="height: 403px">
-					<template #header>
-						<div class="clearfix">
-							<span>待办事项</span>
-							<el-button style="float: right; padding: 3px 0" text>添加</el-button>
-						</div>
-					</template>
-
-					<el-table :show-header="false" :data="todoList" style="width: 100%">
-						<el-table-column width="40">
-							<template #default="scope">
-								<el-checkbox v-model="scope.row.status"></el-checkbox>
-							</template>
-						</el-table-column>
-						<el-table-column>
-							<template #default="scope">
-								<div
-									class="todo-item"
-									:class="{
-										'todo-item-del': scope.row.status
-									}"
-								>
-									{{ scope.row.title }}
-								</div>
-							</template>
-						</el-table-column>
-					</el-table>
-				</el-card>
 			</el-col>
 		</el-row>
 		<el-row :gutter="20">
@@ -119,10 +76,10 @@
 <script setup lang="ts" name="dashboard">
 import Schart from 'vue-schart';
 import { reactive } from 'vue';
+import useUserStore from '@/stores/user';
 import imgurl from '@/assets/img/img.jpg';
 
-const name = localStorage.getItem('ms_username');
-const role: string = name === 'admin' ? '超级管理员' : '普通用户';
+const userStore = useUserStore();
 
 const options = {
 	type: 'bar',
@@ -196,10 +153,6 @@ const todoList = reactive([
 </script>
 
 <style scoped>
-.el-row {
-	margin-bottom: 20px;
-}
-
 .grid-content {
 	display: flex;
 	align-items: center;

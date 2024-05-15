@@ -80,7 +80,9 @@ public class SpringSecurityConfig {
                 // 放行查询接口
                 .requestMatchers(HttpMethod.GET).permitAll()
                 // 放行失物招领相关接口
-                .requestMatchers("/api/lost/**").permitAll();
+                .requestMatchers("/api/lost/**").permitAll()
+                // 放行文件接口
+                .requestMatchers("/api/file/**").permitAll();
 
             // 放行 AnonymousAuth 注解的接口
             requestMappingHandlerMapping

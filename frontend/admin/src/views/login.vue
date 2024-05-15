@@ -43,6 +43,7 @@ import type { ResponseData, UserLogin } from '@/utils/interface';
 import { apiLogin } from '@/utils/api';
 import useTagsStore from '@/stores/tags';
 import usePermissStore from '@/stores/permiss';
+import useUserStore from '@/stores/user';
 
 
 const router = useRouter();
@@ -63,6 +64,7 @@ const rules: FormRules = {
 	password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 };
 const permiss = usePermissStore();
+const userStore = useUserStore();
 const loginFormRef = ref<FormInstance>();
 const submitForm = (formEl: FormInstance | undefined) => {
     formEl && formEl.validate(async (valid: boolean) => {
@@ -74,6 +76,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             }
 
             ElMessage.success('登录成功');
+            userStore.setUser(data.data);
             localStorage.setItem('ms_username', loginForm.username);
             const keys = permiss.defaultList[loginForm.username == 'admin' ? 'admin' : 'user'];
             permiss.handleSet(keys);

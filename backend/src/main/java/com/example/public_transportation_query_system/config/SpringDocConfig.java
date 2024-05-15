@@ -134,10 +134,10 @@ public class SpringDocConfig {
     }
 
     @Bean
-    public GroupedOpenApi adApi() {
+    public GroupedOpenApi fileApi() {
         return GroupedOpenApi.builder()
-            .group("7-广告")
-            .pathsToMatch("/api/ad/**")
+            .group("7-文件")
+            .pathsToMatch("/api/file/**")
             .build();
     }
 

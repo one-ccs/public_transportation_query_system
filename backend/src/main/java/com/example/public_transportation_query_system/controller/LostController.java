@@ -51,7 +51,7 @@ public class LostController {
     }
 
     @Operation(summary = "分页查询失物招领列表", description = "分页查询失物招领列表接口")
-    @GetMapping("/pageQuey")
+    @GetMapping("/pageQuery")
     public Result<Object> pageQuery(BasePageQuery query) {
         return lostServiceImpl.getLostPage(query);
     }
