@@ -4,6 +4,8 @@ import java.io.File;
 
 public class FileUtil {
 
+    private final static String uploadPath = "./upload";
+
     /**
      * 获取 path 相对于程序根目录的绝对路径
      * @param path 路径
@@ -25,7 +27,13 @@ public class FileUtil {
      * @return
      */
     public static String getUploadPathWith(String path) {
-        return getRootPathWidth("./upload" + path);
+        File file = new File(uploadPath, path);
+
+        try {
+            path = file.getCanonicalPath();
+        } catch (Exception e) {}
+
+        return path;
     }
 
     /**
@@ -33,7 +41,7 @@ public class FileUtil {
      * @return
      */
     public static boolean isSafeUploadFile(String filePath) {
-        File file = new File("./upload" + filePath);
+        File file = new File(uploadPath, filePath);
         String path = "";
 
         try {

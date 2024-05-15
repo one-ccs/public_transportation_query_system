@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -152,7 +153,7 @@ public class SpringSecurityConfig {
      * 无权访问
      */
     public void onAccessDeny(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception) throws IOException {
-        response.setContentType("application/json");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(Result.forbidden().toJsonString());
     }
@@ -161,7 +162,7 @@ public class SpringSecurityConfig {
      * 未登录
      */
     public void onUnauthorized(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        response.setContentType("application/json");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(Result.unauthorized().toJsonString());
     }
@@ -178,7 +179,7 @@ public class SpringSecurityConfig {
             v.setRoles(myUserDetails.getRoleNames());
         });
 
-        response.setContentType("application/json");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(Result.success(authorizeVO).toJsonString());
     }
@@ -187,7 +188,7 @@ public class SpringSecurityConfig {
      * 登录失败
      */
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        response.setContentType("application/json");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(Result.failure(exception.getMessage()).toJsonString());
     }
@@ -196,7 +197,7 @@ public class SpringSecurityConfig {
      * 登出成功
      */
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        response.setContentType("application/json");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
         PrintWriter writer = response.getWriter();
         String authorization = request.getHeader("Authorization");
