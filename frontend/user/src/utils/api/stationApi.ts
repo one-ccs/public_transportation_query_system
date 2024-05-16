@@ -1,8 +1,5 @@
 import { api } from '.';
 import type { NearbyQuery, PageQuery, Station } from '@/utils/interface';
-import useGlobalStore from '@/stores/global';
-
-const globalStore = useGlobalStore();
 
 /**
  * 获取站点信息
@@ -16,7 +13,6 @@ export function apiStationGet(id: number, successCallback?: Function, failureCal
 		params: {
             id,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -34,7 +30,6 @@ export function apiStationPageQuery(query: PageQuery, successCallback?: Function
 		params: {
             ...query,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -46,7 +41,6 @@ export function apiStationNearby(query: NearbyQuery, successCallback?: Function,
 		params: {
             ...query,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });

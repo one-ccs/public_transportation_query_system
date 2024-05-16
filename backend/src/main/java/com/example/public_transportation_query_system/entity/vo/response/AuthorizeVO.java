@@ -9,7 +9,9 @@ import lombok.Data;
  */
 @Data
 public class AuthorizeVO {
+    Integer id;
     String username;
     List<String> roles;
     String token;
+    String avatar;
 }

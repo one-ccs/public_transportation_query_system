@@ -1,8 +1,5 @@
 import { api } from '.';
 import type { Notice, PageQuery } from '@/utils/interface';
-import useGlobalStore from '@/stores/global';
-
-const globalStore = useGlobalStore();
 
 /**
  * 获取公告信息
@@ -16,7 +13,6 @@ export function apiNoticeGet(id: number, successCallback?: Function, failureCall
 		params: {
             id,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -37,7 +33,6 @@ export function apiNoticePut(notice: Notice, successCallback?: Function, failure
             ...notice,
         },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -58,7 +53,6 @@ export function apiNoticePost(notice: Notice, successCallback?: Function, failur
             ...notice,
         },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -77,7 +71,6 @@ export function apiNoticeDelete(id: number | number[], successCallback?: Functio
 		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -95,7 +88,6 @@ export function apiNoticePageQuery(query: PageQuery, successCallback?: Function,
 		params: {
             ...query,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });

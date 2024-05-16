@@ -1,8 +1,5 @@
 import { api } from '.';
 import type { PageQuery, Role } from '@/utils/interface';
-import useGlobalStore from '@/stores/global';
-
-const globalStore = useGlobalStore();
 
 /**
  * 获取角色信息
@@ -17,7 +14,6 @@ export function apiRoleGet(id: number, successCallback?: Function, failureCallba
 		params: {
             id,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -38,7 +34,6 @@ export function apiRolePut(role: Role, successCallback?: Function, failureCallba
             ...role,
         },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -59,7 +54,6 @@ export function apiRolePost(role: Role, successCallback?: Function, failureCallb
             ...role,
         },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -78,7 +72,6 @@ export function apiRoleDelete(id: number | number[], successCallback?: Function,
 		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -97,7 +90,6 @@ export function apiRolePageQuery(query: PageQuery, successCallback?: Function, f
 		params: {
             ...query,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });

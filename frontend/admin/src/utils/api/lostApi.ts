@@ -1,8 +1,5 @@
 import { api } from '.';
 import type { Lost, PageQuery } from '@/utils/interface';
-import useGlobalStore from '@/stores/global';
-
-const globalStore = useGlobalStore();
 
 /**
  * 获取失物招领信息
@@ -16,7 +13,6 @@ export function apiLostGet(id: number, successCallback?: Function, failureCallba
 		params: {
             id,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -37,7 +33,6 @@ export function apiLostPut(lost: Lost, successCallback?: Function, failureCallba
             ...lost,
         },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -58,7 +53,6 @@ export function apiLostPost(lost: Lost, successCallback?: Function, failureCallb
             ...lost,
         },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -77,7 +71,6 @@ export function apiLostDelete(id: number | number[], successCallback?: Function,
 		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -95,7 +88,6 @@ export function apiLostPageQuery(query: PageQuery, successCallback?: Function, f
 		params: {
             ...query,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });

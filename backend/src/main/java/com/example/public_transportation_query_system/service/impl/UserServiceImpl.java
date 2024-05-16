@@ -237,4 +237,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return Result.success("注册失败");
     }
+
+    public Result<Object> modifyAvatar(Integer id, String filename) {
+        if (StringUtils.isBlank(filename)) {
+            return Result.failure("头像名不能为空");
+        }
+
+        if (!this.updateById(new User(id, filename))) {
+            return Result.failure("头像修改失败");
+        }
+
+        return Result.success("头像修改成功");
+    }
 }

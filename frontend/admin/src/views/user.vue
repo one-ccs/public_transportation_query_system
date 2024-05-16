@@ -9,12 +9,12 @@
 						</div>
 					</template>
 					<div class="info">
-						<div class="info-image" @click="showDialog">
-							<el-avatar :size="100" :src="avatarImg" />
-							<span class="info-edit">
-								<i class="el-icon-lx-camerafill"></i>
-							</span>
-						</div>
+                        <image-upload
+                            :image-src="userStore.fullAvatar"
+                            :upload-handler="saveAvatar"
+                            :width="100"
+                            :height="100"
+                            round />
 						<div class="info-name">{{ name }}</div>
 						<div class="info-desc">不可能！我的代码怎么可能会有bug！</div>
 					</div>
@@ -45,35 +45,18 @@
 				</el-card>
 			</el-col>
 		</el-row>
-		<el-dialog title="裁剪图片" v-model="dialogVisible" width="600px">
-			<vue-cropper
-				ref="cropper"
-				:src="imgSrc"
-				:ready="cropImage"
-				:zoom="cropImage"
-				:cropmove="cropImage"
-				style="width: 100%; height: 400px"
-			></vue-cropper>
-
-			<template #footer>
-				<span class="dialog-footer">
-					<el-button class="crop-demo-btn" type="primary"
-						>选择图片
-						<input class="crop-input" type="file" name="image" accept="image/*" @change="setImage" />
-					</el-button>
-					<el-button type="primary" @click="saveAvatar">上传并保存</el-button>
-				</span>
-			</template>
-		</el-dialog>
 	</div>
 </template>
 
 <script setup lang="ts" name="user">
-import { reactive, ref } from 'vue';
-import VueCropper from 'vue-cropperjs';
-import 'cropperjs/dist/cropper.css';
-import avatar from '@/assets/img/img.jpg';
+import { reactive} from 'vue';
+import { ElMessage } from 'element-plus';
+import { apiUploadAvatar, apiUserModifyAvatar } from '@/utils/api';
+import type { ResponseData } from '@/utils/interface';
+import useUserStore from '@/stores/user';
+import ImageUpload from '@/components/ImageUpload.vue';
 
+const userStore = useUserStore();
 const name = localStorage.getItem('ms_username');
 const form = reactive({
 	old: '',
@@ -82,44 +65,27 @@ const form = reactive({
 });
 const onSubmit = () => {};
 
-const avatarImg = ref(avatar);
-const imgSrc = ref('');
-const cropImg = ref('');
-const dialogVisible = ref(false);
-const cropper: any = ref();
+const saveAvatar = (base64: string, hideDialog: Function) => {
+    apiUploadAvatar(base64, (data: ResponseData) => {
 
-const showDialog = () => {
-	dialogVisible.value = true;
-	imgSrc.value = avatarImg.value;
-};
-
-const setImage = (e: any) => {
-	const file = e.target.files[0];
-	if (!file.type.includes('image/')) {
-		return;
-	}
-	const reader = new FileReader();
-	reader.onload = (event: any) => {
-		dialogVisible.value = true;
-		imgSrc.value = event.target.result;
-		cropper.value && cropper.value.replace(event.target.result);
-	};
-	reader.readAsDataURL(file);
-};
-
-const cropImage = () => {
-	cropImg.value = cropper.value.getCroppedCanvas().toDataURL();
-};
-
-const saveAvatar = () => {
-	avatarImg.value = cropImg.value;
-	dialogVisible.value = false;
+        apiUserModifyAvatar({
+            id: userStore.userInfo.id!,
+            filename: data.data,
+        }, () => {
+            ElMessage.success('头像修改成功');
+            hideDialog();
+            userStore.userInfo.avatar = data.data;
+        });
+    });
 };
 </script>
 
 <style scoped>
 .info {
-	text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 	padding: 35px 0;
 }
 .info-image {

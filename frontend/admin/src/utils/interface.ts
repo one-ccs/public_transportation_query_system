@@ -5,6 +5,7 @@ export interface User {
     username?: string;
     password?: string;
     email?: string;
+    avatar?: string;
     status?: number;
     registerDatetime?: string;
 };
@@ -103,6 +104,6 @@ export interface UserLogin {
 
 export interface UserVO extends User {
     roles?: Role[];
-    passwordCheck: string;
+    passwordCheck?: string;
     passwordModified?: boolean;
 };

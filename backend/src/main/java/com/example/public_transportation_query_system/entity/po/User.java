@@ -36,6 +36,9 @@ public class User implements Serializable, BaseData {
     @Schema(description = "邮箱地址")
     private String email;
 
+    @Schema(description = "头像文件名")
+    private String avatar;
+
     @Schema(description = "状态（0 未激活、1 已激活、2 已注销）")
     private Byte status;
 
@@ -44,6 +47,10 @@ public class User implements Serializable, BaseData {
     private LocalDateTime registerDatetime;
 
     public User(String username, String password, String email) {
-        this(null, username, password, email, null, null);
+        this(null, username, password, email, null, null, null);
+    }
+
+    public User(Integer id, String avatar) {
+        this(id, null, null, null, avatar, null, null);
     }
 }

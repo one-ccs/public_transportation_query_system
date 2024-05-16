@@ -1,8 +1,5 @@
 import { api } from '.';
 import type { PageQuery, Route } from '@/utils/interface';
-import useGlobalStore from '@/stores/global';
-
-const globalStore = useGlobalStore();
 
 /**
  * 获取线路信息
@@ -16,7 +13,6 @@ export function apiRouteGet(id: number, successCallback?: Function, failureCallb
 		params: {
             id,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -37,7 +33,6 @@ export function apiRoutePut(route: Route, successCallback?: Function, failureCal
             ...route,
         },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -58,7 +53,6 @@ export function apiRoutePost(route: Route, successCallback?: Function, failureCa
             ...route,
         },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -77,7 +71,6 @@ export function apiRouteDelete(id: number | number[], successCallback?: Function
 		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -95,7 +88,6 @@ export function apiRoutePageQuery(query: PageQuery, successCallback?: Function, 
 		params: {
             ...query,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });

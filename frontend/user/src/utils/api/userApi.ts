@@ -1,9 +1,6 @@
 import { api } from '.';
 import type { UserLogin, UserVO, ResponseData, PageQuery } from '@/utils/interface';
 import encryptMD5 from '@/utils/encryptMD5';
-import useGlobalStore from '@/stores/global';
-
-const globalStore = useGlobalStore();
 
 /**
  * 获取用户信息
@@ -18,7 +15,6 @@ export function apiUserGet(id: number, successCallback?: Function, failureCallba
 		params: {
             id,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -40,7 +36,6 @@ export function apiUserPut(user: UserVO, successCallback?: Function, failureCall
             password: user.password ? encryptMD5(user.password) : null,
         },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -62,7 +57,6 @@ export function apiUserPost(user: UserVO, successCallback?: Function, failureCal
             password: user.passwordModified ? encryptMD5(user.password!): null,
         },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -81,7 +75,6 @@ export function apiUserDelete(id: number | number[], successCallback?: Function,
 		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     })
@@ -100,7 +93,6 @@ export function apiPageUser(query: PageQuery, successCallback?: Function, failur
 		params: {
             ...query,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });

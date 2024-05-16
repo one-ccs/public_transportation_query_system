@@ -18,7 +18,6 @@ export function apiUserGet(id: number, successCallback?: Function, failureCallba
 		params: {
             id,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -40,7 +39,6 @@ export function apiUserPut(user: UserVO, successCallback?: Function, failureCall
             password: user.password ? encryptMD5(user.password) : null,
         },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -62,7 +60,6 @@ export function apiUserPost(user: UserVO, successCallback?: Function, failureCal
             password: user.passwordModified ? encryptMD5(user.password!): null,
         },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -81,7 +78,6 @@ export function apiUserDelete(id: number | number[], successCallback?: Function,
 		method: 'DELETE',
         data: id.hasOwnProperty('length') ? { ids: id } : { id },
         contentType: 'JSON',
-        token: globalStore.token,
         successCallback,
         failureCallback,
     })
@@ -100,7 +96,6 @@ export function apiPageUser(query: PageQuery, successCallback?: Function, failur
 		params: {
             ...query,
         },
-        token: globalStore.token,
         successCallback,
         failureCallback,
     });
@@ -134,4 +129,14 @@ export function apiLogin(user: UserLogin, successCallback?: Function, failureCal
 
 export function apiLogout(successCallback?: Function, failureCallback?: Function) {
 
+}
+
+export function apiUserModifyAvatar(data: { id: number, filename: string }, successCallback?: Function, failureCallback?: Function) {
+    return api({
+        url: '/api/user/modifyAvatar',
+        method: 'POST',
+        data,
+        successCallback,
+        failureCallback,
+    });
 }

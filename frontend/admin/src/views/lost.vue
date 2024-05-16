@@ -88,16 +88,16 @@
 		</div>
 
 		<!-- 添加弹出框 -->
-		<el-dialog title="添加" v-model="addVisible" width="30%">
+		<el-dialog title="添加" v-model="addVisible" width="600px">
 			<el-form :model="addForm" ref="addFormRef" :rules="addRules" label-width="70px">
 				<el-form-item label="描述" prop="describe">
-					<el-input v-model="addForm.describe"></el-input>
+					<el-text v-model="addForm.describe"></el-text>
 				</el-form-item>
 				<el-form-item label="地址" prop="address">
                     <el-input v-model="addForm.address"></el-input>
 				</el-form-item>
 				<el-form-item label="图片" prop="imgUrl">
-                    <image-upload v-model="addForm.imgUrl" :width="150" :height="100" />
+                    <image-upload :image-src="addForm.imgUrl" :width="150" :height="100" />
 				</el-form-item>
                 <el-form-item label="认领状态" prop="status">
                     <el-select

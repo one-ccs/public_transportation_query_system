@@ -4,7 +4,7 @@
 			<el-col :span="8">
 				<el-card shadow="hover" class="mgb20" style="height: 252px">
 					<div class="user-info">
-						<el-avatar :size="120" :src="imgurl" />
+                        <avatar :size="120" :src="userStore.userInfo.avatar" />
 						<div class="user-info-cont">
 							<div class="user-info-name">{{ userStore.userInfo.username }}</div>
 							<div :title="userStore.roles.join(', ')">{{ userStore.role }}</div>
@@ -74,10 +74,10 @@
 </template>
 
 <script setup lang="ts" name="dashboard">
-import Schart from 'vue-schart';
 import { reactive } from 'vue';
+import Schart from 'vue-schart';
 import useUserStore from '@/stores/user';
-import imgurl from '@/assets/img/img.jpg';
+import Avatar from '@/components/Avatar.vue';
 
 const userStore = useUserStore();
 

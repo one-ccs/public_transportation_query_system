@@ -1,9 +1,15 @@
 import axios, { type AxiosInstance, type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 import { ElMessage } from 'element-plus';
+import useGlobalStore from '@/stores/global';
+import useUserStore from '@/stores/user';
+
+
+const globalStore = useGlobalStore();
+const userStore = useUserStore();
 
 const service:AxiosInstance = axios.create({
-    baseURL: 'http://127.0.0.1:8080',
-    timeout: 5000,
+    baseURL: globalStore.apiHost,
+    timeout: globalStore.timeout,
     // 小于 500 的状态码不抛出错误
     validateStatus: status => (status < 500),
 });
@@ -11,6 +17,7 @@ const service:AxiosInstance = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
+        config.headers.Authorization = `Bearer ${userStore.token}`;
         return config;
     },
     (error: AxiosError) => {

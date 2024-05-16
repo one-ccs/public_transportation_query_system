@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { localLoad, localRemove, localSave } from "@/utils/storage";
+import defaultAvatar from '@/assets/img/img.jpg';
 
 const useGlobalStore = defineStore("global", {
     state: () => ({
@@ -8,6 +9,9 @@ const useGlobalStore = defineStore("global", {
         data: {
             token: '',
         },
+        apiHost: 'http://127.0.0.1:8080',
+        timeout: 5000,
+        defaultAvatarUrl: defaultAvatar,
     }),
     getters: {
         token: (state) => state.data.token,

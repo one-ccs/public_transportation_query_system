@@ -48,3 +48,4 @@ export * from './routeApi';
 export * from './stationApi';
 export * from './noticeApi';
 export * from './lostApi';
+export * from './fileApi';

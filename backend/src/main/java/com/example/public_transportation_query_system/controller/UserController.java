@@ -65,4 +65,11 @@ public class UserController {
         return userServiceImpl.register(username, password, email);
     }
 
+    @SecurityRequirements
+    @Operation(summary = "修改头像", description = "修改头像接口")
+    @PostMapping("/modifyAvatar")
+    public Result<Object> modifyAvatar(Integer id, String filename) {
+        return userServiceImpl.modifyAvatar(id, filename);
+    }
+
 }

@@ -1,7 +1,12 @@
 <template>
     <div class="image-upload" >
         <div class="image-upload-box" @click="showDialog()" :style="{ width: _width, height: _height }">
-            <el-image class="image-wrapper" fit="cover" :src="src">
+            <el-image
+                class="image-wrapper"
+                fit="cover"
+                :src="props.imageSrc || logoPng"
+                :style="{ 'border-radius': props.round ? '50%' : 'unset' }"
+            >
                 <template #error>
                     <div class="image-slot">
                         <el-icon><Picture /></el-icon>
@@ -13,7 +18,7 @@
         <el-dialog title="裁剪图片" v-model="dialogVisible" width="600px">
             <vue-cropper
                 ref="cropperRef"
-                :src="src || logoPng"
+                :src="props.imageSrc || logoPng"
                 :ready="cropperImage()"
                 :zoom="cropperImage()"
                 :cropmove="cropperImage()"
@@ -25,7 +30,7 @@
                     <el-button class="crop-demo-btn" type="primary">选择图片
                         <input class="crop-input" type="file" name="image" accept="image/*" @change="readImage" />
                     </el-button>
-                    <el-button type="primary" @click="onUploadClick()">上传</el-button>
+                    <el-button type="primary" @click="onUploadAndSaveClick()">上传并保存</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -38,15 +43,16 @@ import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import logoPng from '@/assets/img/logo.png';
 
-const src = defineModel({ type: String, required: true });
-
 const props = withDefaults(defineProps<{
+    imageSrc?: string;
     width?: number | string;
     height?: number | string;
-    upload?: Function;
+    round?: boolean;
+    uploadHandler?: Function;
 }>(), {
     width: '64px',
     height: '64px',
+    round: false,
 });
 
 const emit = defineEmits<{
@@ -62,7 +68,6 @@ const _width = computed(() => {
     return props.width;
 });
 
-
 // 裁剪图片弹窗
 const dialogVisible = ref(false);
 const cropperRef = ref();
@@ -75,7 +80,7 @@ const hideDialog = () => {
     dialogVisible.value = false;
 };
 const cropperImage = () => {
-	cropperBase64 = cropperRef.value.getCroppedCanvas().toDataURL();
+	cropperBase64 = cropperRef.value?.getCroppedCanvas()?.toDataURL();
 };
 const readImage = (e: any) => {
     const file = e.target.files[0];
@@ -90,8 +95,9 @@ const readImage = (e: any) => {
 	};
 	reader.readAsDataURL(file);
 };
-const onUploadClick = () => {
-    props.upload ? props.upload(hideDialog) : hideDialog();
+const onUploadAndSaveClick = () => {
+    if (!cropperBase64) cropperBase64 = cropperRef.value?.getCroppedCanvas()?.toDataURL();
+    props.uploadHandler ? props.uploadHandler(cropperBase64, hideDialog) : hideDialog();
 };
 </script>
 

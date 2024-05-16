@@ -1,6 +1,11 @@
 import { defineStore } from "pinia";
+import type { User } from "@/utils/interface";
 import { localLoad, localRemove, localSave } from "../utils/storage";
 import i18n from "@/utils/i18n";
+import pinia from "./pinia";
+import useGlobalStore from "./global";
+
+const globalStore = useGlobalStore(pinia);
 
 const useUserStore = defineStore("user", {
     state: () => ({
@@ -8,14 +13,18 @@ const useUserStore = defineStore("user", {
         keyName: "userStore",
         data: {
             token: '',
+            id: -1,
             username: '',
+            avatar: '',
             roles: <string[]>[],
         },
     }),
     getters: {
-        userInfo: state => state.data,
+        token: state => state.data.token,
+        userInfo: (state): User => state.data,
         role: state => i18n(state.data.roles[0], 'zh'),
         roles: state => state.data.roles.map(role => i18n(role, 'zh')),
+        fullAvatar: state => globalStore.apiHost + '/api/file/image/avatar/' + state.data.avatar,
     },
     actions: {
         init(force=false) {
