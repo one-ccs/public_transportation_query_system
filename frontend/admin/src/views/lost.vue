@@ -41,9 +41,9 @@
 						<el-image
 							class="table-td-thumb"
                             fit="cover"
-							:src="row.imgUrl"
+							:src="row.imgUrl.includes('http') ? row.imgUrl : globalStore.lostApi + row.imgUrl"
 							:z-index="10"
-							:preview-src-list="[row.imgUrl]"
+							:preview-src-list="[row.imgUrl.includes('http') ? row.imgUrl : globalStore.lostApi + row.imgUrl]"
 							preview-teleported
                             hide-on-click-modal
 						>
@@ -88,20 +88,68 @@
 		</div>
 
 		<!-- 添加弹出框 -->
-		<el-dialog title="添加" v-model="addVisible" width="600px">
-			<el-form :model="addForm" ref="addFormRef" :rules="addRules" label-width="70px">
-				<el-form-item label="描述" prop="describe">
-					<el-text v-model="addForm.describe"></el-text>
+		<el-dialog title="添加" v-model="addVisible" width="500px">
+			<el-form :model="addForm" ref="addFormRef" :rules="addRules" label-width="80px">
+				<el-form-item label="物品描述" prop="describe">
+					<el-input v-model="addForm.describe" type="textarea" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
 				</el-form-item>
-				<el-form-item label="地址" prop="address">
+				<el-form-item label="拾取地址" prop="address">
                     <el-input v-model="addForm.address"></el-input>
 				</el-form-item>
-				<el-form-item label="图片" prop="imgUrl">
-                    <image-upload :image-src="addForm.imgUrl" :width="150" :height="100" />
+				<el-form-item label="拾取时间" prop="pickDatetime">
+                    <el-date-picker
+                        v-model="addForm.pickDatetime"
+                        type="datetime"
+                        value-format="YYYY-MM-DD HH:mm:ss"
+                        placeholder="请选择拾取时间"
+                    />
+				</el-form-item>
+				<el-form-item label="相关图片" prop="imgUrl">
+                    <image-upload :image-src="addForm.imgUrl" :upload-handler="uploadHandler"  :width="150" :height="100" />
+				</el-form-item>
+			</el-form>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button @click="addVisible = false">取 消</el-button>
+					<el-button type="primary" @click="saveAdd(addFormRef)">确 定</el-button>
+				</span>
+			</template>
+		</el-dialog>
+
+		<!-- 修改弹出框 -->
+		<el-dialog title="修改" v-model="modifyVisible" width="500px">
+			<el-form :model="modifyForm" ref="modifyFormRef" :rules="modifyRules" label-width="80px">
+				<el-form-item label="ID" prop="id">
+					<el-input v-model="modifyForm.id" disabled></el-input>
+				</el-form-item>
+				<el-form-item label="物品描述" prop="describe">
+					<el-input v-model="modifyForm.describe" type="textarea" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
+				</el-form-item>
+				<el-form-item label="拾取地址" prop="address">
+                    <el-input v-model="modifyForm.address"></el-input>
+				</el-form-item>
+				<el-form-item label="拾取时间" prop="pickDatetime">
+                    <el-date-picker
+                        v-model="modifyForm.pickDatetime"
+                        type="datetime"
+                        value-format="YYYY-MM-DD HH:mm:ss"
+                        placeholder="请选择拾取时间"
+                    />
+				</el-form-item>
+				<el-form-item label="认领时间" prop="claimDatetime">
+                    <el-date-picker
+                        v-model="modifyForm.claimDatetime"
+                        type="datetime"
+                        value-format="YYYY-MM-DD HH:mm:ss"
+                        placeholder="请选择认领时间"
+                    />
+				</el-form-item>
+				<el-form-item label="相关图片" prop="imgUrl">
+                    <image-upload :image-src="modifyForm.imgUrl" :upload-handler="uploadHandler" :width="150" :height="100" />
 				</el-form-item>
                 <el-form-item label="认领状态" prop="status">
                     <el-select
-                        v-model="addForm.status"
+                        v-model="modifyForm.status"
                         placeholder="请选择认领状态"
                     >
                         <el-option
@@ -120,19 +168,6 @@
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
-					<el-button @click="addVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveAdd(addFormRef)">确 定</el-button>
-				</span>
-			</template>
-		</el-dialog>
-
-		<!-- 修改弹出框 -->
-		<el-dialog title="修改" v-model="modifyVisible" width="30%">
-			<el-form :model="modifyForm" ref="modifyFormRef" :rules="modifyRules" label-width="70px">
-
-			</el-form>
-			<template #footer>
-				<span class="dialog-footer">
 					<el-button @click="modifyVisible = false">取 消</el-button>
 					<el-button type="primary" @click="saveModify(modifyFormRef)">确 定</el-button>
 				</span>
@@ -146,9 +181,10 @@ import { reactive, ref } from 'vue';
 import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
 import type { Lost, ResponseData } from '@/utils/interface';
-import { apiLostDelete, apiLostPageQuery, apiLostPost, apiLostPut } from '@/utils/api';
+import { apiLostDelete, apiLostPageQuery, apiLostPost, apiLostPut, apiUploadLost } from '@/utils/api';
 import { deepCopy } from '@/utils/copy';
 import ImageUpload from '@/components/ImageUpload.vue';
+import useGlobalStore from '@/stores/global';
 
 
 interface TableItem {
@@ -160,6 +196,7 @@ interface TableItem {
     claimDatetime: string;
 }
 
+const globalStore = useGlobalStore();
 const query = reactive({
 	pageIndex: 1,
 	pageSize: 10,
@@ -240,6 +277,14 @@ const handleDelete = (index: number, row: any) => {
     .catch(() => {});
 };
 
+const uploadHandler = (base64: string, hideDialog: Function) => {
+    apiUploadLost(base64, (data: ResponseData) => {
+        if (addVisible.value) addForm.imgUrl = data.data;
+        if (modifyVisible.value) modifyForm.imgUrl = data.data;
+
+        hideDialog();
+    });
+};
 
 // 状态列表
 const statusList = reactive([
@@ -249,10 +294,12 @@ const statusList = reactive([
 
 // 添加表格验证
 const addRules: FormRules = {
-	content: [{ required: true, message: '请输入失物招领描述', trigger: 'blur' }],
+	describe: [{ required: true, message: '请输入描述', trigger: 'blur' }],
+	address: [{ required: true, message: '请输入拾取地址', trigger: 'blur' }],
+	pickDatetime: [{ required: true, message: '请输入拾取时间', trigger: 'blur' }],
 };
 // 表格添加时弹窗和保存
-const addVisible = ref(true);
+const addVisible = ref(false);
 const addFormRef = ref<FormInstance>();
 const addForm = reactive<Lost>({
     imgUrl: '',
@@ -275,7 +322,6 @@ const saveAdd = (formEl: FormInstance | undefined) => {
 
 // 修改表格验证
 const modifyRules: FormRules = {
-	content: [{ required: true, message: '请输入失物招领描述', trigger: 'blur' }],
 };
 // 表格修改时弹窗和保存
 const modifyVisible = ref(false);

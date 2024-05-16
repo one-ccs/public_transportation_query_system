@@ -49,19 +49,27 @@ public class FileController {
         return ResponseEntity.ok(file);
     }
 
-    @Operation(summary = "头像上传", description = "头像上传接口（支持上传文件或直接上传 base64）")
-    @PostMapping("/upload/avatar")
-    public void uploadAvatar(@RequestParam(value = "base64", required = false) String base64, @RequestParam(value = "file", required = false) MultipartFile multipartFile, HttpServletResponse response) throws IOException {
+    @Operation(summary = "文件上传", description = "文件上传接口（支持上传文件或上传 base64 字符串数据）")
+    @PostMapping("/upload/{type}")
+    public void uploadAvatar(@PathVariable String type, @RequestParam(value = "base64", required = false) String base64, @RequestParam(value = "file", required = false) MultipartFile multipartFile, HttpServletResponse response) throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
 
+        String savePath = "/unknown";
+        switch (type) {
+            case "avatar":
+                savePath = "/image/avatar";
+                break;
+            case "lost":
+                savePath = "/image/lost";
+                break;
+        }
+
         if (multipartFile != null && !multipartFile.isEmpty()) {
-            // 处理文件上传
-            handleMultipartFileUpload(multipartFile, response);
+            handleMultipartFileUpload(multipartFile, savePath, response);
         }
         else if (!base64.isEmpty()) {
-            // 处理 base64 上传
-            handleBase64Upload(base64, response);
+            handleBase64Upload(base64, savePath, response);
         }
         else {
             response.getWriter().write(Result.failure("请提供 base64 或 file").toJsonString());
@@ -69,13 +77,14 @@ public class FileController {
 
     }
 
-    private void handleMultipartFileUpload(MultipartFile file, HttpServletResponse response) throws IOException {
-        // 检查文件是否为空
-        if (file.isEmpty()) {
-            response.getWriter().write(Result.failure("上传文件为空").toJsonString());
-            return;
-        }
-
+    /**
+     * 处理文件上传
+     * @param file 文件
+     * @param savePath 保存地址
+     * @param response 响应对象
+     * @throws IOException
+     */
+    private void handleMultipartFileUpload(MultipartFile file, String savePath, HttpServletResponse response) throws IOException {
         // 获取文件后缀
         String fileExtension = getFileExtension(file.getOriginalFilename());
 
@@ -83,12 +92,14 @@ public class FileController {
         String safeFilename = RandomStringUtils.randomAlphanumeric(16) + "." + fileExtension;
 
         // 创建文件对象
-        File uploadedFile = new File(FileUtil.getUploadPathWith("/image/avatar"), safeFilename);;
+        File uploadedFile = new File(FileUtil.getUploadPathWith(savePath), safeFilename);;
 
         // 保存到指定路径
         try (FileOutputStream fileOutputStream = new FileOutputStream(uploadedFile)) {
             fileOutputStream.write(file.getBytes());
         } catch (IOException e) {
+            // 请确保保存目录存在
+            System.err.println(e);
             response.getWriter().write(Result.failure("文件保存失败").toJsonString());
             return;
         }
@@ -96,23 +107,32 @@ public class FileController {
         response.getWriter().write(Result.success("文件上传成功", safeFilename).toJsonString());
     }
 
-    private void handleBase64Upload(String fileData, HttpServletResponse response) throws IOException {
+    /**
+     * 处理 base64 上传
+     * @param base64 base64 字符串数据
+     * @param savePath 保存路径
+     * @param response 响应对象
+     * @throws IOException
+     */
+    private void handleBase64Upload(String base64, String savePath, HttpServletResponse response) throws IOException {
         // 从 base64 数据中提取文件后缀
-        String fileExtension = fileData.substring(fileData.indexOf('/') + 1, fileData.indexOf(';'));
+        String fileExtension = base64.substring(base64.indexOf('/') + 1, base64.indexOf(';'));
 
         // 生成安全的文件名
         String safeFilename = RandomStringUtils.randomAlphanumeric(16) + "." + fileExtension;
 
         // 将 base64 数据转换为字节数组
-        byte[] fileBytes = Base64.getDecoder().decode(fileData.split(",")[1]);
+        byte[] fileBytes = Base64.getDecoder().decode(base64.split(",")[1]);
 
         // 创建文件对象
-        File uploadedFile = new File(FileUtil.getUploadPathWith("/image/avatar"), safeFilename);
+        File uploadedFile = new File(FileUtil.getUploadPathWith(savePath), safeFilename);
 
         // 保存到指定路径
         try (FileOutputStream fileOutputStream = new FileOutputStream(uploadedFile)) {
             fileOutputStream.write(fileBytes);
         } catch (IOException e) {
+            // 请确保保存目录存在
+            System.err.println(e);
             response.getWriter().write(Result.failure("文件保存失败").toJsonString());
             return;
         }

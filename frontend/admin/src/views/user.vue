@@ -75,6 +75,7 @@ const saveAvatar = (base64: string, hideDialog: Function) => {
             ElMessage.success('头像修改成功');
             hideDialog();
             userStore.userInfo.avatar = data.data;
+            userStore.save();
         });
     });
 };

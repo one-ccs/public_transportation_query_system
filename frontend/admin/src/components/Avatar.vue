@@ -23,7 +23,7 @@ const globalStore = useGlobalStore();
 <template>
     <el-avatar
         class="avatar"
-        :src="src ? `${globalStore.apiHost}/api/file/image/avatar/${src}` : globalStore.defaultAvatarUrl"
+        :src="src || globalStore.defaultAvatarUrl"
         :size="size"
         :alt="alt"
         :shape="round ? 'circle' : 'square'"
