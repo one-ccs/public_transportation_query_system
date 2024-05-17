@@ -80,10 +80,10 @@
 					<el-input v-model="addForm.sitename"></el-input>
 				</el-form-item>
 				<el-form-item label="经度" prop="longitude">
-					<el-input v-model.number="addForm.longitude"></el-input>
+					<el-input-number v-model="addForm.longitude" :min="0" :max="180"></el-input-number>
 				</el-form-item>
 				<el-form-item label="纬度" prop="latitude">
-					<el-input v-model.number="addForm.latitude"></el-input>
+					<el-input-number v-model="addForm.latitude" :min="0" :max="90"></el-input-number>
 				</el-form-item>
                 <el-form-item label="开通状态" prop="status">
                     <el-select
@@ -130,10 +130,10 @@
 					<el-input v-model="modifyForm.sitename"></el-input>
 				</el-form-item>
 				<el-form-item label="经度" prop="longitude">
-					<el-input v-model.number="modifyForm.longitude"></el-input>
+					<el-input-number v-model="modifyForm.longitude" :min="0" :max="180"></el-input-number>
 				</el-form-item>
 				<el-form-item label="纬度" prop="latitude">
-					<el-input v-model.number="modifyForm.latitude"></el-input>
+					<el-input-number v-model="modifyForm.latitude" :min="0" :max="90"></el-input-number>
 				</el-form-item>
                 <el-form-item label="开通状态" prop="status">
                     <el-select
@@ -177,10 +177,13 @@ import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
 import type { ResponseData, Station, TimeRangePageQuery } from '@/utils/interface';
-import { apiStationDelete, apiStationPageQuery, apiStationPost, apiStationPut } from '@/utils/api';
+import { apiNoticePut, apiStationDelete, apiStationPageQuery, apiStationPost, apiStationPut } from '@/utils/api';
 import { deepCopy } from '@/utils/copy';
+import { strftime } from '@/utils/datetime';
+import useUserStore from '@/stores/user';
 
 
+const userStore = useUserStore();
 const query = reactive<TimeRangePageQuery>({
 	pageIndex: 1,
 	pageSize: 10,
@@ -249,13 +252,17 @@ const handleSizeChange = (val: number) => {
 // 删除操作
 const handleDelete = (index: number, row: any) => {
 	// 二次确认删除
-	ElMessageBox.confirm(`确定要删除 "${row.username ? row.username : row.email}" 吗？`, '提示', {
+	ElMessageBox.confirm(`确定要删除 "${row.sitename}" 吗？`, '提示', {
 		type: 'warning'
 	})
     .then(() => {
         apiStationDelete(row.id, () => {
             ElMessage.success('删除成功');
             getData();
+            apiNoticePut({
+                title: '站点移除通知',
+                content: `系统管理员 ${userStore.userInfo.username} 于 ${strftime(new Date())} 移除站点 ${row.sitename}`,
+            }, () => {});
         });
     })
     .catch(() => {});
@@ -292,6 +299,10 @@ const saveAdd = (formEl: FormInstance | undefined) => {
             ElMessage.success(data.message);
             addVisible.value = false;
             getData();
+            apiNoticePut({
+                title: '站点添加通知',
+                content: `系统管理员 ${userStore.userInfo.username} 于 ${strftime(new Date())} 新增站点 ${addForm.sitename}`,
+            }, () => {});
         });
     });
 };

@@ -242,7 +242,7 @@ const handleSizeChange = (val: number) => {
 // 删除操作
 const handleDelete = (index: number, row: any) => {
 	// 二次确认删除
-	ElMessageBox.confirm(`确定要删除 "${row.username ? row.username : row.email}" 吗？`, '提示', {
+	ElMessageBox.confirm(`确定要删除 "${row.title}" 吗？`, '提示', {
 		type: 'warning'
 	})
     .then(() => {

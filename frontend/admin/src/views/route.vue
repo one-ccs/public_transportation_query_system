@@ -315,11 +315,14 @@ import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'elem
 import { Delete, Edit, Plus, RefreshLeft, Search } from '@element-plus/icons-vue';
 import draggable from 'vuedraggable';
 import type { ResponseData, RouteBO, Station, PageQuery, TimeRangePageQuery, StationBO } from '@/utils/interface';
-import { apiRouteDelete, apiRoutePageQuery, apiRoutePost, apiRoutePut, apiStationPageQuery } from '@/utils/api';
+import { apiNoticePut, apiRouteDelete, apiRoutePageQuery, apiRoutePost, apiRoutePut, apiStationPageQuery } from '@/utils/api';
 import { deepCopy } from '@/utils/copy';
+import { strftime } from '@/utils/datetime';
 import i18n from '@/utils/i18n';
+import useUserStore from '@/stores/user';
 
 
+const userStore = useUserStore();
 const query = reactive<TimeRangePageQuery>({
 	pageIndex: 1,
 	pageSize: 10,
@@ -447,13 +450,17 @@ const handleSizeChange = (val: number) => {
 // 删除操作
 const handleDelete = (index: number, row: any) => {
 	// 二次确认删除
-	ElMessageBox.confirm(`确定要删除 "${row.username ? row.username : row.email}" 吗？`, '提示', {
+	ElMessageBox.confirm(`确定要删除 "${row.no}" 吗？`, '提示', {
 		type: 'warning'
 	})
     .then(() => {
         apiRouteDelete(row.id, () => {
             ElMessage.success('删除成功');
             getData();
+            apiNoticePut({
+                title: '线路移除通知',
+                content: `系统管理员 ${userStore.userInfo.username} 于 ${strftime(new Date())} 移除线路 ${row.no}`,
+            }, () => {});
         });
     })
     .catch(() => {});
@@ -488,6 +495,10 @@ const saveAdd = (formEl: FormInstance | undefined) => {
             ElMessage.success(data.message);
             addVisible.value = false;
             getData();
+            apiNoticePut({
+                title: '线路添加通知',
+                content: `系统管理员 ${userStore.userInfo.username} 于 ${strftime(new Date())} 新增线路 ${addForm.no}`,
+            }, () => {});
         });
     });
 };
