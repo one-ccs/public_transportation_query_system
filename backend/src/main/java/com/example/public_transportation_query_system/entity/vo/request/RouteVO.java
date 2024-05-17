@@ -32,7 +32,7 @@ public class RouteVO implements BaseData {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime openingDatetime;
 
-    private List<StationBO> stations;
+    private List<StationBO> stations = new ArrayList<>();
 
     /**
      * 返回线路途径站点对应的 线路站点关联表

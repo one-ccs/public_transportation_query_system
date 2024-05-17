@@ -34,5 +34,7 @@
             station
         HAVING
             distance <![CDATA[ <= ]]> #{distance}
+        ORDER BY
+            distance ASC
     </select>
 </mapper>
