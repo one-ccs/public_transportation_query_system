@@ -11,7 +11,7 @@ const historyStore = useHistoryStore();
 const query = reactive<NearbyQuery>({
     longitude: null,
     latitude: null,
-    distance: 9999999,
+    distance: 1500,
 })
 const nearbyStations = ref<StationBO[]>([]);
 
@@ -48,6 +48,10 @@ const showRouteDetail = (route: Route) => {
 onMounted(() => {
     getNearbyList();
 });
+
+const _distance = (n: number) => {
+    return n > 1500 ? n / 1000 : n;
+}
 </script>
 
 <template>
@@ -61,7 +65,7 @@ onMounted(() => {
                 <div class="header" @click="showStationDetail(station)">
                     <icon-box class="icon" class-prefix="fa" name="bus" :size="24" :font-size="15"></icon-box>
                     <span class="sitename">{{ station.sitename }}</span>
-                    <span class="distance">{{ parseInt(((station.distance as any) / 10000) as any) }} m</span>
+                    <span class="distance">{{ _distance(station.distance!) }} m</span>
                 </div>
                 <div class="body">
                     <div class="route-card" v-for="route in station.routes" @click="showRouteDetail(route)">

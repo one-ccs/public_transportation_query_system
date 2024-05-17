@@ -12,5 +12,13 @@ function defaultPositionErrorCallback<PositionErrorCallback>(error: { code: numb
  * @param options 配置选项
  */
 export function getCurrentPosition(successCallback: PositionCallback, errorCallback: PositionErrorCallback = defaultPositionErrorCallback, options?: PositionOptions) {
+    options = options || {
+        // 是否高精度
+        enableHighAccuracy: true,
+        // 获取定位的超时
+        timeout: undefined,
+        // 地理信息最大缓存时间
+        maximumAge: undefined,
+    }
     navigator.geolocation?.getCurrentPosition(successCallback, errorCallback, options);
 }
