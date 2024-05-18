@@ -12,22 +12,20 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-@TableName("route_station")
-@Schema(name = "RouteStation", description = "线路-站点关联表")
-public class RouteStation implements Serializable {
+@TableName("station_route")
+@Schema(name = "StationRoute", description = "站点-线路关联表")
+public class StationRoute implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "线路站点关联 id")
+    @Schema(description = "站点线路关联 id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
-
-    @Schema(description = "线路 id")
-    private Integer routeId;
 
     @Schema(description = "站点 id")
     private Integer stationId;
 
-    @Schema(description = "站点在线路中的顺序")
-    private Byte sequence;
+    @Schema(description = "线路 id")
+    private Integer routeId;
+
 }
