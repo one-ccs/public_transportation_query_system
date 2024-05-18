@@ -10,6 +10,10 @@ ENCRYPTED_FILE = 'spider/data/encrypted.txt'
 DECRYPTED_FILE = 'spider/data/decrypted.json'
 PARSED_FILE = 'spider/data/parsed.json'
 
+def request(longitude: float, latitude: float):
+    res = Service.request_nearby(longitude, latitude)
+    print(res.text)
+
 def decrypt():
     """解码"""
     with open(ENCRYPTED_FILE, 'r', encoding='utf-8') as ef:
@@ -81,7 +85,8 @@ def add_route():
             Service.add_route(route)
 
 
-# decrypt()
-# parse_near_lines()
-# add_station()
+# request(106.521978, 29.380991)
+decrypt()
+parse_near_lines()
+add_station()
 add_route()

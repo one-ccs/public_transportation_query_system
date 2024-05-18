@@ -60,6 +60,9 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
         if (StringUtils.isBlank(station.getSitename())) {
             return Result.failure("站点名不能为空");
         }
+        if (this.lambdaQuery().eq(Station::getSitename, station.getSitename()).one() != null) {
+            return Result.failure("站点名 '" + station.getSitename() + "' 重复");
+        }
 
         // 清除 id
         station.setId(null);
