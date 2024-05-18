@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import type { NearbyQuery, ResponseData, Route, RouteBO, Station, StationBO } from '@/utils/interface';
 import { apiStationNearby } from '@/utils/api';
 import { getCurrentPosition } from '@/utils/advanced';
@@ -7,6 +8,7 @@ import useHistoryStore from '@/stores/history';
 import RightSlideRouterView from '@/components/RightSlideRouterView.vue';
 import IconBox from '@/components/IconBox.vue';
 
+const router = useRouter();
 const historyStore = useHistoryStore();
 const query = reactive<NearbyQuery>({
     longitude: null,
@@ -40,9 +42,11 @@ const parseNextText = (station: StationBO, route: RouteBO) => {
 };
 const showStationDetail = (station: Station) => {
     historyStore.set(station);
+    router.push({ name: 'nearbyStationDetail'});
 };
 const showRouteDetail = (route: Route) => {
     historyStore.set(route);
+    router.push({ name: 'nearbyRouteDetail'});
 };
 
 onMounted(() => {
@@ -62,13 +66,13 @@ const _distance = (n: number) => {
                 class="station-box"
                 v-for="station in nearbyStations"
             >
-                <div class="header" @click="showStationDetail(station)">
+                <div class="header clickable" @click="showStationDetail(station)">
                     <icon-box class="icon" class-prefix="fa" name="bus" :size="24" :font-size="15"></icon-box>
                     <span class="sitename">{{ station.sitename }}</span>
                     <span class="distance">{{ _distance(station.distance!) }} m</span>
                 </div>
                 <div class="body">
-                    <div class="route-card" v-for="route in station.routes" @click="showRouteDetail(route)">
+                    <div class="route-card clickable" v-for="route in station.routes" @click="showRouteDetail(route)">
                         <div class="title">
                             <div class="route-no">{{ route.no }}路</div>
                             <div class="time">{{ route.firstTime }}-{{ route.lastTime }}</div>

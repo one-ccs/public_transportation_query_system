@@ -27,6 +27,9 @@ public class Route implements Serializable, BaseData {
     @Schema(description = "线路号")
     private String no;
 
+    @Schema(description = "票价")
+    private Float price;
+
     @Schema(description = "首班车时间")
     @DateTimeFormat(pattern = "HH:mm:ss")
     private LocalTime firstTime;

@@ -85,7 +85,6 @@
 }
 
 .client-wrapper {
-    position: relative;
     width: 100%;
     height: 100%;
     overflow-x: hidden;
@@ -97,4 +96,9 @@
     cursor: pointer;
     user-select: none;
     text-decoration: none;
+}
+
+.clickable {
+    cursor: pointer;
+    user-select: none;
 }

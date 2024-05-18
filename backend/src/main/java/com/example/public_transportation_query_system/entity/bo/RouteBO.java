@@ -17,6 +17,8 @@ public class RouteBO {
 
     private String no;
 
+    private float price;
+
     @DateTimeFormat(pattern = "HH:mm:ss")
     private LocalTime firstTime;
 

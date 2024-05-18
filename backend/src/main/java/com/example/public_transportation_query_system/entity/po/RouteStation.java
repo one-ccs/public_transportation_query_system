@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @TableName("route_station")
-@Schema(name = "RouteStation", description = "线路-关联表站点")
+@Schema(name = "RouteStation", description = "线路-站点关联表")
 public class RouteStation implements Serializable {
 
     private static final long serialVersionUID = 1L;

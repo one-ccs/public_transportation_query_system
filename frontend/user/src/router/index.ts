@@ -19,6 +19,24 @@ const routes: RouteRecordRaw[] = [
                     title: '附近线路',
                 },
                 component: () => import('@/views/Home/Nearby.vue'),
+                children: [
+                    {
+                        path: 'routeDetail',
+                        name: 'nearbyRouteDetail',
+                        meta: {
+                            title: '线路详情',
+                        },
+                        component: () => import('@/views/Home/RouteDetail.vue'),
+                    },
+                    {
+                        path: 'stationDetail',
+                        name: 'nearbyStationDetail',
+                        meta: {
+                            title: '站点详情',
+                        },
+                        component: () => import('@/views/Home/StationDetail.vue'),
+                    },
+                ],
             },
             {
                 path: 'history',
@@ -27,6 +45,24 @@ const routes: RouteRecordRaw[] = [
                     title: '最近使用',
                 },
                 component: () => import('@/views/Home/History.vue'),
+                children: [
+                    {
+                        path: 'routeDetail',
+                        name: 'historyRouteDetail',
+                        meta: {
+                            title: '线路详情',
+                        },
+                        component: () => import('@/views/Home/RouteDetail.vue'),
+                    },
+                    {
+                        path: 'stationDetail',
+                        name: 'historyStationDetail',
+                        meta: {
+                            title: '站点详情',
+                        },
+                        component: () => import('@/views/Home/StationDetail.vue'),
+                    },
+                ],
             },
             {
                 path: 'planning',
@@ -35,6 +71,24 @@ const routes: RouteRecordRaw[] = [
                     title: '线路规划',
                 },
                 component: () => import('@/views/Home/Planning.vue'),
+                children: [
+                    {
+                        path: 'routeDetail',
+                        name: 'planningRouteDetail',
+                        meta: {
+                            title: '线路详情',
+                        },
+                        component: () => import('@/views/Home/RouteDetail.vue'),
+                    },
+                    {
+                        path: 'stationDetail',
+                        name: 'planningStationDetail',
+                        meta: {
+                            title: '站点详情',
+                        },
+                        component: () => import('@/views/Home/StationDetail.vue'),
+                    },
+                ],
             },
         ],
     },
