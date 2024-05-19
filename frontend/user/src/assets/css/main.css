@@ -1,4 +1,5 @@
 @import './base.css';
+@import './spirit.css';
 
 
 /* 覆写框架样式 */
@@ -42,6 +43,7 @@
 /* 自定义样式 */
 :root {
     --border-radius: var(--van-radius-lg);
+    --border-divider: 1px solid #EAEAEA;
     --padding: 15px;
     --client-width: 100%;
     --text-color: #333;
@@ -50,7 +52,6 @@
     --box-shadow-light: 0 0 5px 0 #3333;
     --box-shadow-light-2: 0 2px 5px 0 #3333;
     --search-bar-height: 58px;
-    --border-divider: 1px solid #EAEAEA;
 }
 
 @media screen and (min-width: 768px) {

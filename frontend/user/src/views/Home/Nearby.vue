@@ -19,7 +19,11 @@ const nearbyStations = ref<StationBO[]>([]);
 const bodyRef = ref();
 
 const onRefreshClick = () => {
+    nearbyStations.value.length = 0;
     getNearbyList();
+    // bodyRef.value.scrollIntoView({
+    //     behavior: 'smooth',
+    // });
 };
 
 // 获取附近站点列表
@@ -29,6 +33,15 @@ const getNearbyList = () => {
         query.latitude = pos.coords.latitude;
 
         apiStationNearby(query, (data: ResponseData) => {
+            if (data.data.length === 0) {
+                query.longitude = 106.521978;
+                query.latitude = 29.380991;
+
+                apiStationNearby(query, (data: ResponseData) => {
+                    // 只显示前 9 条
+                    nearbyStations.value = data.data.slice(0, 9);
+                });
+            }
             // 只显示前 9 条
             nearbyStations.value = data.data.slice(0, 9);
         });
@@ -42,25 +55,27 @@ const parseNextText = (station: StationBO, route: RouteBO) => {
     }
     return '终点站';
 };
-const showStationDetail = (station: Station) => {
+const goStationDetail = (station: StationBO, routeId: number | null) => {
     historyStore.set(station);
-    router.push({ name: 'nearbyStationDetail', query: { 'id': station.id }});
+    router.push({
+        name: 'nearbyStationDetail',
+        query: {
+            'routeId': routeId,
+            'stationId': station.id,
+        },
+    });
 };
-const showRouteDetail = (route: Route, station: Station) => {
+const goRouteDetail = (route: RouteBO, stationId: number) => {
     historyStore.set(route);
     router.push({ name: 'nearbyRouteDetail', query: {
-        'id': route.id,
-        'stationId': station.id,
+        'routeId': route.id,
+        'stationId': stationId,
     }});
 };
 
 onMounted(() => {
     getNearbyList();
 });
-
-const _distance = (n: number) => {
-    return n > 1500 ? n / 1000 : n;
-}
 </script>
 
 <template>
@@ -71,13 +86,13 @@ const _distance = (n: number) => {
                 class="station-box"
                 v-for="station in nearbyStations"
             >
-                <div class="header clickable" @click="showStationDetail(station)">
-                    <icon-box class="icon" class-prefix="fa" name="bus" :size="24" :font-size="15"></icon-box>
+                <div class="header clickable" @click="goStationDetail(station, null)">
+                    <i class="spirit station"></i>
                     <span class="sitename">{{ station.sitename }}</span>
-                    <span class="distance">{{ _distance(station.distance!) }} m</span>
+                    <span class="distance">{{ station.distance }} <span style="font-size: .88rem;">米</span></span>
                 </div>
                 <div class="body">
-                    <div class="route-card clickable" v-for="route in station.routes" @click="showRouteDetail(route, station)">
+                    <div class="route-card clickable" v-for="route in station.routes" @click="goRouteDetail(route, station.id!)">
                         <div class="title">
                             <div class="route-no">{{ route.no }}路</div>
                             <div class="time">{{ route.firstTime }}-{{ route.lastTime }}</div>
@@ -115,7 +130,7 @@ const _distance = (n: number) => {
                 font-size: 1.1rem;
                 background-color: #FBFBFD;
 
-                .icon {
+                .spirit {
                     margin-right: 8px;
                 }
                 .distance {

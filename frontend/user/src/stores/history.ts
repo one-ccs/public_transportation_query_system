@@ -19,6 +19,7 @@ const useHistoryStore = defineStore("history", {
             this.isInit = true;
 
             this.data = { ...localLoad(this.keyName, {}) };
+            if (!this.data.history) this.data.history = [];
         },
         load() {
             this.init(true);

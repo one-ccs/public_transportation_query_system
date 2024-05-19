@@ -35,11 +35,34 @@ export function apiStationPageQuery(query: PageQuery, successCallback?: Function
     });
 }
 
+/**
+ * 获取附件站点列表
+ * @param successCallback 成功回调函数
+ * @param failureCallback 失败回调函数
+ * @returns Promise
+ */
 export function apiStationNearby(query: NearbyQuery, successCallback?: Function, failureCallback?: Function) {
     return api({
 		url: '/api/station/nearby',
 		params: {
             ...query,
+        },
+        successCallback,
+        failureCallback,
+    });
+}
+
+/**
+ * 获取经过站点的线路列表
+ * @param successCallback 成功回调函数
+ * @param failureCallback 失败回调函数
+ * @returns Promise
+ */
+export function apiStationRoutes(id: number, successCallback?: Function, failureCallback?: Function) {
+    return api({
+		url: '/api/station/routes',
+		params: {
+            id,
         },
         successCallback,
         failureCallback,

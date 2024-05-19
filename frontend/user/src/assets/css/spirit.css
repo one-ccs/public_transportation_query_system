@@ -1,0 +1,42 @@
+:root {
+    --spirit-url: url(../img/icons-2x-1a3954d39f.png);
+}
+
+.spirit {
+    position: relative;
+    display: inline-block;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    background-color: #3498DB;
+}
+.spirit::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.spirit.route {
+    width: 54px;
+    height: 38px;
+    background-color: transparent;
+}
+.spirit.route::before {
+    background-image: var(--spirit-url);
+    background-position: 0 -299px;
+}
+.spirit.bus::before {
+    background-image: var(--spirit-url);
+    background-position: -436px -142px;
+    transform: scale(0.7);
+}
+.spirit.station::before {
+    background-image: var(--spirit-url);
+    background-position: 0 -381px;
+    transform: scale(0.53) translate(-4px , 0px);
+    width: 28px;
+    height: 30px;
+}

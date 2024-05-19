@@ -87,6 +87,6 @@ def add_route():
 
 # request(106.521978, 29.380991)
 decrypt()
-parse_near_lines()
-add_station()
-add_route()
+# parse_near_lines()
+# add_station()
+# add_route()

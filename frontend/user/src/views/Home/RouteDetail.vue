@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import type { ResponseData, RouteBO } from '@/utils/interface';
-import { apiRouteDetail } from '@/utils/api';
+import { apiNoticeGet, apiRouteDetail } from '@/utils/api';
 import { useDocumentTitle } from '@/utils/use';
 import RightSlideRouterView from '@/components/RightSlideRouterView.vue';
 import BackNavBar from '@/components/BackNavBar.vue';
+import { showDialog } from 'vant';
 
 const route = useRoute();
+const router = useRouter();
 const routeDetail = ref<RouteBO>();
-const routeId = Number(route.query.id);
+const routeId = Number(route.query.routeId);
 const stationId = Number(route.query.stationId);
 const currentIndex = ref(0);
 const isInvert = ref(false);
+const notice = ref('[服务热线]：\n...');
 
 const getData = () => {
     routeId && apiRouteDetail(routeId, (data: ResponseData) => {
@@ -22,12 +25,14 @@ const getData = () => {
         const length = routeDetail.value?.stations?.length || 0;
         for (let index = 0; index < length; index++) {
 
-            console.log(routeDetail.value?.stations![index].id);
             if (routeDetail.value?.stations![index].id === stationId) {
                 currentIndex.value = index;
                 break;
             }
         }
+    });
+    apiNoticeGet(18, (data: ResponseData) => {
+        notice.value = data.data.content;
     });
 };
 
@@ -49,6 +54,10 @@ const routeInfo = computed(() => {
     return `${routeDetail.value?.firstTime?.substring(0, 5)}-${routeDetail.value?.lastTime?.substring(0, 5)}·票价${routeDetail.value?.price}元`;
 });
 
+const onHomeClick = () => {
+    router.push({ name: 'nearby' });
+};
+
 onMounted(() => {
     getData();
 });
@@ -57,14 +66,25 @@ onMounted(() => {
 <template>
     <div class="view">
         <right-slide-router-view />
-        <back-nav-bar class="view-header" :title="title" />
+        <back-nav-bar class="view-header" :title="title" @click-right="onHomeClick()">
+            <template #right>
+                <van-icon name="wap-home" size="1.3rem" color="#666"/>
+            </template>
+        </back-nav-bar>
         <div class="view-container">
             <div class="head">
                 <div class="info">
                     <div class="route-se">{{ stationSE }}</div>
                     <div class="route-describe">{{ routeInfo }}</div>
                 </div>
-                <div class="notice">服务热线</div>
+                <van-notice-bar
+                    class="notice"
+                    left-icon="volume-o"
+                    mode="link"
+                    :scrollable="true"
+                    :text="notice"
+                    @click="showDialog({ message: notice, messageAlign: 'left', closeOnClickOverlay: true })"
+                />
             </div>
             <div class="body">
                 <div class="info-box">
@@ -72,7 +92,10 @@ onMounted(() => {
                         <div class="text">等待发车</div>
                         <div class="describe">上一班7分钟前过站</div>
                     </div>
-                    <div class="same-station-route link-button">同站线路</div>
+                    <div class="same-station-route link-button" @click="router.push({ name: 'nearbyStationDetail', query: { id: stationId } })">
+                        <span>同站线路</span>
+                        <i class="spirit route"></i>
+                    </div>
                 </div>
                 <van-steps class="stations" :active="currentIndex" direction="vertical" active-color="#07c160">
                     <van-step
@@ -83,7 +106,7 @@ onMounted(() => {
                         <span class="sitename">{{ station.sitename }}</span>
                     </van-step>
                 </van-steps>
-                <van-back-top v-if="routeDetail" offset="10" teleport=".body" />
+                <van-back-top v-if="routeDetail" offset="120" teleport=".body" />
             </div>
         </div>
     </div>
@@ -110,17 +133,18 @@ onMounted(() => {
             }
             .notice {
                 border-top: var(--border-divider);
-                padding: 5px 12px;
             }
         }
         .body {
+            padding: var(--padding);
+            padding-bottom: 65px;
+            // height: calc(100% - 150px);
             overflow-y: auto;
 
             .info-box {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                margin: var(--padding);
                 border-radius: var(--border-radius);
                 background-color: #fff;
 
@@ -137,14 +161,21 @@ onMounted(() => {
                     }
                 }
                 .same-station-route {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                     border-top: var(--border-divider);
-                    padding: var(--padding) 0;
+                    padding: calc(var(--padding) * .5) 0;
                     width: 100%;
                     text-align: center;
+
+                    .spirit {
+                        transform: scale(.5) scaleY(.8) translateX(-25%);
+                    }
                 }
             }
             .stations {
-                margin: 0 var(--padding);
+                margin-top: var(--padding);
                 border-radius: var(--border-radius);
                 padding: 15px 15px 15px 38px;
 

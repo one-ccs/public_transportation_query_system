@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import useHistoryStore from '@/stores/history';
+import { ref } from 'vue';
+import { showDialog } from 'vant';
 import type { RouteBO, StationBO } from '@/utils/interface';
+import useHistoryStore from '@/stores/history';
 import RightSlideRouterView from '@/components/RightSlideRouterView.vue';
 import IconBox from '@/components/IconBox.vue';
 
 const historyStore = useHistoryStore();
+const bodyRef = ref();
 
 const parseInfoText = (history: RouteBO & StationBO) => {
     if (history.no) {
@@ -15,12 +18,21 @@ const parseInfoText = (history: RouteBO & StationBO) => {
     }
     return '';
 };
+
+const onDeleteClick = () => {
+    showDialog({
+        showCancelButton: true,
+        message: '确认清空历史记录吗?',
+    }).then(() => {
+        historyStore.clear();
+    }).catch(() => {});
+};
 </script>
 
 <template>
     <div class="client-wrapper">
         <right-slide-router-view />
-        <div class="body">
+        <div class="body" ref="bodyRef">
             <div class="history-card" v-for="history in historyStore.get">
                 <icon-box class="icon" class-prefix="fa" name="bus"></icon-box>
                 <div class="content">
@@ -33,6 +45,11 @@ const parseInfoText = (history: RouteBO & StationBO) => {
                     name="close"
                     @click="historyStore.delete(history)"
                 ></van-icon>
+            </div>
+            <van-back-top v-if="bodyRef" offset="120" bottom="80" z-index="1" teleport=".body" />
+            <van-empty v-if="!historyStore.get.length" image="search" description="没有历史记录哦" />
+            <div class="btn-clear link-button">
+                <icon-box name="delete" @click="onDeleteClick"></icon-box>
             </div>
         </div>
     </div>
@@ -71,6 +88,12 @@ const parseInfoText = (history: RouteBO & StationBO) => {
                 flex: 0 0 auto;
                 color: #888;
             }
+        }
+        .btn-clear {
+            position: fixed;
+            left: 50%;
+            bottom: 80px;
+            transform: translateX(-50%);
         }
     }
 }
