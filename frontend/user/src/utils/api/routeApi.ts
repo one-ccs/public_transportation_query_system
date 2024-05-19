@@ -92,3 +92,20 @@ export function apiRoutePageQuery(query: PageQuery, successCallback?: Function, 
         failureCallback,
     });
 }
+
+/**
+ * 查询线路详情
+ * @param successCallback 成功回调函数
+ * @param failureCallback 失败回调函数
+ * @returns Promise
+ */
+export function apiRouteDetail(id: number, successCallback?: Function, failureCallback?: Function) {
+    return api({
+		url: '/api/route/detail',
+		params: {
+            id,
+        },
+        successCallback,
+        failureCallback,
+    });
+}

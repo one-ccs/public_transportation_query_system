@@ -35,6 +35,11 @@
                 <el-table-column type="selection" width="39" />
 				<el-table-column prop="id" label="ID" width="66" align="center" sortable></el-table-column>
 				<el-table-column prop="no" label="线路号" width="125" align="center"></el-table-column>
+				<el-table-column prop="price" label="票价" width="80" align="center">
+                    <template #default="{ row }">
+                        <span>{{ row.price }}元</span>
+                    </template>
+                </el-table-column>
 				<el-table-column prop="firstTime" label="首班时间" width="125" align="center"></el-table-column>
 				<el-table-column prop="lastTime" label="末班时间" width="125" align="center"></el-table-column>
 				<el-table-column label="途经站点" min-width="200" show-overflow-tooltip>
@@ -92,6 +97,15 @@
                         v-model="addForm.no"
                         placeholder="请输入线路号"
                     ></el-input>
+				</el-form-item>
+				<el-form-item label="票价(元)" prop="price">
+					<el-input-number
+                        v-model="modifyForm.price"
+                        placeholder="票价"
+                        :min="0"
+                        :max="99"
+                        :step="0.5"
+                    ></el-input-number>
 				</el-form-item>
 				<el-form-item label="首班时间">
                     <el-time-select
@@ -205,6 +219,15 @@
                         v-model="modifyForm.no"
                         placeholder="请输入线路号"
                     ></el-input>
+				</el-form-item>
+				<el-form-item label="票价(元)" prop="price">
+					<el-input-number
+                        v-model="modifyForm.price"
+                        placeholder="票价"
+                        :min="0"
+                        :max="99"
+                        :step="0.5"
+                    ></el-input-number>
 				</el-form-item>
 				<el-form-item label="首班时间">
                     <el-time-select

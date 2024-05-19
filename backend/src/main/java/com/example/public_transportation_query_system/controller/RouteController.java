@@ -56,4 +56,10 @@ public class RouteController {
         return routeServiceImpl.getRoutePage(query);
     }
 
+    @Operation(summary = "查询线路详情", description = "查询线路详情接口")
+    @GetMapping("/detail")
+    public Result<Object> detail(Integer id) {
+        return routeServiceImpl.getRouteDetail(id);
+    }
+
 }

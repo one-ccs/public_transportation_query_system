@@ -42,6 +42,7 @@
 /* 自定义样式 */
 :root {
     --border-radius: var(--van-radius-lg);
+    --padding: 15px;
     --client-width: 100%;
     --text-color: #333;
     --background-color: #F2F5FC;
@@ -49,6 +50,7 @@
     --box-shadow-light: 0 0 5px 0 #3333;
     --box-shadow-light-2: 0 2px 5px 0 #3333;
     --search-bar-height: 58px;
+    --border-divider: 1px solid #EAEAEA;
 }
 
 @media screen and (min-width: 768px) {
@@ -89,6 +91,11 @@
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+.view-container {
+    width: 100%;
+    height: 100%;
 }
 
 .link-button {

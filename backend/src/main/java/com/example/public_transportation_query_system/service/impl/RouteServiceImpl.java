@@ -176,4 +176,15 @@ public class RouteServiceImpl extends ServiceImpl<RouteMapper, Route> implements
         return Result.failure("删除失败，参数 id 和 ids 不能同时为空");
     }
 
+    public Result<Object> getRouteDetail(Integer id) {
+        if (id == null) {
+            return Result.failure("线路 id 不能为空");
+        }
+        Route route = this.lambdaQuery().eq(Route::getId, id).one();
+
+        RouteBO routeBO = this.getRouteBO(route);
+
+        return Result.success("线路详情", routeBO);
+    }
+
 }

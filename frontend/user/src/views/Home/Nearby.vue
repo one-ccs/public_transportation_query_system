@@ -16,6 +16,7 @@ const query = reactive<NearbyQuery>({
     distance: 1500,
 })
 const nearbyStations = ref<StationBO[]>([]);
+const bodyRef = ref();
 
 const onRefreshClick = () => {
     getNearbyList();
@@ -28,7 +29,8 @@ const getNearbyList = () => {
         query.latitude = pos.coords.latitude;
 
         apiStationNearby(query, (data: ResponseData) => {
-            nearbyStations.value = data.data.slice(0, 5);
+            // 只显示前 9 条
+            nearbyStations.value = data.data.slice(0, 9);
         });
     });
 };
@@ -42,11 +44,14 @@ const parseNextText = (station: StationBO, route: RouteBO) => {
 };
 const showStationDetail = (station: Station) => {
     historyStore.set(station);
-    router.push({ name: 'nearbyStationDetail'});
+    router.push({ name: 'nearbyStationDetail', query: { 'id': station.id }});
 };
-const showRouteDetail = (route: Route) => {
+const showRouteDetail = (route: Route, station: Station) => {
     historyStore.set(route);
-    router.push({ name: 'nearbyRouteDetail'});
+    router.push({ name: 'nearbyRouteDetail', query: {
+        'id': route.id,
+        'stationId': station.id,
+    }});
 };
 
 onMounted(() => {
@@ -61,7 +66,7 @@ const _distance = (n: number) => {
 <template>
     <div class="client-wrapper">
         <right-slide-router-view />
-        <div class="body" v-if="nearbyStations.length">
+        <div class="body" ref="bodyRef" v-if="nearbyStations.length">
             <div
                 class="station-box"
                 v-for="station in nearbyStations"
@@ -72,7 +77,7 @@ const _distance = (n: number) => {
                     <span class="distance">{{ _distance(station.distance!) }} m</span>
                 </div>
                 <div class="body">
-                    <div class="route-card clickable" v-for="route in station.routes" @click="showRouteDetail(route)">
+                    <div class="route-card clickable" v-for="route in station.routes" @click="showRouteDetail(route, station)">
                         <div class="title">
                             <div class="route-no">{{ route.no }}路</div>
                             <div class="time">{{ route.firstTime }}-{{ route.lastTime }}</div>
@@ -85,7 +90,7 @@ const _distance = (n: number) => {
                     </div>
                 </div>
             </div>
-            <van-back-top offset="120" bottom="80"></van-back-top>
+            <van-back-top v-if="bodyRef" offset="120" bottom="80" z-index="1" teleport=".body" />
             <div class="btn-refresh link-button">
                 <icon-box name="replay" @click="onRefreshClick"></icon-box>
             </div>

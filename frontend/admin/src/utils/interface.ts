@@ -19,6 +19,7 @@ export interface Role {
 export interface Route {
     id?: number;
     no?: string;
+    price?: number;
     status?: number;
     firstTime?: string;
     lastTime?: string;
