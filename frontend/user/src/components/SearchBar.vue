@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import useGlobalStore from '@/stores/global';
 import logo from '@/assets/img/logo.png';
 
-const query = ref('');
-
-const onSearch = () => {
-
-};
+const globalStore = useGlobalStore();
 </script>
 
 <template>
@@ -14,10 +10,12 @@ const onSearch = () => {
         <van-image :src="logo" width="50" height="50"></van-image>
         <van-search
             class="search-box"
-            v-model="query"
+            v-model="globalStore.search"
             placeholder="搜索线路或站点"
             background="transparent"
-            @search="onSearch()"
+            autocomplete="off"
+            @search="globalStore.onSearch"
+            @click="$router.push('/search')"
         ></van-search>
         <div class="position">重庆</div>
     </div>

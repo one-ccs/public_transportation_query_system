@@ -56,7 +56,7 @@ const parseNextText = (station: StationBO, route: RouteBO) => {
     return '终点站';
 };
 const goStationDetail = (station: StationBO, routeId: number | null) => {
-    historyStore.set(station);
+    historyStore.addHistory(station);
     router.push({
         name: 'nearbyStationDetail',
         query: {
@@ -66,7 +66,7 @@ const goStationDetail = (station: StationBO, routeId: number | null) => {
     });
 };
 const goRouteDetail = (route: RouteBO, stationId: number) => {
-    historyStore.set(route);
+    historyStore.addHistory(route);
     router.push({ name: 'nearbyRouteDetail', query: {
         'routeId': route.id,
         'stationId': stationId,

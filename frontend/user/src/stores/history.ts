@@ -8,10 +8,12 @@ const useHistoryStore = defineStore("history", {
         keyName: "historyStore",
         data: {
             history: <Array<StationBO & RouteBO>>[],
+            search: <string[]>[],
         },
     }),
     getters: {
-        get: (state) => state.data.history,
+        history: state => state.data.history,
+        search: state => state.data.search,
     },
     actions: {
         init(force=false) {
@@ -20,6 +22,7 @@ const useHistoryStore = defineStore("history", {
 
             this.data = { ...localLoad(this.keyName, {}) };
             if (!this.data.history) this.data.history = [];
+            if (!this.data.search) this.data.search = [];
         },
         load() {
             this.init(true);
@@ -34,17 +37,24 @@ const useHistoryStore = defineStore("history", {
             localRemove(this.keyName);
             return this;
         },
-        set(history: StationBO | StationBO[] | RouteBO | RouteBO[]) {
+        addHistory(history: StationBO | StationBO[] | RouteBO | RouteBO[]) {
             if (!this.data.history) this.data.history = [];
             Array.isArray(history) ?
-                this.data.history.push(...history) :
-                this.data.history.push(history);
+                this.data.history.unshift(...history) :
+                this.data.history.unshift(history);
             this.save();
         },
-        delete(history: StationBO | RouteBO) {
+        deleteHistory(history: StationBO | RouteBO) {
             const index = this.data.history.indexOf(history);
             this.data.history.splice(index, 1);
             this.save();
+        },
+        addSearch(query: string) {
+            if (!this.data.search) this.data.search = [];
+            this.data.search.unshift(query);
+        },
+        deleteSearch(query: string) {
+            this.data.search = this.data.search.filter(text => text !== query);
         },
     }
 });

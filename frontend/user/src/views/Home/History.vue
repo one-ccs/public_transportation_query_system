@@ -5,7 +5,9 @@ import type { RouteBO, StationBO } from '@/utils/interface';
 import useHistoryStore from '@/stores/history';
 import RightSlideRouterView from '@/components/RightSlideRouterView.vue';
 import IconBox from '@/components/IconBox.vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const historyStore = useHistoryStore();
 const bodyRef = ref();
 
@@ -19,6 +21,28 @@ const parseInfoText = (history: RouteBO & StationBO) => {
     return '';
 };
 
+const onHistoryClick = (history: RouteBO & StationBO) => {
+    // 站点
+    if (history.sitename) {
+        router.push({
+            name: 'historyStationDetail',
+            query: {
+                stationId: history.id,
+            },
+        });
+    }
+    // 线路
+    if (history.no) {
+        router.push({
+            name: 'historyRouteDetail',
+            query: {
+                routeId: history.id,
+            },
+        });
+    }
+};
+
+// 清空历史记录
 const onDeleteClick = () => {
     showDialog({
         showCancelButton: true,
@@ -33,7 +57,7 @@ const onDeleteClick = () => {
     <div class="client-wrapper">
         <right-slide-router-view />
         <div class="body" ref="bodyRef">
-            <div class="history-card" v-for="history in historyStore.get">
+            <div class="history-card link-button" v-for="history in historyStore.history" @click="onHistoryClick(history)">
                 <icon-box class="icon" class-prefix="fa" name="bus"></icon-box>
                 <div class="content">
                     <div class="title">{{ history.sitename || history.no }}</div>
@@ -43,11 +67,11 @@ const onDeleteClick = () => {
                     class="delete"
                     class-prefix="fa"
                     name="close"
-                    @click="historyStore.delete(history)"
+                    @click="historyStore.deleteHistory(history)"
                 ></van-icon>
             </div>
             <van-back-top v-if="bodyRef" offset="120" bottom="80" z-index="1" teleport=".body" />
-            <van-empty v-if="!historyStore.get.length" image="search" description="没有历史记录哦" />
+            <van-empty v-if="!historyStore.history.length" image="search" description="没有历史记录哦" />
             <div class="btn-clear link-button">
                 <icon-box name="delete" @click="onDeleteClick"></icon-box>
             </div>

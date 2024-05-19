@@ -8,6 +8,8 @@ const useGlobalStore = defineStore("global", {
         data: {
             token: '',
         },
+        search: '',
+        onSearch: () => {},
     }),
     getters: {
         token: (state) => state.data.token,

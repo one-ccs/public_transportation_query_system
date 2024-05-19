@@ -11,6 +11,7 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "@vant/touch-emulator": "^1.4.0",
     "axios": "^1.6.8",
     "font-awesome": "^4.7.0",
     "pinia": "^2.1.7",

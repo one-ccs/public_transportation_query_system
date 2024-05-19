@@ -36,11 +36,11 @@ const getNextStationText = (route: RouteBO & {_invert?: boolean}) => {
 const onHomeClick = () => {
     router.push({ name: 'nearby' });
 };
-const onSiteClick = (route: RouteBO) => {
+const onStationClick = (routeBO: RouteBO) => {
     router.push({
-        name: 'nearbyRouteDetail',
+        path: route.matched[1].path + '/routeDetail',
         query: {
-            routeId: route.id,
+            routeId: routeBO.id,
             stationId: stationId,
         },
     });
@@ -65,7 +65,7 @@ onMounted(() => {
         <div class="view-container">
             <div class="routes">
                 <div class="route" v-for="route in passStationRoutes">
-                    <div class="info" @click="onSiteClick(route)">
+                    <div class="info" @click="onStationClick(route)">
                         <div class="title">
                             <span class="no">{{ route.no }}路</span>
                             <span class="time-fl">{{ route.firstTime }}-{{ route.lastTime }}</span>

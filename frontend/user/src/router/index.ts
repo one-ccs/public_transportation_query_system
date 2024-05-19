@@ -13,6 +13,14 @@ const routes: RouteRecordRaw[] = [
         component: HomeView,
         children: [
             {
+                path: 'search',
+                name: 'search',
+                meta: {
+                    title: '搜索',
+                },
+                component: () => import('@/views/Home/Search.vue'),
+            },
+            {
                 path: 'nearby',
                 name: 'nearby',
                 meta: {
