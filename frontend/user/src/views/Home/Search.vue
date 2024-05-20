@@ -19,13 +19,17 @@ const query = reactive<TimeRangePageQuery>({
 });
 
 globalStore.onSearch = () => {
-    globalStore.isSearched = true;
+    globalStore.clearSearchResult();
+    globalStore.isSearched = globalStore.isSearching = true;
     historyStore.addSearch(globalStore.search);
     query.query = globalStore.search;
 
     apiUtilSearch(query, (data: ResponseData) => {
+        globalStore.isSearching = false;
         globalStore.searchResult.routes = data.data.routes.list;
         globalStore.searchResult.stations = data.data.stations.list;
+    }, () => {
+        globalStore.isSearching = false;
     });
 };
 
@@ -49,7 +53,10 @@ const onDeleteClick = () => {
     <div class="client-wrapper">
         <right-slide-router-view />
         <div class="body" ref="bodyRef">
+            <van-loading v-if="globalStore.isSearching">搜索中...</van-loading>
             <div v-if="globalStore.isSearched" class="search-result">
+                <van-empty v-if="!(globalStore.searchResult.routes.length + globalStore.searchResult.stations.length)" image="search" description="没有查找到相关信息哦" />
+
                 <div v-if="globalStore.searchResult.routes.length" class="routes">
                     <div class="title">线路</div>
                     <div
@@ -76,22 +83,28 @@ const onDeleteClick = () => {
             <div v-else class="search-history">
                 <van-empty v-if="!historyStore.searches.length" image="search" description="没有搜索历史哦" />
 
-                <div
-                    class="history link-button"
-                    v-for="search in historyStore.searches"
-                >
-                    <div class="text" @click="onHistoryClick(search)">{{ search }}</div>
-                    <van-icon
-                        class="delete"
-                        class-prefix="fa"
-                        name="close"
-                        @click="historyStore.deleteSearch(search)"
-                    ></van-icon>
-                </div>
+                <template v-else>
+                    <div class="title">搜索历史</div>
+                    <div
+                        class="history link-button"
+                        v-for="search in historyStore.searches"
+                    >
+                        <div class="text" @click="onHistoryClick(search)">
+                            <van-icon name="clock-o" />
+                            <span>{{ search }}</span>
+                        </div>
+                        <van-icon
+                            class="delete"
+                            class-prefix="fa"
+                            name="close"
+                            @click="historyStore.deleteSearch(search)"
+                        ></van-icon>
+                    </div>
 
-                <div class="btn-clear link-button" v-if="historyStore.searches.length">
-                    <icon-box name="delete" @click="onDeleteClick"></icon-box>
-                </div>
+                    <div class="btn-clear link-button" v-if="historyStore.searches.length">
+                        <icon-box name="delete" @click="onDeleteClick"></icon-box>
+                    </div>
+                </template>
             </div>
 
             <van-back-top v-if="bodyRef" offset="120" bottom="80" z-index="1" teleport=".body" />
@@ -104,6 +117,11 @@ const onDeleteClick = () => {
     .body {
         height: 100%;
 
+        .van-loading {
+            text-align: center;
+            height: 5rem;
+            line-height: 5rem;
+        }
         .search-result {
             .title {
                 padding: var(--padding);
@@ -126,6 +144,10 @@ const onDeleteClick = () => {
         .search-history {
             height: 100%;
 
+            .title {
+                padding: var(--padding);
+                background-color: #FBFBFD;
+            }
             .history {
                 display: flex;
                 align-items: center;
@@ -138,12 +160,16 @@ const onDeleteClick = () => {
                 .text {
                     flex: 1 0 auto;
                     padding: var(--padding);
-                    font-size: 1.2rem;
+                    font-size: 1rem;
+
+                    .van-icon {
+                        margin-right: 8px;
+                    }
                 }
                 .delete {
                     flex: 0 0 auto;
                     width: 3rem;
-                    height: 100%;
+                    height: 2.5rem;
                     line-height: 2.5rem;
                     color: #888;
                 }

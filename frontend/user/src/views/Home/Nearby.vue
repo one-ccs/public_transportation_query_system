@@ -23,9 +23,6 @@ const defaultLatitude = 29.346101336631264;
 const onRefreshClick = () => {
     nearbyStations.value.length = 0;
     getNearbyList();
-    // bodyRef.value.scrollIntoView({
-    //     behavior: 'smooth',
-    // });
 };
 
 // 获取附近站点列表
