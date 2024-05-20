@@ -92,7 +92,7 @@ onMounted(() => {
                         <div class="text">等待发车</div>
                         <div class="describe">上一班7分钟前过站</div>
                     </div>
-                    <div class="same-station-route link-button" @click="router.push({ name: 'nearbyStationDetail', query: { id: stationId } })">
+                    <div class="same-station-route link-button" @click="router.push({ path: `${$route.matched[1].path}/stationDetail`, query: { stationId: stationId } })">
                         <span>同站线路</span>
                         <i class="spirit same-route"></i>
                     </div>

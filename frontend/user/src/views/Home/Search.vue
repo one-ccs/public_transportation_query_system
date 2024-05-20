@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
-import { showDialog } from 'vant';
+import { showDialog, showFailToast } from 'vant';
 import type { ResponseData, TimeRangePageQuery } from '@/utils/interface';
 import { apiUtilSearch } from '@/utils/api';
 import useGlobalStore from '@/stores/global';
@@ -28,8 +28,9 @@ globalStore.onSearch = () => {
         globalStore.isSearching = false;
         globalStore.searchResult.routes = data.data.routes.list;
         globalStore.searchResult.stations = data.data.stations.list;
-    }, () => {
+    }, (data: ResponseData) => {
         globalStore.isSearching = false;
+        showFailToast(data.message);
     });
 };
 
@@ -54,6 +55,7 @@ const onDeleteClick = () => {
         <right-slide-router-view />
         <div class="body" ref="bodyRef">
             <van-loading v-if="globalStore.isSearching">搜索中...</van-loading>
+
             <div v-if="globalStore.isSearched" class="search-result">
                 <van-empty v-if="!(globalStore.searchResult.routes.length + globalStore.searchResult.stations.length)" image="search" description="没有查找到相关信息哦" />
 
@@ -117,11 +119,6 @@ const onDeleteClick = () => {
     .body {
         height: 100%;
 
-        .van-loading {
-            text-align: center;
-            height: 5rem;
-            line-height: 5rem;
-        }
         .search-result {
             .title {
                 padding: var(--padding);

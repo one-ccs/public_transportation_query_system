@@ -16,6 +16,11 @@
 .van-cell__value {
     flex: 1 1 auto !important;
 }
+.van-loading {
+    text-align: center;
+    height: 5rem;
+    line-height: 5rem;
+}
 
 .translucent {
     --van-cell-group-background: #0000;

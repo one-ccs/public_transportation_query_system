@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { showFailToast } from 'vant';
 import { useRoute, useRouter } from 'vue-router';
-import type { ResponseData, RouteBO, Station } from '@/utils/interface';
+import type { ResponseData, RouteBO } from '@/utils/interface';
 import { apiStationRoutes } from '@/utils/api';
 import RightSlideRouterView from '@/components/RightSlideRouterView.vue';
 import BackNavBar from '@/components/BackNavBar.vue';
@@ -11,10 +12,18 @@ const router = useRouter();
 const passStationRoutes = ref<RouteBO[]>([]);
 const routeId = Number(route.query.routeId);
 const stationId = Number(route.query.stationId);
+const routesRef = ref();
+const isLoading = ref(false);
 
 const getData = () => {
+    isLoading.value = true;
+
     apiStationRoutes(stationId, (data: ResponseData) => {
+        isLoading.value = false;
         passStationRoutes.value = data.data;
+    }, (data: ResponseData) => {
+        isLoading.value = false;
+        showFailToast(data.message);
     });
 };
 
@@ -63,7 +72,9 @@ onMounted(() => {
             </template>
         </back-nav-bar>
         <div class="view-container">
-            <div class="routes">
+            <van-loading v-if="isLoading">加载中...</van-loading>
+
+            <div class="routes" ref="routesRef">
                 <div class="route" v-for="route in passStationRoutes">
                     <div class="info" @click="onStationClick(route)">
                         <div class="title">
@@ -80,7 +91,7 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <van-back-top offset="120" bottom="80" z-index="1" teleport=".routes" />
+                <van-back-top v-if="routesRef" offset="120" bottom="80" z-index="1" teleport=".routes" />
             </div>
         </div>
     </div>
@@ -90,6 +101,7 @@ onMounted(() => {
 .view {
     .view-container {
         padding: var(--padding);
+
         .routes {
             border-radius: var(--border-radius);
             background-color: #fff;

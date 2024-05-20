@@ -7,6 +7,7 @@ import { getCurrentPosition } from '@/utils/advanced';
 import useHistoryStore from '@/stores/history';
 import RightSlideRouterView from '@/components/RightSlideRouterView.vue';
 import IconBox from '@/components/IconBox.vue';
+import { showFailToast } from 'vant';
 
 const router = useRouter();
 const historyStore = useHistoryStore();
@@ -15,6 +16,7 @@ const query = reactive<NearbyQuery>({
     latitude: null,
     distance: 1500,
 })
+const isLoading = ref(false);
 const nearbyStations = ref<StationBO[]>([]);
 const bodyRef = ref();
 const defaultLongitude = 106.53984026193238;
@@ -27,6 +29,8 @@ const onRefreshClick = () => {
 
 // 获取附近站点列表
 const getNearbyList = () => {
+    isLoading.value = true;
+
     getCurrentPosition((pos: GeolocationPosition) => {
         query.longitude = pos.coords.longitude;
         query.latitude = pos.coords.latitude;
@@ -37,20 +41,31 @@ const getNearbyList = () => {
                 query.latitude = defaultLatitude;
 
                 apiStationNearby(query, (data: ResponseData) => {
+                    isLoading.value = false;
                     // 只显示前 9 条
                     nearbyStations.value = data.data.slice(0, 9);
+                }, (data: ResponseData) => {
+                    isLoading.value = false;
+                    showFailToast(data.message);
                 });
             }
             // 只显示前 9 条
             nearbyStations.value = data.data.slice(0, 9);
+        }, (data: ResponseData) => {
+            isLoading.value = false;
+            showFailToast(data.message);
         });
     }, () => {
         query.longitude = defaultLongitude;
         query.latitude = defaultLatitude;
 
         apiStationNearby(query, (data: ResponseData) => {
+            isLoading.value = false;
             // 只显示前 9 条
             nearbyStations.value = data.data.slice(0, 9);
+        }, (data: ResponseData) => {
+            isLoading.value = false;
+            showFailToast(data.message);
         });
     });
 };
@@ -67,16 +82,16 @@ const goStationDetail = (station: StationBO, routeId: number | null) => {
     router.push({
         name: 'nearbyStationDetail',
         query: {
-            'routeId': routeId,
-            'stationId': station.id,
+            routeId: routeId,
+            stationId: station.id,
         },
     });
 };
 const goRouteDetail = (route: RouteBO, stationId: number) => {
     historyStore.addHistory(route);
     router.push({ name: 'nearbyRouteDetail', query: {
-        'routeId': route.id,
-        'stationId': stationId,
+        routeId: route.id,
+        stationId: stationId,
     }});
 };
 
@@ -91,6 +106,7 @@ onMounted(() => {
         <div class="body" ref="bodyRef" >
             <van-loading v-if="!nearbyStations.length" vertical>地点加载中...</van-loading>
             <van-empty v-if="!nearbyStations.length" image="search" description="暂无数据" />
+
             <div
                 class="station-box"
                 v-for="station in nearbyStations"
