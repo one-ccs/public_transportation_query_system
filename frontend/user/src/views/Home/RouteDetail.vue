@@ -12,10 +12,22 @@ const route = useRoute();
 const router = useRouter();
 const routeDetail = ref<RouteBO>();
 const routeId = Number(route.query.routeId);
-const stationId = Number(route.query.stationId);
+const stationId = computed(() => {
+    const queryStationId = Number(route.query.stationId);
+    let detailStationId = 0;
+
+    if (routeDetail.value?.stations) {
+        detailStationId = routeDetail.value.stations[currentIndex.value].id || 0;
+    }
+
+    return queryStationId ? queryStationId : detailStationId;
+});
 const currentIndex = ref(0);
 const isInvert = ref(false);
 const notice = ref('[服务热线]：\n...');
+const title = computed(() => {
+    return routeDetail.value?.no + '路';
+});
 
 const getData = () => {
     routeId && apiRouteDetail(routeId, (data: ResponseData) => {
@@ -25,7 +37,7 @@ const getData = () => {
         const length = routeDetail.value?.stations?.length || 0;
         for (let index = 0; index < length; index++) {
 
-            if (routeDetail.value?.stations![index].id === stationId) {
+            if (routeDetail.value?.stations![index].id === stationId.value) {
                 currentIndex.value = index;
                 break;
             }
@@ -36,9 +48,6 @@ const getData = () => {
     });
 };
 
-const title = computed(() => {
-    return routeDetail.value?.no + '路';
-})
 // 获取始-终站信息
 const stationSE = computed(() => {
     const station = routeDetail.value?.stations || [];
@@ -101,6 +110,7 @@ onMounted(() => {
                     <van-step
                         class="station"
                         v-for="(station, index) in routeDetail?.stations"
+                        @click="$router.push({ path: `${$route.matched[1].path}/stationDetail`, query: { stationId: station.id } })"
                     >
                         <span class="index">{{ index + 1 }}</span>
                         <span class="sitename">{{ station.sitename }}</span>

@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { showFailToast } from 'vant';
 import { useRoute, useRouter } from 'vue-router';
-import type { ResponseData, RouteBO } from '@/utils/interface';
-import { apiStationRoutes } from '@/utils/api';
+import type { ResponseData, RouteBO, Station } from '@/utils/interface';
+import { apiStationGet, apiStationRoutes } from '@/utils/api';
+import { useDocumentTitle } from '@/utils/use';
 import RightSlideRouterView from '@/components/RightSlideRouterView.vue';
 import BackNavBar from '@/components/BackNavBar.vue';
 
 const route = useRoute();
 const router = useRouter();
+const stationDetail = ref<Station>();
 const passStationRoutes = ref<RouteBO[]>([]);
 const routeId = Number(route.query.routeId);
 const stationId = Number(route.query.stationId);
@@ -18,9 +20,13 @@ const isLoading = ref(false);
 const getData = () => {
     isLoading.value = true;
 
+    apiStationGet(stationId, (data: ResponseData) => {
+        stationDetail.value = data.data;
+    });
     apiStationRoutes(stationId, (data: ResponseData) => {
         isLoading.value = false;
         passStationRoutes.value = data.data;
+        useDocumentTitle(stationDetail.value?.sitename!);
     }, (data: ResponseData) => {
         isLoading.value = false;
         showFailToast(data.message);
@@ -66,7 +72,7 @@ onMounted(() => {
 <template>
     <div class="view">
         <right-slide-router-view />
-        <back-nav-bar class="view-header" @click-right="onHomeClick()">
+        <back-nav-bar class="view-header" :title="stationDetail?.sitename" @click-right="onHomeClick()">
             <template #right>
                 <van-icon name="wap-home" size="1.3rem" color="#666"/>
             </template>
