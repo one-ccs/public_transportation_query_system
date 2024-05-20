@@ -49,12 +49,16 @@ const useHistoryStore = defineStore("history", {
             this.data.history.splice(index, 1);
             this.save();
         },
-        addSearch(query: string) {
+        addSearch(search: string | string[]) {
             if (!this.data.search) this.data.search = [];
-            this.data.search.unshift(query);
+            Array.isArray(search) ?
+                this.data.search.unshift(...search) :
+                this.data.search.unshift(search);
+            this.save();
         },
         deleteSearch(query: string) {
             this.data.search = this.data.search.filter(text => text !== query);
+            this.save();
         },
     }
 });

@@ -45,6 +45,14 @@ const getNearbyList = () => {
             // 只显示前 9 条
             nearbyStations.value = data.data.slice(0, 9);
         });
+    }, () => {
+        query.longitude = 106.521978;
+        query.latitude = 29.380991;
+
+        apiStationNearby(query, (data: ResponseData) => {
+            // 只显示前 9 条
+            nearbyStations.value = data.data.slice(0, 9);
+        });
     });
 };
 const parseNextText = (station: StationBO, route: RouteBO) => {
@@ -81,7 +89,9 @@ onMounted(() => {
 <template>
     <div class="client-wrapper">
         <right-slide-router-view />
-        <div class="body" ref="bodyRef" v-if="nearbyStations.length">
+        <div class="body" ref="bodyRef" >
+            <van-loading v-if="!nearbyStations.length" vertical>地点加载中...</van-loading>
+            <van-empty v-if="!nearbyStations.length" image="search" description="暂无数据" />
             <div
                 class="station-box"
                 v-for="station in nearbyStations"
@@ -110,7 +120,6 @@ onMounted(() => {
                 <icon-box name="replay" @click="onRefreshClick"></icon-box>
             </div>
         </div>
-        <van-empty v-else image="search" description="暂无数据" />
     </div>
 </template>
 
@@ -119,6 +128,12 @@ onMounted(() => {
     padding: 8px;
 
     .body {
+        .van-loading {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
         .station-box {
             margin-bottom: 8px;
 
