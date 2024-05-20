@@ -106,7 +106,7 @@ onMounted(() => {
                         <span class="sitename">{{ station.sitename }}</span>
                     </van-step>
                 </van-steps>
-                <van-back-top v-if="routeDetail" offset="120" teleport=".body" />
+                <van-back-top v-if="routeDetail" offset="120" bottom="80" teleport=".body" />
             </div>
         </div>
     </div>
@@ -137,8 +137,6 @@ onMounted(() => {
         }
         .body {
             padding: var(--padding);
-            padding-bottom: 65px;
-            // height: calc(100% - 150px);
             overflow-y: auto;
 
             .info-box {

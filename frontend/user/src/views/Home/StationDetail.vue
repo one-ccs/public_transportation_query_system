@@ -79,6 +79,8 @@ onMounted(() => {
                         <van-icon name="sort"></van-icon>
                     </div>
                 </div>
+
+                <van-back-top offset="120" bottom="80" z-index="1" teleport=".routes" />
             </div>
         </div>
     </div>
