@@ -12,8 +12,8 @@ const useHistoryStore = defineStore("history", {
         },
     }),
     getters: {
-        history: state => state.data.history,
-        search: state => state.data.search,
+        histories: state => state.data.history,
+        searches: state => state.data.search,
     },
     actions: {
         init(force=false) {
@@ -37,23 +37,29 @@ const useHistoryStore = defineStore("history", {
             localRemove(this.keyName);
             return this;
         },
-        addHistory(history: StationBO | StationBO[] | RouteBO | RouteBO[]) {
+        addHistory(history: StationBO & RouteBO) {
             if (!this.data.history) this.data.history = [];
-            Array.isArray(history) ?
-                this.data.history.unshift(...history) :
-                this.data.history.unshift(history);
+            this.data.history = this.data.history.filter(h => {
+                // 线路
+                if (h.no && h.no === history.no) return false;
+                // 站点
+                if (h.sitename && h.sitename === history.sitename) return false;
+
+                return true;
+            });
+            this.data.history.unshift(history);
             this.save();
         },
-        deleteHistory(history: StationBO | RouteBO) {
+        deleteHistory(history: StationBO & RouteBO) {
             const index = this.data.history.indexOf(history);
             this.data.history.splice(index, 1);
             this.save();
         },
-        addSearch(search: string | string[]) {
+        addSearch(search: string) {
+            if (!search) return;
             if (!this.data.search) this.data.search = [];
-            Array.isArray(search) ?
-                this.data.search.unshift(...search) :
-                this.data.search.unshift(search);
+            this.data.search = this.data.search.filter(s => s !== search);
+            this.data.search.unshift(search);
             this.save();
         },
         deleteSearch(query: string) {

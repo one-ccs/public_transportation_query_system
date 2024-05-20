@@ -57,7 +57,7 @@ const onDeleteClick = () => {
     <div class="client-wrapper">
         <right-slide-router-view />
         <div class="body" ref="bodyRef">
-            <div class="history-card link-button" v-for="history in historyStore.history" @click="onHistoryClick(history)">
+            <div class="history-card link-button" v-for="history in historyStore.histories" @click="onHistoryClick(history)">
                 <icon-box class="icon" class-prefix="fa" name="bus"></icon-box>
                 <div class="content">
                     <div class="title">{{ history.sitename || history.no }}</div>
@@ -71,7 +71,7 @@ const onDeleteClick = () => {
                 ></van-icon>
             </div>
             <van-back-top v-if="bodyRef" offset="120" bottom="80" z-index="1" teleport=".body" />
-            <van-empty v-if="!historyStore.history.length" image="search" description="没有历史记录哦" />
+            <van-empty v-if="!historyStore.histories.length" image="search" description="没有历史记录哦" />
             <div class="btn-clear link-button">
                 <icon-box name="delete" @click="onDeleteClick"></icon-box>
             </div>

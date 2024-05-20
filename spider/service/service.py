@@ -48,7 +48,7 @@ class Service(object):
         })
         if res.status_code == 200:
             Service.token = res.json()['data']['token']
-            print('登录成功', Service.token)
+            print('登录成功')
 
     @staticmethod
     def request_nearby(longitude: float, latitude: float):

@@ -19,6 +19,24 @@ const routes: RouteRecordRaw[] = [
                     title: '搜索',
                 },
                 component: () => import('@/views/Home/Search.vue'),
+                children: [
+                    {
+                        path: 'routeDetail',
+                        name: 'searchRouteDetail',
+                        meta: {
+                            title: '线路详情',
+                        },
+                        component: () => import('@/views/Home/RouteDetail.vue'),
+                    },
+                    {
+                        path: 'stationDetail',
+                        name: 'searchStationDetail',
+                        meta: {
+                            title: '站点详情',
+                        },
+                        component: () => import('@/views/Home/StationDetail.vue'),
+                    },
+                ],
             },
             {
                 path: 'nearby',

@@ -94,7 +94,7 @@ onMounted(() => {
                     </div>
                     <div class="same-station-route link-button" @click="router.push({ name: 'nearbyStationDetail', query: { id: stationId } })">
                         <span>同站线路</span>
-                        <i class="spirit route"></i>
+                        <i class="spirit same-route"></i>
                     </div>
                 </div>
                 <van-steps class="stations" :active="currentIndex" direction="vertical" active-color="#07c160">

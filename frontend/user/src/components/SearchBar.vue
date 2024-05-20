@@ -15,7 +15,8 @@ const globalStore = useGlobalStore();
             background="transparent"
             autocomplete="off"
             @search="globalStore.onSearch"
-            @click="$router.push('/search')"
+            @clear="globalStore.isSearched = false"
+            @click="globalStore.isSearched = false, $router.push('/search')"
         ></van-search>
         <div class="position">重庆</div>
     </div>

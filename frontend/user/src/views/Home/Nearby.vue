@@ -17,6 +17,8 @@ const query = reactive<NearbyQuery>({
 })
 const nearbyStations = ref<StationBO[]>([]);
 const bodyRef = ref();
+const defaultLongitude = 106.53984026193238;
+const defaultLatitude = 29.346101336631264;
 
 const onRefreshClick = () => {
     nearbyStations.value.length = 0;
@@ -34,8 +36,8 @@ const getNearbyList = () => {
 
         apiStationNearby(query, (data: ResponseData) => {
             if (data.data.length === 0) {
-                query.longitude = 106.521978;
-                query.latitude = 29.380991;
+                query.longitude = defaultLongitude;
+                query.latitude = defaultLatitude;
 
                 apiStationNearby(query, (data: ResponseData) => {
                     // 只显示前 9 条
@@ -46,8 +48,8 @@ const getNearbyList = () => {
             nearbyStations.value = data.data.slice(0, 9);
         });
     }, () => {
-        query.longitude = 106.521978;
-        query.latitude = 29.380991;
+        query.longitude = defaultLongitude;
+        query.latitude = defaultLatitude;
 
         apiStationNearby(query, (data: ResponseData) => {
             // 只显示前 9 条

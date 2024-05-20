@@ -60,18 +60,23 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
         if (StringUtils.isBlank(station.getSitename())) {
             return Result.failure("站点名不能为空");
         }
-        if (this.lambdaQuery().eq(Station::getSitename, station.getSitename()).one() != null) {
-            return Result.failure("站点名 '" + station.getSitename() + "' 重复");
-        }
 
         // 清除 id
         station.setId(null);
 
-        // 添加站点
-        if (this.save(station)) {
-            return Result.success("添加成功");
+        // 存在旧站点则更新数据
+        Station oldStation = this.lambdaQuery().eq(Station::getSitename, station.getSitename()).one();
+        boolean modifyFlag = false;
+        if (oldStation != null) {
+            modifyFlag = true;
+            station.setId(oldStation.getId());
         }
-        return Result.failure("添加失败");
+
+        // 添加站点
+        if (this.saveOrUpdate(station)) {
+            return Result.success((modifyFlag ? "修改" : "添加") + "站点成功 (id: " + station.getId() + ")");
+        }
+        return Result.failure("添加站点失败");
     }
 
     public Result<Object> modifyStation(Station station) {

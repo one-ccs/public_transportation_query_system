@@ -19,19 +19,29 @@
     height: 100%;
 }
 
-.spirit.route {
+.spirit.same-route {
     width: 54px;
     height: 38px;
     background-color: transparent;
 }
-.spirit.route::before {
+.spirit.same-route::before {
     background-image: var(--spirit-url);
     background-position: 0 -299px;
 }
+
 .spirit.bus::before {
     background-image: var(--spirit-url);
     background-position: -436px -142px;
-    transform: scale(0.7);
+    width: 24px;
+    height: 26px;
+    transform: scale(0.6);
+}
+.spirit.route-playing::before {
+    background-image: var(--spirit-url);
+    background-position: -257px -351px;
+    width: 25px;
+    height: 27px;
+    transform: scale(0.5);
 }
 .spirit.station::before {
     background-image: var(--spirit-url);

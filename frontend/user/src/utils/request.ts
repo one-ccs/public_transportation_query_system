@@ -21,7 +21,13 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
     (response: AxiosResponse) => {
-        return response;
+        // 延迟 500 ms 返回数据
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve(response);
+            }, 500);
+        })
+        // return response;
     },
     (error: AxiosError) => {
         if (error.code === 'ERR_NETWORK') return showFailToast('网络连接超时，请稍后重试');

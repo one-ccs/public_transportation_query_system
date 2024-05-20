@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from util.crypto import aes_decrypt
-from json import dump, load
+from json import dump, load, loads
 
 from service import Service
 
@@ -17,7 +17,9 @@ def request(longitude: float, latitude: float):
 def decrypt():
     """解码"""
     with open(ENCRYPTED_FILE, 'r', encoding='utf-8') as ef:
-        encrypted = ef.read()
+        encrypted = ef.read().replace('**YGKJ', '').replace('YGKJ##', '')
+        encrypted = loads(encrypted)
+        encrypted = encrypted['jsonr']['data']['encryptResult']
         decrypted = aes_decrypt(encrypted, SECRET_KEY)
 
         with open(DECRYPTED_FILE, 'w', encoding='utf-8') as df:
@@ -86,7 +88,7 @@ def add_route():
 
 
 # request(106.521978, 29.380991)
-decrypt()
-# parse_near_lines()
-# add_station()
-# add_route()
+# decrypt()
+parse_near_lines()
+add_station()
+add_route()

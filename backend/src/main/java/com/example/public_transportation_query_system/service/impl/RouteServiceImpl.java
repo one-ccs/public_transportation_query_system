@@ -102,9 +102,6 @@ public class RouteServiceImpl extends ServiceImpl<RouteMapper, Route> implements
         if (StringUtils.isBlank(routeVo.getNo())) {
             return Result.failure("线路号不能为空");
         }
-        if (this.lambdaQuery().eq(Route::getNo, routeVo.getNo()).one() != null) {
-            return Result.failure("线路号 '" + routeVo.getNo() + "' 重复");
-        }
         for (StationBO station : routeVo.getStations()) {
             if (ObjectUtils.isEmpty(station.getSequence())) {
                 return Result.failure("站点 sequence 属性不能为空");
@@ -116,18 +113,23 @@ public class RouteServiceImpl extends ServiceImpl<RouteMapper, Route> implements
             .setId(null)
         );
 
+        // 存在旧线路则更新数据
+        Route oldRoute = this.lambdaQuery().eq(Route::getNo, routeVo.getNo()).one();
+        boolean modifyFlag = false;
+        if (oldRoute != null) {
+            modifyFlag = true;
+            newRoute.setId(oldRoute.getId());
+        }
+
         // 添加线路
-        if (this.save(newRoute)) {
+        if (this.saveOrUpdate(newRoute)) {
             // 设置新线路的 id
             routeVo.setId(newRoute.getId());
             // 添加站点
-            if (routeVo.getRouteStations().size() > 0 &&
-                !routeStationServiceImpl.saveBatch(routeVo.getRouteStations())
-            ) {
-                return Result.failure("添加失败，线路途径站点添加失败");
+            if (routeVo.getRouteStations().size() > 0 && !routeStationServiceImpl.saveBatch(routeVo.getRouteStations())) {
+                return Result.failure("线路途径站点添加失败");
             }
-            return Result.success("添加成功");
-
+            return Result.success((modifyFlag ? "修改" : "添加") + "线路成功 (id: " + newRoute.getId() + ")");
         }
         return Result.failure("添加失败");
     }

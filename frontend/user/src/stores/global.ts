@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { localLoad, localRemove, localSave } from "@/utils/storage";
+import type { RouteBO, StationBO } from "@/utils/interface";
 
 const useGlobalStore = defineStore("global", {
     state: () => ({
@@ -10,6 +11,11 @@ const useGlobalStore = defineStore("global", {
         },
         search: '',
         onSearch: () => {},
+        isSearched: false,
+        searchResult: {
+            'routes': <RouteBO[]>[],
+            'stations': <StationBO[]>[],
+        },
     }),
     getters: {
         token: (state) => state.data.token,
