@@ -102,14 +102,6 @@ export interface NearbyQuery {
     distance: number;
 };
 
-export interface UserLogin {
-    username: string;
-    email?: string;
-    password: string;
-    captcha?: string;
-    remember: boolean;
-};
-
 export interface UserVO extends User {
     roles?: Role[];
     passwordCheck: string;

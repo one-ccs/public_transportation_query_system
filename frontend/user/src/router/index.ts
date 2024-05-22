@@ -119,22 +119,6 @@ const routes: RouteRecordRaw[] = [
         ],
     },
     {
-        path: '/login',
-        name: 'login',
-        meta: {
-            title: '登录',
-        },
-        component: () => import('@/views/Login.vue'),
-    },
-    {
-        path: '/forgot',
-        name: 'forgot',
-        meta: {
-            title: '找回密码',
-        },
-        component: () => import('@/views/Forgot.vue'),
-    },
-    {
         path: '/about',
         name: 'about',
         meta: {
