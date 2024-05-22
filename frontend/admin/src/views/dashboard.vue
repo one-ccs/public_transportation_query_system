@@ -13,23 +13,63 @@
                 </el-icon>
         </div>
 
-        <!-- <dv-border-box12>
-
-        </dv-border-box12> -->
+        <div class="body">
+            <div class="number-charts">
+                <div class="number-chart">
+                    <div class="title">用户数</div>
+                    <dv-digital-flop :config="options.userCount"></dv-digital-flop>
+                </div>
+                <div class="number-chart">
+                    <div class="title">线路数</div>
+                    <dv-digital-flop :config="options.routeCount"></dv-digital-flop>
+                </div>
+                <div class="number-chart">
+                    <div class="title">站点数</div>
+                    <dv-digital-flop :config="options.stationCount"></dv-digital-flop>
+                </div>
+            </div>
+        </div>
     </dv-border-box11>
 </template>
 
 <script setup lang="ts" name="dashboard">
+import { apiStatistics } from '@/utils/api';
 import { isFullscreen, requestFullscreen, exitFullscreen } from '@/utils/fullscreen';
-import { onMounted, ref } from 'vue';
+import type { ResponseData } from '@/utils/interface';
+import { onMounted, reactive, ref } from 'vue';
 
 const rootBoxRef = ref();
+const options = reactive({
+    userCount: {
+        number: [233],
+        content: '{nt}位',
+    },
+    routeCount: {
+        number: [77],
+        content: '{nt}条',
+    },
+    stationCount: {
+        number: [23],
+        content: '{nt}条',
+    },
+})
 
 const toggleFullScreen = () => {
     isFullscreen() ? exitFullscreen() : requestFullscreen(rootBoxRef.value.$el);
 };
 
+const getData = () => {
+    apiStatistics((data: ResponseData) => {
+        console.log(data.data);
+
+        options.userCount.number[0] = data.data.userCount;
+        options.routeCount.number[0] = data.data.routeCount;
+        options.stationCount.number[0] = data.data.stationCount;
+    });
+};
+
 onMounted(() => {
+    getData();
     setTimeout(() => {
         rootBoxRef.value?.initWH();
     }, 500);
@@ -42,7 +82,7 @@ onMounted(() => {
         border-radius: calc(var(--border-radius) * 2);
         width: 100%;
         height: 100%;
-        background-color: #3B3B3B;
+        background-color: #0C1426;
 
         .btn-full-screen {
             opacity: .3;
@@ -52,6 +92,22 @@ onMounted(() => {
 
             &:hover {
                 opacity: 1;
+            }
+        }
+        .body {
+            .number-charts {
+                display: flex;
+
+                .number-chart {
+                    width: 200px;
+                    color: #0B46A1;
+                    background-color: #2677a333;
+
+                    canvas {
+                        width: 200px;
+                        height: 30px;
+                    }
+                }
             }
         }
     }

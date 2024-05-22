@@ -303,7 +303,7 @@ const addVisible = ref(false);
 const addFormRef = ref<FormInstance>();
 const addForm = reactive<Lost>({
     imgUrl: '',
-    status: 1,
+    status: 0,
 });
 const handleAdd = () => {
 	addVisible.value = true;

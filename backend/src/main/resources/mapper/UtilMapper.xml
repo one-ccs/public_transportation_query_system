@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.public_transportation_query_system.mapper.UtilMapper">
+    <select id="routeOfStationCount" resultType="RouteOfStationCount">
+        SELECT
+            route.id,
+            route.`no`,
+            COUNT(*) AS count
+        FROM
+            route
+            INNER JOIN
+            route_station
+            ON
+                route.id = route_station.route_id
+        GROUP BY
+            route.id,
+            route.`no`
+        ORDER BY
+            count DESC
+    </select>
+
+    <select id="lostStatusCount" resultType="LostStatusCount">
+        SELECT
+            lost.`status`,
+            COUNT(*) AS count
+        FROM
+            lost
+        GROUP BY
+            lost.`status`
+    </select>
+</mapper>
