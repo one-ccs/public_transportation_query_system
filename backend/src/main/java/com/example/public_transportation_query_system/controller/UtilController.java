@@ -27,6 +27,12 @@ public class UtilController {
     @Autowired
     StationServiceImpl stationServiceImpl;
 
+    @Operation(summary = "测试 api 是否连通", description = "测试 api 是否连通")
+    @GetMapping("/connected")
+    public Result<Object> connected() {
+        return Result.success(true);
+    }
+
     @Operation(summary = "搜索", description = "搜索接口")
     @GetMapping("/search")
     public Result<Object> search(BasePageQuery query) {

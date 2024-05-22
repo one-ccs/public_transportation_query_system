@@ -1,12 +1,21 @@
 import axios, { type AxiosInstance, type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 import { showFailToast } from 'vant';
+import useGlobalStore from '@/stores/global';
+
+
+const globalStore = useGlobalStore();
+
 
 const service:AxiosInstance = axios.create({
-    baseURL: 'http://127.0.0.1:8080',
-    timeout: 5000,
+    baseURL: globalStore.apiHost,
+    timeout: globalStore.timeout,
     // 小于 500 的状态码不抛出错误
     validateStatus: (status: number) => status < 500,
 });
+// 重新设置 baseUrl
+globalStore.onConnectedServer = (apiHost: string) => {
+    service.defaults.baseURL = apiHost;
+};
 
 // 请求拦截器
 service.interceptors.request.use(
@@ -21,11 +30,11 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
     (response: AxiosResponse) => {
-        // 延迟 500 ms 返回数据
+        // 延迟 300 ms 返回数据
         return new Promise(resolve => {
             setTimeout(() => {
                 resolve(response);
-            }, 500);
+            }, 300);
         })
         // return response;
     },
