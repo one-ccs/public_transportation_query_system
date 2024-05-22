@@ -1,0 +1,50 @@
+/* 自定义样式 */
+:root {
+    --border-radius: 8px;
+    --border-divider: 1px solid #EAEAEA;
+    --padding: 15px;
+    --client-width: 100%;
+    --text-color: #333;
+    --background-color: #F2F5FC;
+    --box-shadow-light: 0 0 5px 0 #3333;
+    --box-shadow-light-2: 0 2px 5px 0 #3333;
+    --search-bar-height: 58px;
+    --back-nav-bar-height: 46px;
+    --bottom-menu-height: 80px;
+}
+
+.tooltip {
+    position: relative;
+}
+.tooltip::after {
+    content: attr(tooltip);
+    opacity: .7;
+    display: none;
+    position: absolute;
+    width: max-content;
+    font-size: 14px;
+}
+.tooltip.bottom::after {
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translate(-50%);
+}
+.tooltip.left::after {
+    top: 10%;
+    right: calc(100% + 18px);
+}
+.tooltip:hover::after {
+    display: inline-block;
+}
+
+.link-button {
+    color: var(--text-color);
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+}
+
+.clickable {
+    cursor: pointer;
+    user-select: none;
+}

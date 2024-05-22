@@ -3,8 +3,8 @@ import './assets/css/icon.css';
 import '@/assets/css/font_830376_qzecyukz0s.css'
 
 import { createApp } from 'vue';
-import { createPinia } from 'pinia';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';
+import DataVVue3 from '@kjgl77/datav-vue3';
 
 import App from './App.vue';
 import router from './router';
@@ -19,6 +19,7 @@ const app = createApp(App);
 
 app.use(pinia);
 app.use(router);
+app.use(DataVVue3);
 
 // 初始化 store
 useGlobalStore().init();

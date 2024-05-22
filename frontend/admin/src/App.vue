@@ -10,5 +10,6 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn';
 </script>
 <style>
 @import './assets/css/main.css';
+@import './assets/css/custom.css';
 @import './assets/css/color-dark.css';
 </style>
