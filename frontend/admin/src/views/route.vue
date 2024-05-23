@@ -4,6 +4,7 @@
             <div class="handle-box">
                 <el-button type="danger" :icon="Delete" @click="deleteBatch()">批量删除</el-button>
                 <el-button type="primary" :icon="Plus" @click="handleAdd()">新增</el-button>
+                <el-button type="primary" :icon="Download" @click="exportXlsx()">导出Excel</el-button>
                 <el-button :icon="RefreshLeft" @click="getData()">刷新</el-button>
 
                 <div class="float-end">
@@ -335,7 +336,7 @@
 <script setup lang="ts" name="route">
 import { onMounted, reactive, ref } from 'vue';
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
-import { Delete, Edit, Plus, RefreshLeft, Search } from '@element-plus/icons-vue';
+import { Delete, Edit, Plus, RefreshLeft, Search, Download } from '@element-plus/icons-vue';
 import draggable from 'vuedraggable';
 import type { ResponseData, RouteBO, Station, PageQuery, TimeRangePageQuery, StationBO } from '@/utils/interface';
 import { apiNoticePut, apiRouteDelete, apiRoutePageQuery, apiRoutePost, apiRoutePut, apiStationPageQuery } from '@/utils/api';
@@ -343,6 +344,7 @@ import { deepCopy } from '@/utils/copy';
 import { strftime } from '@/utils/datetime';
 import i18n from '@/utils/i18n';
 import useUserStore from '@/stores/user';
+import { exportExcel } from '@/utils/excel';
 
 
 const userStore = useUserStore();
@@ -524,6 +526,13 @@ const saveAdd = (formEl: FormInstance | undefined) => {
             }, () => {});
         });
     });
+};
+const exportXlsx = () => {
+    const list = tableData.value.map(item => [item.id, item.no, item.price, item.firstTime, item.lastTime, item.stations?.map(item => item.sitename).join(','), item.openingDatetime]);
+
+    list.unshift(['ID', '线路号', '票价', '首班时间', '末班时间', '途经站点', '开通状态', '开通日期']);
+
+    exportExcel(`线路_第${query.pageIndex}页_${new Date().valueOf()}`, list);
 };
 
 // 修改表格验证

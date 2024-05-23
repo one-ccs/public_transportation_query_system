@@ -19,7 +19,7 @@
                             </el-icon>
                             <span>{{ item.title }}</span>
                         </template>
-                        <template v-for="subItem in item.subs">
+                        <template v-for="subItem in <any>item.subs">
                             <el-sub-menu
                                 v-if="subItem.subs"
                                 :index="subItem.index"
@@ -109,88 +109,88 @@ const items = [
         title: '失物招领管理',
         permiss: '6',
     },
-    {
-        icon: 'Calendar',
-        index: '2',
-        title: '表格相关',
-        permiss: '3',
-        subs: [
-            {
-                index: '/table',
-                title: '常用表格',
-                permiss: '2',
-            },
-            {
-                index: '/import',
-                title: '导入Excel',
-                permiss: '2',
-            },
-            {
-                index: '/export',
-                title: '导出Excel',
-                permiss: '2',
-            },
-        ],
-    },
-    {
-        icon: 'DocumentCopy',
-        index: '/tabs',
-        title: 'tab选项卡',
-        permiss: '4',
-    },
-    {
-        icon: 'Edit',
-        index: '3',
-        title: '表单相关',
-        permiss: '5',
-        subs: [
-            {
-                index: '/form',
-                title: '基本表单',
-                permiss: '6',
-            },
-            {
-                index: '/upload',
-                title: '文件上传',
-                permiss: '7',
-            },
-            {
-                index: '4',
-                title: '三级菜单',
-                permiss: '8',
-                subs: [
-                    {
-                        index: '/editor',
-                        title: '富文本编辑器',
-                        permiss: '9',
-                    },
-                    {
-                        index: '/markdown',
-                        title: 'markdown编辑器',
-                        permiss: '10',
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        icon: 'Setting',
-        index: '/icon',
-        title: '自定义图标',
-        permiss: '11',
-    },
-    {
-        icon: 'Setting',
-        index: '/icon2',
-        title: '自定义图标2',
-        permiss: '11',
-    },
-    {
-        icon: 'PieChart',
-        index: '/charts',
-        title: 'schart图表',
-        permiss: '12',
-    },
+    // {
+    //     icon: 'Calendar',
+    //     index: '2',
+    //     title: '表格相关',
+    //     permiss: '3',
+    //     subs: [
+    //         {
+    //             index: '/table',
+    //             title: '常用表格',
+    //             permiss: '2',
+    //         },
+    //         {
+    //             index: '/import',
+    //             title: '导入Excel',
+    //             permiss: '2',
+    //         },
+    //         {
+    //             index: '/export',
+    //             title: '导出Excel',
+    //             permiss: '2',
+    //         },
+    //     ],
+    // },
+    // {
+    //     icon: 'DocumentCopy',
+    //     index: '/tabs',
+    //     title: 'tab选项卡',
+    //     permiss: '4',
+    // },
+    // {
+    //     icon: 'Edit',
+    //     index: '3',
+    //     title: '表单相关',
+    //     permiss: '5',
+    //     subs: [
+    //         {
+    //             index: '/form',
+    //             title: '基本表单',
+    //             permiss: '6',
+    //         },
+    //         {
+    //             index: '/upload',
+    //             title: '文件上传',
+    //             permiss: '7',
+    //         },
+    //         {
+    //             index: '4',
+    //             title: '三级菜单',
+    //             permiss: '8',
+    //             subs: [
+    //                 {
+    //                     index: '/editor',
+    //                     title: '富文本编辑器',
+    //                     permiss: '9',
+    //                 },
+    //                 {
+    //                     index: '/markdown',
+    //                     title: 'markdown编辑器',
+    //                     permiss: '10',
+    //                 },
+    //             ],
+    //         },
+    //     ],
+    // },
+    // {
+    //     icon: 'Setting',
+    //     index: '/icon',
+    //     title: '自定义图标',
+    //     permiss: '11',
+    // },
+    // {
+    //     icon: 'Setting',
+    //     index: '/icon2',
+    //     title: '自定义图标2',
+    //     permiss: '11',
+    // },
+    // {
+    //     icon: 'PieChart',
+    //     index: '/charts',
+    //     title: 'schart图表',
+    //     permiss: '12',
+    // },
     {
         icon: 'Warning',
         index: '/permission',

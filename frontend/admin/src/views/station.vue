@@ -4,6 +4,7 @@
             <div class="handle-box">
                 <el-button type="danger" :icon="Delete" @click="deleteBatch()">批量删除</el-button>
                 <el-button type="primary" :icon="Plus" @click="handleAdd()">新增</el-button>
+                <el-button type="primary" :icon="Download" @click="exportXlsx()">导出Excel</el-button>
                 <el-button :icon="RefreshLeft" @click="getData()">刷新</el-button>
 
                 <div class="float-end">
@@ -173,7 +174,7 @@
 </template>
 
 <script setup lang="ts" name="station">
-import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
+import { Delete, Edit, Plus, Search, RefreshLeft, Download } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
 import type { ResponseData, Station, TimeRangePageQuery } from '@/utils/interface';
@@ -181,6 +182,7 @@ import { apiNoticePut, apiStationDelete, apiStationPageQuery, apiStationPost, ap
 import { deepCopy } from '@/utils/copy';
 import { strftime } from '@/utils/datetime';
 import useUserStore from '@/stores/user';
+import { exportExcel } from '@/utils/excel';
 
 
 const userStore = useUserStore();
@@ -305,6 +307,13 @@ const saveAdd = (formEl: FormInstance | undefined) => {
             }, () => {});
         });
     });
+};
+const exportXlsx = () => {
+    const list = tableData.value.map(item => [item.id, item.sitename, item.longitude, item.latitude, item.status, item.openingDatetime]);
+
+    list.unshift(['ID', '站点名', '经度', '纬度', '开通状态', '开通日期']);
+
+    exportExcel(`站点_第${query.pageIndex}页_${new Date().valueOf()}`, list);
 };
 
 // 修改表格验证

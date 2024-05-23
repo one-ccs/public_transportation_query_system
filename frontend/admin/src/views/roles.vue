@@ -4,10 +4,11 @@
             <div class="handle-box">
                 <el-button type="danger" :icon="Delete" @click="deleteBatch()">批量删除</el-button>
                 <el-button type="primary" :icon="Plus" @click="handleAdd()">新增</el-button>
+                <el-button type="primary" :icon="Download" @click="exportXlsx()">导出Excel</el-button>
                 <el-button :icon="RefreshLeft" @click="getData()">刷新</el-button>
 
                 <div class="float-end">
-                    <el-input v-model="query" @change="handleSearch()" prefix-icon="Search" clearable placeholder="模糊搜索" class="handle-input mr10"></el-input>
+                    <el-input v-model="query.query" @change="handleSearch()" prefix-icon="Search" clearable placeholder="模糊搜索" class="handle-input mr10"></el-input>
                     <el-button type="primary" :icon="Search" @click="handleSearch()">搜索</el-button>
                 </div>
 			</div>
@@ -80,12 +81,13 @@
 </template>
 
 <script setup lang="ts" name="users">
-import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
-import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
+import { Delete, Edit, Plus, Search, RefreshLeft, Download } from '@element-plus/icons-vue';
+import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
 import { apiRolePageQuery, apiRolePut, apiRolePost, apiRoleDelete } from '@/utils/api';
 import { deepCopy } from '@/utils/copy';
-import type { ResponseData } from '@/utils/interface';
+import type { PageQuery, ResponseData } from '@/utils/interface';
+import { exportExcel } from '@/utils/excel';
 
 interface TableItem {
 	id: number;
@@ -93,7 +95,11 @@ interface TableItem {
 	nameZh: string;
 }
 
-const query = ref('');
+const query = ref<PageQuery>({
+    pageIndex: 1,
+    pageSize: 30,
+    query: '',
+});
 const tableData = ref<TableItem[]>([]);
 // 获取表格数据
 const getData = () => {
@@ -180,6 +186,13 @@ const saveAdd = (formEl: FormInstance | undefined) => {
         });
     });
 };
+const exportXlsx = () => {
+    const list = tableData.value.map(item => [item.id, item.name, item.nameZh]);
+
+    list.unshift(['ID', '角色英文名', '角色中文名']);
+
+    exportExcel(`角色_第${1}页_${new Date().valueOf()}`, list);
+};
 
 const modifyRules: FormRules = {
 	name: [{ required: true, message: '请输入英文名', trigger: 'blur' }],
@@ -189,7 +202,7 @@ const modifyRules: FormRules = {
 const modifyVisible = ref(false);
 const modifyFormRef = ref<FormInstance>();
 const modifyForm = reactive({
-    id: null,
+    id: null as unknown as number,
     name: '',
     nameZh: '',
 });

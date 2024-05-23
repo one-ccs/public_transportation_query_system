@@ -4,6 +4,7 @@
             <div class="handle-box">
                 <el-button type="danger" :icon="Delete" @click="deleteBatch()">批量删除</el-button>
                 <el-button type="primary" :icon="Plus" @click="handleAdd()">新增</el-button>
+                <el-button type="primary" :icon="Download" @click="exportXlsx()">导出Excel</el-button>
                 <el-button :icon="RefreshLeft" @click="getData()">刷新</el-button>
 
                 <div class="float-end">
@@ -180,10 +181,11 @@
 <script setup lang="ts" name="users">
 import { reactive, ref } from 'vue';
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
-import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
+import { Delete, Edit, Plus, Search, RefreshLeft, Download } from '@element-plus/icons-vue';
 import type { ResponseData, Role, TimeRangePageQuery, UserVO } from '@/utils/interface';
 import { apiUserPut, apiPageUser, apiUserPost, apiRolePageQuery, apiUserDelete } from '@/utils/api';
 import { deepCopy } from '@/utils/copy';
+import { exportExcel } from '@/utils/excel';
 
 
 interface TableItem {
@@ -193,7 +195,7 @@ interface TableItem {
 	email: string;
 	registerDatetime: string;
 	status: number;
-    roles: Object[];
+    roles: Role[];
 }
 
 const query = reactive({
@@ -346,6 +348,13 @@ const saveAdd = (formEl: FormInstance | undefined) => {
             getData();
         });
     });
+};
+const exportXlsx = () => {
+    const list = tableData.value.map(item => [item.id, item.username, item.password, item.email, item.registerDatetime, item.status, item.roles.map(item => item.nameZh).join(',')]);
+
+    list.unshift(['ID', '用户名', '密码', '邮箱地址', '注册时间', '状态', '角色']);
+
+    exportExcel(`管理员_第${query.pageIndex}页_${new Date().valueOf()}`, list);
 };
 
 // 修改用户密码验证

@@ -4,6 +4,7 @@
             <div class="handle-box">
                 <el-button type="danger" :icon="Delete" @click="deleteBatch()">批量删除</el-button>
                 <el-button type="primary" :icon="Plus" @click="handleAdd()">新增</el-button>
+                <el-button type="primary" :icon="Download" @click="exportXlsx()">导出Excel</el-button>
                 <el-button :icon="RefreshLeft" @click="getData()">刷新</el-button>
 
                 <div class="float-end">
@@ -178,13 +179,14 @@
 
 <script setup lang="ts" name="users">
 import { reactive, ref } from 'vue';
-import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
+import { Delete, Edit, Plus, Search, RefreshLeft, Download } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
 import type { Lost, ResponseData } from '@/utils/interface';
 import { apiLostDelete, apiLostPageQuery, apiLostPost, apiLostPut, apiUploadLost } from '@/utils/api';
 import { deepCopy } from '@/utils/copy';
 import ImageUpload from '@/components/ImageUpload.vue';
 import useGlobalStore from '@/stores/global';
+import { exportExcel } from '@/utils/excel';
 
 
 interface TableItem {
@@ -194,6 +196,7 @@ interface TableItem {
     address: string;
     pickDatetime: string;
     claimDatetime: string;
+    status: number;
 }
 
 const globalStore = useGlobalStore();
@@ -318,6 +321,13 @@ const saveAdd = (formEl: FormInstance | undefined) => {
             getData();
         });
     });
+};
+const exportXlsx = () => {
+    const list = tableData.value.map(item => [item.id, item.describe, item.address, item.imgUrl, item.pickDatetime, item.claimDatetime, item.status]);
+
+    list.unshift(['ID', '描述', '拾取地点', '图片', '拾取时间', '认领时间', '认领状态']);
+
+    exportExcel(`失物招领_第${query.pageIndex}页_${new Date().valueOf()}`, list);
 };
 
 // 修改表格验证

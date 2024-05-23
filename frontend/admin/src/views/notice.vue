@@ -4,6 +4,7 @@
             <div class="handle-box">
                 <el-button type="danger" :icon="Delete" @click="deleteBatch()">批量删除</el-button>
                 <el-button type="primary" :icon="Plus" @click="handleAdd()">新增</el-button>
+                <el-button type="primary" :icon="Download" @click="exportXlsx()">导出Excel</el-button>
                 <el-button :icon="RefreshLeft" @click="getData()">刷新</el-button>
 
                 <div class="float-end">
@@ -157,12 +158,13 @@
 </template>
 
 <script setup lang="ts" name="users">
-import { Delete, Edit, Plus, Search, RefreshLeft } from '@element-plus/icons-vue';
+import { Delete, Edit, Plus, Search, RefreshLeft, Download } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
 import type { Notice, ResponseData } from '@/utils/interface';
 import { apiNoticeDelete, apiNoticePageQuery, apiNoticePost, apiNoticePut } from '@/utils/api';
 import { deepCopy } from '@/utils/copy';
+import { exportExcel } from '@/utils/excel';
 
 
 interface TableItem {
@@ -283,6 +285,13 @@ const saveAdd = (formEl: FormInstance | undefined) => {
             getData();
         });
     });
+};
+const exportXlsx = () => {
+    const list = tableData.value.map(item => [item.id, item.username, item.title, item.content, item.status, item.releaseDatetime]);
+
+    list.unshift(['ID', '发布用户', '标题', '内容', '状态', '发布日期']);
+
+    exportExcel(`线路_第${query.pageIndex}页_${new Date().valueOf()}`, list);
 };
 
 // 修改表格验证
