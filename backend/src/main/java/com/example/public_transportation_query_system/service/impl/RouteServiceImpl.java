@@ -152,10 +152,10 @@ public class RouteServiceImpl extends ServiceImpl<RouteMapper, Route> implements
             // 删除旧站点信息
             routeStationServiceImpl.deleteAllByRouteId(route.getId());
             // 添加新站点信息
-            if (routeStationServiceImpl.saveBatch(routeVo.getRouteStations())) {
-                return Result.success("修改成功");
+            if (routeVo.getRouteStations().size() > 0 && !routeStationServiceImpl.saveBatch(routeVo.getRouteStations())) {
+                return Result.failure("修改失败， 修改线路途径站点失败");
             }
-            return Result.failure("修改失败， 修改线路途径站点失败");
+            return Result.success("修改成功");
         }
         return Result.failure("修改失败");
     }

@@ -27,5 +27,7 @@
             lost
         GROUP BY
             lost.`status`
+        ORDER BY
+            lost.`status`
     </select>
 </mapper>

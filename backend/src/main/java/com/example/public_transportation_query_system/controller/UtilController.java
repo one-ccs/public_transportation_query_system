@@ -1,5 +1,6 @@
 package com.example.public_transportation_query_system.controller;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -90,37 +91,35 @@ public class UtilController {
             StationBO previous = null;
 
             for (StationBO stationBO : routeBO.getStations()) {
-                if (routeBO.getId() == 17) System.out.println(stationBO);
                 if (previous != null) {
                     length += this.getDistanceDouble(
-                        previous.getLatitude(),
                         previous.getLongitude(),
-                        stationBO.getLatitude(),
+                        previous.getLatitude(),
+                        stationBO.getLongitude(),
                         stationBO.getLatitude()
                     );
-                    if (routeBO.getId() == 17) System.out.println(length);
                 }
                 previous = stationBO;
             }
-            System.out.println(getDistanceDouble(29.344384395150854, 106.53962875115394, 29.34655874141637, 106.53984637397708));
+
             return new RouteOfLength(
                 routeBO.getId(),
                 routeBO.getNo(),
                 length
             );
-        }).toList();
+        }).sorted(Comparator.comparingDouble(RouteOfLength::getLength).reversed()).toList();
 
         return routeOfLengths;
     }
 
     public final double EARTH_RADIUS = 6371000.0; // 地球半径，单位米
 
-    public double getDistanceDouble(Double lat1, Double lng1, Double lat2, Double lng2) {
+    public double getDistanceDouble(Double longitude1, Double latitude1, Double longitude2, Double latitude2) {
         // 经纬度（角度）转弧度。弧度用作参数，以调用Math.cos和Math.sin
-        double radiansAX = Math.toRadians(lng1);// A经弧度
-        double radiansAY = Math.toRadians(lat1);// A纬弧度
-        double radiansBX = Math.toRadians(lng2);// B经弧度
-        double radiansBY = Math.toRadians(lat2);// B纬弧度
+        double radiansAX = Math.toRadians(longitude1);// A经弧度
+        double radiansAY = Math.toRadians(latitude1);// A纬弧度
+        double radiansBX = Math.toRadians(longitude2);// B经弧度
+        double radiansBY = Math.toRadians(latitude2);// B纬弧度
 
         // 公式中“cosβ1cosβ2cos（α1-α2）+sinβ1sinβ2”的部分，得到∠AOB的cos值
         double cos = Math.cos(radiansAY) * Math.cos(radiansBY) * Math.cos(radiansAX - radiansBX) + Math.sin(radiansAY) * Math.sin(radiansBY);
