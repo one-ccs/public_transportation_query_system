@@ -38,7 +38,7 @@ public class MyUserDetails implements UserDetails {
 	}
 
 	public MyUserDetails(String username, User user, List<Role> roles) {
-		this(username, user.getPassword(), true, true, true, true, roles, user);
+		this(username, user.getPassword(), user.getStatus() == null || user.getStatus() == 1, true, true, true, roles, user);
 	}
 
 	public MyUserDetails(

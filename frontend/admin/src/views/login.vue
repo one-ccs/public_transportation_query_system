@@ -78,7 +78,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             ElMessage.success('登录成功');
             userStore.setUser(data.data);
             localStorage.setItem('ms_username', loginForm.username);
-            const keys = permiss.defaultList[loginForm.username == 'admin' ? 'admin' : 'user'];
+            const keys = permiss.defaultList[data.data.roles[0]];
             permiss.handleSet(keys);
             localStorage.setItem('ms_keys', JSON.stringify(keys));
             router.push('/');

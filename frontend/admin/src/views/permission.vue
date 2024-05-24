@@ -1,11 +1,11 @@
 <template>
 	<div class="container">
-		<div class="plugins-tips">通过 v-permiss 自定义指令实现权限管理，使用非 admin 账号登录，可查看效果。</div>
 		<div class="mgb20">
 			<span class="label">角色：</span>
-			<el-select v-model="role" @change="handleChange">
-				<el-option label="超级管理员" value="admin"></el-option>
-				<el-option label="普通用户" value="user"></el-option>
+			<el-select v-model="userStore.userInfo.roles[0]" @change="handleChange">
+				<el-option label="超级管理员" value="superAdmin"></el-option>
+				<el-option label="管理员" value="admin"></el-option>
+				<el-option label="用户管理员" value="userAdmin"></el-option>
 			</el-select>
 		</div>
 		<div class="mgb20 tree-wrapper">
@@ -26,8 +26,9 @@
 import { ref } from 'vue';
 import { ElTree } from 'element-plus';
 import usePermissStore from '@/stores/permiss';
+import useUserStore from '@/stores/user';
 
-const role = ref<string>('admin');
+const userStore = useUserStore();
 
 interface Tree {
 	id: string;
@@ -40,8 +41,42 @@ const data: Tree[] = [
 		id: '1',
 		label: '系统首页'
 	},
+    {
+        id: '2',
+        label: '用户管理',
+        children: [
+            {
+                id: '2.1',
+                label: '普通用户管理',
+            },
+            {
+                id: '2.2',
+                label: '管理员管理',
+            },
+            {
+                id: '2.3',
+                label: '角色管理',
+            },
+        ],
+    },
+    {
+        id: '3',
+        label: '线路管理',
+    },
+    {
+        id: '4',
+        label: '站点管理',
+    },
+    {
+        id: '5',
+        label: '公告管理',
+    },
+    {
+        id: '6',
+        label: '失物招领管理',
+    },
 	{
-		id: '2',
+		id: '7',
 		label: '基础表格',
 		children: [
 			{
@@ -55,11 +90,11 @@ const data: Tree[] = [
 		]
 	},
 	{
-		id: '3',
+		id: '8',
 		label: 'tab选项卡'
 	},
 	{
-		id: '4',
+		id: '9',
 		label: '表单相关',
 		children: [
 			{
@@ -106,8 +141,7 @@ const permiss = usePermissStore();
 // 获取当前权限
 const checkedKeys = ref<string[]>([]);
 const getPremission = () => {
-	// 请求接口返回权限
-	checkedKeys.value = permiss.defaultList[role.value];
+	checkedKeys.value = permiss.getPermiss();
 };
 getPremission();
 
@@ -116,10 +150,11 @@ const tree = ref<InstanceType<typeof ElTree>>();
 const onSubmit = () => {
 	// 获取选中的权限
 	console.log(tree.value!.getCheckedKeys(false));
+    localStorage.setItem('ms_keys', JSON.stringify(tree.value!.getCheckedKeys(false)));
 };
 
-const handleChange = (val: string[]) => {
-	tree.value!.setCheckedKeys(permiss.defaultList[role.value]);
+const handleChange = (val: string) => {
+	tree.value!.setCheckedKeys(permiss.defaultList[val]);
 };
 </script>
 

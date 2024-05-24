@@ -103,6 +103,11 @@ export interface UserLogin {
     remember: boolean;
 };
 
+export interface UserBO extends User {
+    token: string;
+    roles: string[];
+}
+
 export interface UserVO extends User {
     roles?: Role[];
     passwordCheck?: string;
