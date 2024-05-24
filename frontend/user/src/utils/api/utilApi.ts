@@ -11,3 +11,14 @@ export function apiUtilSearch(query: PageQuery, successCallback?: Function, fail
         failureCallback,
     });
 }
+
+export function apiUtilRoutePlanning(query: {}, successCallback?: Function, failureCallback?: Function) {
+    return api({
+        url: '/api/util/routePlanning',
+        params: {
+            ...query,
+        },
+        successCallback,
+        failureCallback,
+    });
+}

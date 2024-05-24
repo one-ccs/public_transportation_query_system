@@ -1,8 +1,10 @@
 package com.example.public_transportation_query_system.controller;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +18,12 @@ import com.example.public_transportation_query_system.entity.po.Route;
 import com.example.public_transportation_query_system.entity.vo.BasePageQuery;
 import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.response.RouteOfLength;
+import com.example.public_transportation_query_system.entity.vo.response.RoutePlanning;
 import com.example.public_transportation_query_system.mapper.UtilMapper;
 import com.example.public_transportation_query_system.service.impl.RouteServiceImpl;
 import com.example.public_transportation_query_system.service.impl.StationServiceImpl;
 import com.example.public_transportation_query_system.service.impl.UserServiceImpl;
+import com.example.public_transportation_query_system.util.PositionUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -81,6 +85,38 @@ public class UtilController {
         return Result.success(result);
     }
 
+    @Operation(summary = "线路规划", description = "线路规划接口")
+    @GetMapping("/routePlanning")
+    public Result<Object> routePlanning() {
+        List<Map<String, Object>> result = new ArrayList<>();
+
+
+        Map<String, Object> f1 = new HashMap<>();
+        List<RoutePlanning> p1 = new ArrayList<>();
+        p1.add(new RoutePlanning("步行", "230米", "鸡公台站"));
+        p1.add(new RoutePlanning("911路", "5站", "轨道鱼胡路站"));
+        p1.add(new RoutePlanning("步行", "90米", "鱼胡路"));
+        f1.put("name", "方案1");
+        f1.put("list", p1);
+
+        Map<String, Object> f2 = new HashMap<>();
+        List<RoutePlanning> p2 = new ArrayList<>();
+        p2.add(new RoutePlanning("步行", "230米", "鸡公台站"));
+        p2.add(new RoutePlanning("914路", "5站", "轨道鱼胡路站"));
+        p2.add(new RoutePlanning("步行", "19米", "鱼胡路"));
+        f2.put("name", "方案2");
+        f2.put("list", p2);
+
+        result.add(f1);
+        result.add(f2);
+
+        return Result.success(result);
+    }
+
+    /**
+     * 统计站点长度并排序
+     * @return
+     */
     public List<RouteOfLength> routeOfLengthRank() {
         List<Route> routes = routeServiceImpl.list();
 
@@ -92,7 +128,7 @@ public class UtilController {
 
             for (StationBO stationBO : routeBO.getStations()) {
                 if (previous != null) {
-                    length += this.getDistanceDouble(
+                    length += PositionUtil.getDistanceDouble(
                         previous.getLongitude(),
                         previous.getLatitude(),
                         stationBO.getLongitude(),
@@ -110,34 +146,6 @@ public class UtilController {
         }).sorted(Comparator.comparingDouble(RouteOfLength::getLength).reversed()).toList();
 
         return routeOfLengths;
-    }
-
-    public final double EARTH_RADIUS = 6371000.0; // 地球半径，单位米
-
-    /**
-     * 反余弦计算公式计算经纬度距离
-     * @param longitude1 经度 1
-     * @param latitude1 纬度 1
-     * @param longitude2 经度 2
-     * @param latitude2 纬度 2
-     * @return
-     */
-    public double getDistanceDouble(Double longitude1, Double latitude1, Double longitude2, Double latitude2) {
-        // 经纬度（角度）转弧度。弧度用作参数，以调用Math.cos和Math.sin
-        double radiansAX = Math.toRadians(longitude1);// A经弧度
-        double radiansAY = Math.toRadians(latitude1);// A纬弧度
-        double radiansBX = Math.toRadians(longitude2);// B经弧度
-        double radiansBY = Math.toRadians(latitude2);// B纬弧度
-
-        // 公式中“cosβ1cosβ2cos（α1-α2）+sinβ1sinβ2”的部分，得到∠AOB的cos值
-        double cos = Math.cos(radiansAY) * Math.cos(radiansBY) * Math.cos(radiansAX - radiansBX) + Math.sin(radiansAY) * Math.sin(radiansBY);
-
-        // log.info("cos = " + cos);//值域[-1,1]
-        double acos = Math.acos(cos);// 反余弦值
-
-        // log.info("acos = " + acos);//值域[0,π]
-        // log.info("∠AOB = " + Math.toDegrees(acos));//球心角 值域[0,180]
-        return EARTH_RADIUS * acos;// 最终结果
     }
 
 }
