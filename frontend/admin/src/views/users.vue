@@ -432,7 +432,7 @@ const saveModify = (formEl: FormInstance | undefined) => {
 }
 
 .handle-input {
-	width: 300px;
+	width: 230px;
 }
 .table {
 	width: 100%;

@@ -27,7 +27,9 @@ const back = () => {
         :right-text="rightText"
     >
         <template #title>
-            <span class="title">{{ title || route.meta.title }}</span>
+            <slot name="title">
+                <span class="title">{{ title || route.meta.title }}</span>
+            </slot>
         </template>
         <template v-if="!rightText" #right>
             <slot name="right"></slot>

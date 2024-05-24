@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import type { NearbyQuery, ResponseData, Route, RouteBO, Station, StationBO } from '@/utils/interface';
-import { apiStationNearby } from '@/utils/api';
+import { showFailToast } from 'vant';
+import type { NearbyQuery, ResponseData, RouteBO, StationBO } from '@/utils/interface';
+import { apiLostPageQuery, apiStationNearby } from '@/utils/api';
 import { getCurrentPosition } from '@/utils/advanced';
 import useHistoryStore from '@/stores/history';
 import RightSlideRouterView from '@/components/RightSlideRouterView.vue';
 import IconBox from '@/components/IconBox.vue';
-import { showFailToast } from 'vant';
 
 const router = useRouter();
 const historyStore = useHistoryStore();
@@ -27,6 +27,14 @@ const onRefreshClick = () => {
     getNearbyList();
 };
 
+// 获取公告列表
+const lostNotice = ref('[失物公告]：...');
+const getNoticeList = () => {
+    apiLostPageQuery({pageIndex: 1, pageSize: 10}, (data: ResponseData) => {
+        const lost = data.data.list[0];
+        lost && (lostNotice.value = `[失物公告]：${lost.pickDatetime.substring(0, 10)} 于 "${lost.address}" 拾到 "${lost.describe}"。`);
+    });
+};
 // 获取附近站点列表
 const getNearbyList = () => {
     isLoading.value = true;
@@ -96,6 +104,7 @@ const goRouteDetail = (route: RouteBO, stationId: number) => {
 };
 
 onMounted(() => {
+    getNoticeList();
     getNearbyList();
 });
 </script>
@@ -103,6 +112,14 @@ onMounted(() => {
 <template>
     <div class="client-wrapper">
         <right-slide-router-view />
+        <van-notice-bar
+            class="lost clickable"
+            left-icon="volume-o"
+            mode="link"
+            :scrollable="true"
+            :text="lostNotice"
+            @click="$router.push({ name: 'nearbyLost' })"
+        />
         <div class="body" ref="bodyRef" >
             <van-loading v-if="!nearbyStations.length" vertical>地点加载中...</van-loading>
             <van-empty v-if="!nearbyStations.length" image="search" description="暂无数据" />
@@ -113,13 +130,19 @@ onMounted(() => {
             >
                 <div class="header clickable" @click="goStationDetail(station, null)">
                     <i class="spirit station"></i>
-                    <span class="sitename">{{ station.sitename }}</span>
+                    <span class="sitename">
+                        <span>{{ station.sitename }}</span>
+                        <span class="danger-super" v-if="!station.status">暂未开通</span>
+                    </span>
                     <span class="distance">{{ station.distance }} <span style="font-size: .88rem;">米</span></span>
                 </div>
                 <div class="body">
                     <div class="route-card clickable" v-for="route in station.routes" @click="goRouteDetail(route, station.id!)">
                         <div class="title">
-                            <div class="route-no">{{ route.no }}路</div>
+                            <div class="route-no">
+                                <span>{{ route.no }}路</span>
+                                <span class="danger-super" v-if="!route.status">暂未开通</span>
+                            </div>
                             <div class="time">{{ route.firstTime }}-{{ route.lastTime }}</div>
                         </div>
                         <div class="describe">
@@ -140,8 +163,14 @@ onMounted(() => {
 
 <style scoped lang="less">
 .client-wrapper {
-    padding: 8px;
+    padding: 15px;
 
+    .lost {
+        position: sticky;
+        top: 0;
+        transform: translate(-15px, -15px);
+        width: calc(100% + 30px);
+    }
     .body {
         .van-loading {
             position: absolute;

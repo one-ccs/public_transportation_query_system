@@ -116,3 +116,10 @@
     cursor: pointer;
     user-select: none;
 }
+
+.danger-super {
+    margin-left: 3px;
+    color: #F48771;
+    font-size: .5rem;
+    vertical-align: super;
+}

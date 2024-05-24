@@ -60,7 +60,10 @@ const onDeleteClick = () => {
             <div class="history-card link-button" v-for="history in historyStore.histories" @click="onHistoryClick(history)">
                 <icon-box class="icon" class-prefix="fa" name="bus"></icon-box>
                 <div class="content">
-                    <div class="title">{{ history.sitename || history.no }}</div>
+                    <div class="title">
+                        <span>{{ history.sitename || history.no }}</span>
+                        <span class="danger-super" v-if="!history.status">暂未开通</span>
+                    </div>
                     <div class="describe">{{ parseInfoText(history) }}</div>
                 </div>
                 <van-icon

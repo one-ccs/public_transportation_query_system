@@ -47,6 +47,14 @@ const routes: RouteRecordRaw[] = [
                 component: () => import('@/views/Home/Nearby.vue'),
                 children: [
                     {
+                        path: 'lost',
+                        name: 'nearbyLost',
+                        meta: {
+                            title: '失物招领',
+                        },
+                        component: () => import('@/views/Home/Lost.vue'),
+                    },
+                    {
                         path: 'routeDetail',
                         name: 'nearbyRouteDetail',
                         meta: {

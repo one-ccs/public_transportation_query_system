@@ -102,6 +102,10 @@ export interface NearbyQuery {
     distance: number;
 };
 
+export interface LostQuery extends TimeRangePageQuery {
+    status: number;
+};
+
 export interface UserVO extends User {
     roles?: Role[];
     passwordCheck: string;

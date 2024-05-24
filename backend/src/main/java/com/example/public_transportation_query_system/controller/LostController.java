@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.public_transportation_query_system.entity.po.Lost;
-import com.example.public_transportation_query_system.entity.vo.BasePageQuery;
 import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.request.DeleteVO;
+import com.example.public_transportation_query_system.entity.vo.request.QueryLostVO;
 import com.example.public_transportation_query_system.service.impl.LostServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,7 +52,7 @@ public class LostController {
 
     @Operation(summary = "分页查询失物招领列表", description = "分页查询失物招领列表接口")
     @GetMapping("/pageQuery")
-    public Result<Object> pageQuery(BasePageQuery query) {
+    public Result<Object> pageQuery(QueryLostVO query) {
         return lostServiceImpl.getLostPage(query);
     }
 }

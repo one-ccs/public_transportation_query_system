@@ -170,7 +170,7 @@ const saveEdit = () => {
 }
 
 .handle-input {
-	width: 300px;
+	width: 230px;
 }
 .table {
 	width: 100%;

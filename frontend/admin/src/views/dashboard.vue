@@ -56,7 +56,7 @@
                     </div>
                     <div class="number-chart me-5">
                         <div class="chart-title">
-                            <dv-decoration-11 style="width:150px;height:50px;color: #55E088;font-size: 13px;">线路数</dv-decoration-11>
+                            <dv-decoration-11 style="width:150px;height:50px;color: #55E088;font-size: 13px;">站点数</dv-decoration-11>
                         </div>
                         <dv-digital-flop :config="options.stationCount" style="width: 100px;height: 50px;" />
                     </div>
@@ -90,7 +90,7 @@ const options = reactive({
     },
     stationCount: {
         number: [23],
-        content: '{nt}条',
+        content: '{nt}个',
     },
     lostStatusCount: {
         digitalFlopStyle: {
@@ -98,11 +98,11 @@ const options = reactive({
         },
         data: [
             {
-                name: '待领取',
+                name: '待认领',
                 value: 3,
             },
             {
-                name: '已领取',
+                name: '已认领',
                 value: 2,
             },
         ],

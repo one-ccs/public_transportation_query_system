@@ -114,6 +114,14 @@ public class UtilController {
 
     public final double EARTH_RADIUS = 6371000.0; // 地球半径，单位米
 
+    /**
+     * 反余弦计算公式计算经纬度距离
+     * @param longitude1 经度 1
+     * @param latitude1 纬度 1
+     * @param longitude2 经度 2
+     * @param latitude2 纬度 2
+     * @return
+     */
     public double getDistanceDouble(Double longitude1, Double latitude1, Double longitude2, Double latitude2) {
         // 经纬度（角度）转弧度。弧度用作参数，以调用Math.cos和Math.sin
         double radiansAX = Math.toRadians(longitude1);// A经弧度

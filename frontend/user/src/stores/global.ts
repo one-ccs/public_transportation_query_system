@@ -33,6 +33,7 @@ const useGlobalStore = defineStore("global", {
         timeout: 5000,
         search: '',
         onSearch: () => {},
+        onLostSearch: () => {},
         isSearched: false,
         isSearching: false,
         searchResult: {
@@ -41,6 +42,8 @@ const useGlobalStore = defineStore("global", {
     }),
     getters: {
         token: (state) => state.data.token,
+        avatarApi: state => state.apiHost + '/api/file/image/avatar/',
+        lostApi: state => state.apiHost + '/api/file/image/lost/',
     },
     actions: {
         init(force=false) {

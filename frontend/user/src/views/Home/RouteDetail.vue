@@ -75,7 +75,11 @@ onMounted(() => {
 <template>
     <div class="view">
         <right-slide-router-view />
-        <back-nav-bar class="view-header" :title="title" @click-right="onHomeClick()">
+        <back-nav-bar class="view-header" @click-right="onHomeClick()">
+            <template #title>
+                <span>{{ title }}</span>
+                <span class="danger-super" v-if="!routeDetail?.status">暂未开通</span>
+            </template>
             <template #right>
                 <van-icon name="wap-home" size="1.3rem" color="#666"/>
             </template>
@@ -87,7 +91,7 @@ onMounted(() => {
                     <div class="route-describe">{{ routeInfo }}</div>
                 </div>
                 <van-notice-bar
-                    class="notice"
+                    class="notice clickable"
                     left-icon="volume-o"
                     mode="link"
                     :scrollable="true"
@@ -114,6 +118,7 @@ onMounted(() => {
                     >
                         <span class="index">{{ index + 1 }}</span>
                         <span class="sitename">{{ station.sitename }}</span>
+                        <span class="danger-super" v-if="!station.status">暂未开通</span>
                     </van-step>
                 </van-steps>
                 <van-back-top v-if="routeDetail" offset="120" bottom="80" teleport=".body" />

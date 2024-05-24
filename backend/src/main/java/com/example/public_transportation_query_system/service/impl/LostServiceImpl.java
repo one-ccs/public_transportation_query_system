@@ -10,16 +10,16 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.public_transportation_query_system.entity.po.Lost;
-import com.example.public_transportation_query_system.entity.vo.BasePageQuery;
 import com.example.public_transportation_query_system.entity.vo.Result;
 import com.example.public_transportation_query_system.entity.vo.request.DeleteVO;
+import com.example.public_transportation_query_system.entity.vo.request.QueryLostVO;
 import com.example.public_transportation_query_system.mapper.LostMapper;
 import com.example.public_transportation_query_system.service.ILostService;
 
 @Service
 public class LostServiceImpl extends ServiceImpl<LostMapper, Lost> implements ILostService {
 
-    public Result<Object> getLostPage(BasePageQuery query) {
+    public Result<Object> getLostPage(QueryLostVO query) {
         // 构造查询条件
         LambdaQueryWrapper<Lost> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.ge(query.getStartDatetime() != null, Lost::getPickDatetime, query.getStartDatetime())
@@ -28,6 +28,9 @@ public class LostServiceImpl extends ServiceImpl<LostMapper, Lost> implements IL
                 .like(Lost::getDescribe, query.getQuery())
                 .or()
                 .like(Lost::getAddress, query.getQuery())
+            )
+            .and(query.getStatus() != null, i -> i
+                .eq(Lost::getStatus, query.getStatus())
             );
 
         // 分页

@@ -581,7 +581,7 @@ const updateSequence = (stations?: StationBO[]) => {
 }
 
 .handle-input {
-	width: 300px;
+	width: 230px;
 }
 .table {
 	width: 100%;
