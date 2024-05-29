@@ -93,6 +93,9 @@ const options = reactive({
         content: '{nt}个',
     },
     lostStatusCount: {
+        showOriginValue: true,
+        digitalFlopUnit: '个',
+        lineWidth: 24,
         digitalFlopStyle: {
             fill: 'pink',
         },

@@ -30,7 +30,7 @@ const onRefreshClick = () => {
 // 获取公告列表
 const lostNotice = ref('[失物公告]：...');
 const getNoticeList = () => {
-    apiLostPageQuery({pageIndex: 1, pageSize: 10}, (data: ResponseData) => {
+    apiLostPageQuery({pageIndex: 1, pageSize: 10, status: 0 } as any, (data: ResponseData) => {
         const lost = data.data.list[0];
         lost && (lostNotice.value = `[失物公告]：${lost.pickDatetime.substring(0, 10)} 于 "${lost.address}" 拾到 "${lost.describe}"。`);
     });
@@ -42,6 +42,8 @@ const getNearbyList = () => {
     getCurrentPosition((pos: GeolocationPosition) => {
         query.longitude = pos.coords.longitude;
         query.latitude = pos.coords.latitude;
+        query.longitude = defaultLongitude;
+        query.latitude = defaultLatitude;
 
         apiStationNearby(query, (data: ResponseData) => {
             if (data.data.length === 0) {
@@ -64,17 +66,18 @@ const getNearbyList = () => {
             showFailToast(data.message);
         });
     }, () => {
-        query.longitude = defaultLongitude;
-        query.latitude = defaultLatitude;
+        showFailToast('没有定位权限');
+        // query.longitude = defaultLongitude;
+        // query.latitude = defaultLatitude;
 
-        apiStationNearby(query, (data: ResponseData) => {
-            isLoading.value = false;
-            // 只显示前 9 条
-            nearbyStations.value = data.data.slice(0, 9);
-        }, (data: ResponseData) => {
-            isLoading.value = false;
-            showFailToast(data.message);
-        });
+        // apiStationNearby(query, (data: ResponseData) => {
+        //     isLoading.value = false;
+        //     // 只显示前 9 条
+        //     nearbyStations.value = data.data.slice(0, 9);
+        // }, (data: ResponseData) => {
+        //     isLoading.value = false;
+        //     showFailToast(data.message);
+        // });
     });
 };
 const parseNextText = (station: StationBO, route: RouteBO) => {

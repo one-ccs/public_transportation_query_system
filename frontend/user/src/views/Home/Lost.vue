@@ -77,7 +77,7 @@ onMounted(() => {
                         </div>
                     </div>
                     <div class="image">
-                        <van-image :src="globalStore.lostApi + lost.imgUrl" :width="100" />
+                        <van-image :src="globalStore.lostApi + lost.imgUrl" :width="180" />
                     </div>
                 </div>
 

@@ -1,5 +1,5 @@
 import { api } from ".";
-import type { PageQuery } from "../interface";
+import type { LostQuery } from "../interface";
 
 /**
  * 分页查询失物招领列表
@@ -7,7 +7,7 @@ import type { PageQuery } from "../interface";
  * @param failureCallback 失败回调函数
  * @returns Promise
  */
-export function apiLostPageQuery(query: PageQuery, successCallback?: Function, failureCallback?: Function) {
+export function apiLostPageQuery(query: LostQuery, successCallback?: Function, failureCallback?: Function) {
     return api({
 		url: '/api/lost/pageQuery',
 		params: {
