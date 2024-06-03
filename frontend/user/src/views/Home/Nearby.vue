@@ -42,8 +42,8 @@ const getNearbyList = () => {
     getCurrentPosition((pos: GeolocationPosition) => {
         query.longitude = pos.coords.longitude;
         query.latitude = pos.coords.latitude;
-        query.longitude = defaultLongitude;
-        query.latitude = defaultLatitude;
+        // query.longitude = defaultLongitude;
+        // query.latitude = defaultLatitude;
 
         apiStationNearby(query, (data: ResponseData) => {
             if (data.data.length === 0) {
@@ -66,18 +66,18 @@ const getNearbyList = () => {
             showFailToast(data.message);
         });
     }, () => {
-        showFailToast('没有定位权限');
-        // query.longitude = defaultLongitude;
-        // query.latitude = defaultLatitude;
+        // showFailToast('没有定位权限');
+        query.longitude = defaultLongitude;
+        query.latitude = defaultLatitude;
 
-        // apiStationNearby(query, (data: ResponseData) => {
-        //     isLoading.value = false;
-        //     // 只显示前 9 条
-        //     nearbyStations.value = data.data.slice(0, 9);
-        // }, (data: ResponseData) => {
-        //     isLoading.value = false;
-        //     showFailToast(data.message);
-        // });
+        apiStationNearby(query, (data: ResponseData) => {
+            isLoading.value = false;
+            // 只显示前 9 条
+            nearbyStations.value = data.data.slice(0, 9);
+        }, (data: ResponseData) => {
+            isLoading.value = false;
+            showFailToast(data.message);
+        });
     });
 };
 const parseNextText = (station: StationBO, route: RouteBO) => {

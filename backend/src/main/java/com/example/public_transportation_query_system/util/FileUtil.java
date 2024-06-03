@@ -18,7 +18,7 @@ public class FileUtil {
             path = file.getCanonicalPath();
         } catch (Exception e) {}
 
-        return path;
+        return path.replace("\\backend", "");
     }
 
     /**
@@ -27,7 +27,7 @@ public class FileUtil {
      * @return
      */
     public static String getUploadPathWith(String path) {
-        File file = new File(uploadPath, path);
+        File file = new File(getRootPathWidth(uploadPath), path);
 
         try {
             path = file.getCanonicalPath();
@@ -41,7 +41,7 @@ public class FileUtil {
      * @return
      */
     public static boolean isSafeUploadFile(String filePath) {
-        File file = new File(uploadPath, filePath);
+        File file = new File(getRootPathWidth(uploadPath), filePath);
         String path = "";
 
         try {
