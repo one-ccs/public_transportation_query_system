@@ -35,7 +35,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 public class SpringDocConfig {
 
     @Bean
-    public OpenAPI openAPI() {
+    OpenAPI openAPI() {
         return new OpenAPI()
             .components(new Components()
                 .addSecuritySchemes("apiToken", new SecurityScheme()
@@ -77,7 +77,7 @@ public class SpringDocConfig {
     }
 
     @Bean
-    public GroupedOpenApi totalApi() {
+    GroupedOpenApi totalApi() {
         return GroupedOpenApi.builder()
             .group("0-总览")
             .pathsToMatch("/api/**")
@@ -86,7 +86,7 @@ public class SpringDocConfig {
     }
 
     @Bean
-    public GroupedOpenApi accountApi() {
+    GroupedOpenApi accountApi() {
         return GroupedOpenApi.builder()
             .group("1-用户")
             .pathsToMatch("/api/user/**")
@@ -94,7 +94,7 @@ public class SpringDocConfig {
     }
 
     @Bean
-    public GroupedOpenApi RoleApi() {
+    GroupedOpenApi RoleApi() {
         return GroupedOpenApi.builder()
             .group("2-角色")
             .pathsToMatch("/api/role/**")
@@ -102,7 +102,7 @@ public class SpringDocConfig {
     }
 
     @Bean
-    public GroupedOpenApi lineApi() {
+    GroupedOpenApi lineApi() {
         return GroupedOpenApi.builder()
             .group("3-线路")
             .pathsToMatch("/api/route/**")
@@ -110,7 +110,7 @@ public class SpringDocConfig {
     }
 
     @Bean
-    public GroupedOpenApi siteApi() {
+    GroupedOpenApi siteApi() {
         return GroupedOpenApi.builder()
             .group("4-站点")
             .pathsToMatch("/api/station/**")
@@ -118,7 +118,7 @@ public class SpringDocConfig {
     }
 
     @Bean
-    public GroupedOpenApi lostApi() {
+    GroupedOpenApi lostApi() {
         return GroupedOpenApi.builder()
             .group("5-失物招领")
             .pathsToMatch("/api/lost/**")
@@ -126,7 +126,7 @@ public class SpringDocConfig {
     }
 
     @Bean
-    public GroupedOpenApi noticeApi() {
+    GroupedOpenApi noticeApi() {
         return GroupedOpenApi.builder()
             .group("6-公告")
             .pathsToMatch("/api/notice/**")
@@ -134,7 +134,7 @@ public class SpringDocConfig {
     }
 
     @Bean
-    public GroupedOpenApi fileApi() {
+    GroupedOpenApi fileApi() {
         return GroupedOpenApi.builder()
             .group("7-文件")
             .pathsToMatch("/api/file/**")
