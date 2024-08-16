@@ -12,7 +12,7 @@ public class MyBatisPlusGenerator {
 
     private static final String url = "jdbc:mysql://localhost:3306/public_transportation_query_system?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&serverTimezone=UTC";
     private static final String username = "root";
-    private static final String password = "LmzwTvA1p5Bds3DODi$b2bfe2b68ef2esdf9b86dd354e00d3c3c7f533ce18fe8a6f33f7c3af52396b1bb";
+    private static final String password = "123456";
 
     public static void main(String[] args) {
         FastAutoGenerator.create(url, username, password)

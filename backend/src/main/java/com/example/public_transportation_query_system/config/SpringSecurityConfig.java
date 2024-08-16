@@ -52,7 +52,6 @@ public class SpringSecurityConfig {
     @Autowired
     private DataSource dataSource;
 
-    @SuppressWarnings("null")
     @Bean PersistentTokenRepository persistentTokenRepository() {
         JdbcTokenRepositoryImpl jdbcTokenRepositoryImpl = new JdbcTokenRepositoryImpl();
         // 自动建表，仅在第一次启动时设置为 true
@@ -62,7 +61,7 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.authorizeHttpRequests(conf -> {
             // 基本配置
             conf
