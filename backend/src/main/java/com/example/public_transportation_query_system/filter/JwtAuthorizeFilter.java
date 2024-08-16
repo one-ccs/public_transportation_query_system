@@ -27,6 +27,7 @@ public class JwtAuthorizeFilter extends OncePerRequestFilter {
     @Autowired
     JwtUtil jwtUtil;
 
+    @SuppressWarnings("null")
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         // 从请求头获取 token

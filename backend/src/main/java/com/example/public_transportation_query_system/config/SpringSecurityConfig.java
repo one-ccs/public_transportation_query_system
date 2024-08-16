@@ -52,7 +52,8 @@ public class SpringSecurityConfig {
     @Autowired
     private DataSource dataSource;
 
-    @Bean PersistentTokenRepository persistentTokenRepository() {
+    @Bean
+    PersistentTokenRepository persistentTokenRepository() {
         JdbcTokenRepositoryImpl jdbcTokenRepositoryImpl = new JdbcTokenRepositoryImpl();
         // 自动建表，仅在第一次启动时设置为 true
         jdbcTokenRepositoryImpl.setCreateTableOnStartup(false);
